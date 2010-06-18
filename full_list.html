@@ -1,0 +1,281 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Full list of classes and methods &mdash; python-odesk v0.1.0.alpha documentation</title>
+    <link rel="stylesheet" href="static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '#',
+        VERSION:     '0.1.0.alpha',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="static/jquery.js"></script>
+    <script type="text/javascript" src="static/doctools.js"></script>
+    <link rel="top" title="python-odesk v0.1.0.alpha documentation" href="index.html" />
+    <link rel="prev" title="Getting started" href="getting_started.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="getting_started.html" title="Getting started"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">python-odesk v0.1.0.alpha documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <h3><a href="index.html">Table Of Contents</a></h3>
+            <ul>
+<li><a class="reference external" href="#">Full list of classes and methods</a><ul>
+<li><a class="reference external" href="#exceptions">Exceptions</a></li>
+<li><a class="reference external" href="#base-and-support-classes-and-methods">Base and support classes and methods</a></li>
+<li><a class="reference external" href="#client">Client</a></li>
+<li><a class="reference external" href="#other-classes">Other classes</a></li>
+</ul>
+</li>
+</ul>
+
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="getting_started.html"
+                                  title="previous chapter">Getting started</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="sources/full_list.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="full-list-of-classes-and-methods">
+<span id="full-list"></span><h1>Full list of classes and methods<a class="headerlink" href="#full-list-of-classes-and-methods" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="exceptions">
+<span id="id1"></span><h2>Exceptions<a class="headerlink" href="#exceptions" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>HTTP400BadRequestError(urllib2.HTTPError)</li>
+<li>HTTP401UnauthorizedError(urllib2.HTTPError)</li>
+<li>HTTP403ForbiddenError(urllib2.HTTPError)</li>
+<li>HTTP404NotFoundError(urllib2.HTTPError)</li>
+<li>InvalidConfiguredException(Exception)</li>
+<li>APINotImplementedException(Exception)</li>
+</ul>
+</div>
+<div class="section" id="base-and-support-classes-and-methods">
+<span id="base"></span><h2>Base and support classes and methods<a class="headerlink" href="#base-and-support-classes-and-methods" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>def raise_http_error(e)</li>
+</ul>
+<p>Raise appropriate exception depending on the code returned by urllib2</p>
+<ul class="simple">
+<li>class HttpRequest(urllib2.Request)</li>
+</ul>
+<p>A hack around Request class that allows to specify HTTP method explicitly</p>
+<ul class="simple">
+<li>class BaseClient(object)</li>
+</ul>
+<p>A basic HTTP client which supports signing of requests as well as de-serializing of responses.</p>
+<ul class="simple">
+<li>class Namespace</li>
+<li>class GdsNamespace</li>
+</ul>
+</div>
+<div class="section" id="client">
+<span id="id2"></span><h2>Client<a class="headerlink" href="#client" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>class Client(BaseClient)</li>
+</ul>
+<blockquote>
+<ul class="simple">
+<li>def __init__(self, public_key, secret_key, api_token=None, format=&#8217;json&#8217;)</li>
+<li>Variables available inside Client:</li>
+</ul>
+<blockquote>
+<ul class="simple">
+<li>public_key</li>
+<li>secret_key</li>
+<li>api_token</li>
+<li>format</li>
+<li>auth</li>
+<li>team</li>
+<li>hr</li>
+<li>provider</li>
+<li>mc</li>
+<li>time_reports</li>
+<li>otask</li>
+</ul>
+</blockquote>
+</blockquote>
+</div>
+<div class="section" id="other-classes">
+<span id="classes"></span><h2>Other classes<a class="headerlink" href="#other-classes" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Auth(Namespace)</li>
+</ul>
+<blockquote>
+<ul class="simple">
+<li>auth_url</li>
+<li>get_frob</li>
+<li>get_token</li>
+<li>check_token</li>
+</ul>
+</blockquote>
+<ul class="simple">
+<li>Team(Namespace)</li>
+</ul>
+<blockquote>
+<ul class="simple">
+<li>get_teamrooms(self)</li>
+<li>get_snapshots(self, team_id, online=&#8217;now&#8217;)</li>
+<li>get_workdiaries(self, team_id, username, date=None)</li>
+</ul>
+</blockquote>
+<ul class="simple">
+<li>HR2(Namespace)</li>
+</ul>
+<blockquote>
+<ul class="simple">
+<li>get_user(self, user_id)</li>
+<li>get_companies(self)</li>
+<li>get_company(self, company_id)</li>
+<li>get_company_teams(self, company_id)</li>
+<li>get_company_tasks(self, company_id) - Not implemented in API</li>
+<li>get_company_users(self, company_id,  active=True)</li>
+<li>get_teams(self)</li>
+<li>get_team(self, team_id, include_users=False)</li>
+<li>get_team_tasks(self, team_id) - Not implemented in API</li>
+<li>get_team_users(self, team_id, active=True)</li>
+<li>post_team_adjustment(self, team_id, engagement_id, amount, comments, notes)</li>
+<li>get_tasks(self) - Not implemented in API</li>
+<li>get_user_role(self, user_id=None, team_id=None, sub_teams=False)</li>
+<li>get_jobs(self)</li>
+<li>get_job(self, job_id)</li>
+<li>get_offers(self)</li>
+<li>get_offer(self, offer_id)</li>
+<li>get_engagements(self)</li>
+<li>get_engagement(self, engagement_id)</li>
+</ul>
+</blockquote>
+<ul class="simple">
+<li>Provider(Namespace)</li>
+</ul>
+<blockquote>
+<ul class="simple">
+<li>get_provider(self, provider_ciphertext)</li>
+<li>get_provider_brief(self, provider_ciphertext)</li>
+<li>get_providers (q=&#8217;&#8216;)</li>
+</ul>
+</blockquote>
+<ul class="simple">
+<li>Messages(Namespace)</li>
+</ul>
+<blockquote>
+<ul class="simple">
+<li>get_trays(self, username=None, paging_offset=0, paging_count=20)</li>
+<li>get_tray_content(self, username, tray, paging_offset=0, paging_count=20)</li>
+<li>get_thread_content(self, username, thread_id, paging_offset=0, paging_count=20)</li>
+<li>put_threads_read(self, username, thread_ids)</li>
+<li>put_threads_unread(self, username, thread_ids)</li>
+<li>put_threads_starred(self, username, thread_ids)</li>
+<li>put_threads_unstarred(self, username, thread_ids)</li>
+<li>put_threads_deleted(self, username, thread_ids)</li>
+<li>put_threads_undeleted(self, username, thread_ids)</li>
+<li>post_message(self, username, recipients, subject, body, thread_id=None)</li>
+</ul>
+</blockquote>
+<ul class="simple">
+<li>OTask(Namespace)</li>
+</ul>
+<blockquote>
+<ul class="simple">
+<li>get_company_tasks(self, company_id)</li>
+<li>get_team_tasks(self, company_id, team_id)</li>
+<li>get_user_tasks(self, company_id, team_id, user_id)</li>
+<li>get_company_tasks_full(self, company_id)</li>
+<li>get_team_tasks_full(self, company_id, team_id)</li>
+<li>get_user_tasks_full(self, company_id, team_id, user_id)</li>
+<li>get_company_specific_tasks(self, company_id, task_codes)</li>
+<li>get_team_specific_tasks(self, company_id, team_id, task_codes)</li>
+<li>get_user_specific_tasks(self, company_id, team_id, user_id, task_codes)</li>
+<li>post_company_task(self, company_id, code, description, url)</li>
+<li>post_team_task(self, company_id, team_id, code, description, url)</li>
+<li>post_user_task(self, company_id, team_id, user_id, code, description, url)</li>
+<li>put_company_task(self, company_id, code, description, url)</li>
+<li>put_team_task(self, company_id, team_id, code, description, url)</li>
+<li>put_user_task(self, company_id, team_id, user_id, code, description, url)</li>
+<li>delete_company_task(self, company_id, task_codes)</li>
+<li>delete_team_task(self, company_id, team_id, task_codes)</li>
+<li>delete_user_task(self, company_id, team_id, user_id, task_codes)</li>
+<li>delete_all_company_tasks(self, company_id)</li>
+<li>delete_all_team_tasks(self, company_id, team_id)</li>
+<li>delete_all_user_tasks(self, company_id, team_id, user_id)</li>
+<li>update_batch_tasks(self, company_id, csv_data)</li>
+</ul>
+</blockquote>
+<ul class="simple">
+<li>TimeReports(GdsNamespace)</li>
+</ul>
+<blockquote>
+<ul class="simple">
+<li>get_provider_report(self, provider_id, selects, wheres, hours=False)</li>
+<li>get_company_report(self, company_id, selects, wheres, hours=False)</li>
+<li>get_agency_report(self, company_id, agency_id, selects, wheres, hours=False)</li>
+<li>selects and wheres are lists of params. They are joined while building the param string</li>
+</ul>
+</blockquote>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="getting_started.html" title="Getting started"
+             >previous</a> |</li>
+        <li><a href="index.html">python-odesk v0.1.0.alpha documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2010, odesk.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.4.
+    </div>
+  </body>
+</html>
