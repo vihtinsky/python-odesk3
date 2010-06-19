@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '#',
+        URL_ROOT:    '',
         VERSION:     '0.1.0.alpha',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
@@ -43,7 +43,7 @@
         <div class="sphinxsidebarwrapper">
             <h3><a href="index.html">Table Of Contents</a></h3>
             <ul>
-<li><a class="reference external" href="#">Getting started</a><ul>
+<li><a class="reference external" href="">Getting started</a><ul>
 <li><a class="reference external" href="#requirements">Requirements</a></li>
 <li><a class="reference external" href="#install">Install</a></li>
 <li><a class="reference external" href="#settings">Settings</a></li>
@@ -88,7 +88,17 @@
 <span id="id1"></span><h1>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="requirements">
 <span id="id2"></span><h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
-<p>No external dependencies</p>
+<p>No external dependencies for using python-odesk, but there are some to run the tests:</p>
+<p>Mock:</p>
+<div class="highlight-python"><pre>pip install mock
+#or
+easy_install mock</pre>
+</div>
+<p>Nosetests:</p>
+<div class="highlight-python"><pre>pip install nose
+#or
+easy_install nose</pre>
+</div>
 </div>
 <div class="section" id="install">
 <span id="id3"></span><h2>Install<a class="headerlink" href="#install" title="Permalink to this headline">¶</a></h2>
@@ -172,7 +182,7 @@ Here is the simple example.</p>
     </div>
     <div class="footer">
       &copy; Copyright 2010, odesk.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.4.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.3.
     </div>
   </body>
 </html>
