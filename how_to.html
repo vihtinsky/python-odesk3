@@ -179,35 +179,34 @@
 <span id="id4"></span><h2>Get timereports<a class="headerlink" href="#get-timereports" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference external" href="http://developers.odesk.com/Time-Reports-API">http://developers.odesk.com/Time-Reports-API</a></p>
 <p>To get timereports, use, based on the level of the timereports you need:</p>
-<div class="highlight-python"><pre>client.time_reports.get_provider_report(provider_id, selects, wheres, hours=False):
-client.time_reports.get_company_report(company_id, selects, wheres, hours=False):
-client.time_reports.get_agency_report(company_id, agency_id, selects, wheres, hours=False):</pre>
+<div class="highlight-python"><pre>client.time_reports.get_provider_report(provider_id, query, hours=False):
+client.time_reports.get_company_report(company_id, query, hours=False):
+client.time_reports.get_agency_report(company_id, agency_id, query, hours=False):</pre>
 </div>
 <dl class="docutils">
 <dt>Where:</dt>
 <dd><ul class="first last simple">
-<li>selects = list of fields to select, see <a class="reference external" href="http://developers.odesk.com/Time-Reports-API">http://developers.odesk.com/Time-Reports-API</a></li>
-<li>wheres = list of the conditions, see <a class="reference external" href="http://developers.odesk.com/Time-Reports-API">http://developers.odesk.com/Time-Reports-API</a></li>
+<li>query - is the odesk.Query object</li>
 <li>hours = Limits the query to hour specific elements and hides all financial details.</li>
 </ul>
 </dd>
 </dl>
 <p>For example:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">client</span><span class="o">.</span><span class="n">time_reports</span><span class="o">.</span><span class="n">get_provider_report</span><span class="p">(</span><span class="s">&#39;user1&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s">&#39;worked_on&#39;</span><span class="p">,</span>
-        <span class="s">&#39;assignment_team_id&#39;</span><span class="p">,</span> <span class="s">&#39;hours&#39;</span><span class="p">,</span> <span class="s">&#39;earnings&#39;</span><span class="p">,</span> <span class="s">&#39;earnings_offline&#39;</span><span class="p">,</span>
-        <span class="s">&#39;task&#39;</span><span class="p">,</span> <span class="s">&#39;memo&#39;</span><span class="p">],</span>
-        <span class="p">[</span><span class="s">&quot;(&quot;</span><span class="p">,</span> <span class="s">&quot;worked_on&quot;</span><span class="p">,</span> <span class="s">&quot;&gt;&quot;</span><span class="p">,</span> <span class="s">&quot;&#39;2010-05-11&#39;&quot;</span><span class="p">,</span> <span class="s">&quot;)&quot;</span><span class="p">,</span> <span class="s">&#39;AND&#39;</span><span class="p">,</span>
-         <span class="s">&quot;(&quot;</span><span class="p">,</span> <span class="s">&quot;worked_on&quot;</span><span class="p">,</span> <span class="s">&quot;&lt;=&quot;</span><span class="p">,</span> <span class="s">&quot;&#39;2010-05-13&#39;&quot;</span><span class="p">,</span> <span class="s">&quot;)&quot;</span><span class="p">])</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">client</span><span class="o">.</span><span class="n">time_reports</span><span class="o">.</span><span class="n">get_provider_report</span><span class="p">(</span><span class="s">&#39;user1&#39;</span><span class="p">,</span>
+       <span class="n">odesk</span><span class="o">.</span><span class="n">Query</span><span class="p">(</span><span class="n">select</span><span class="o">=</span><span class="n">odesk</span><span class="o">.</span><span class="n">Query</span><span class="o">.</span><span class="n">DEFAULT_TIMEREPORT_FIELDS</span><span class="p">,</span>
+                            <span class="n">where</span><span class="o">=</span><span class="p">(</span><span class="n">odesk</span><span class="o">.</span><span class="n">Q</span><span class="p">(</span><span class="s">&#39;worked_on&#39;</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">())</span> <span class="o">&amp;</span>\
+                                            <span class="p">(</span><span class="n">odesk</span><span class="o">.</span><span class="n">Q</span><span class="p">(</span><span class="s">&#39;worked_on&#39;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="s">&#39;2010-05-01&#39;</span><span class="p">)))</span>
 
-<span class="n">client</span><span class="o">.</span><span class="n">time_reports</span><span class="o">.</span><span class="n">get_provider_report</span><span class="p">(</span><span class="s">&#39;user2&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s">&#39;worked_on&#39;</span><span class="p">,</span>
-        <span class="s">&#39;assignment_team_id&#39;</span><span class="p">,</span> <span class="s">&#39;hours&#39;</span><span class="p">,</span> <span class="s">&#39;task&#39;</span><span class="p">,</span> <span class="s">&#39;memo&#39;</span><span class="p">],</span>
-        <span class="p">[</span><span class="s">&quot;worked_on &gt; &#39;2010-05-11&#39;&quot;</span><span class="p">,</span> <span class="s">&#39;AND&#39;</span><span class="p">,</span> <span class="s">&quot;worked_on &lt;= &#39;2010-05-13&#39;&quot;</span><span class="p">],</span>
-        <span class="n">hours</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
-<span class="n">client</span><span class="o">.</span><span class="n">time_reports</span><span class="o">.</span><span class="n">get_agency_report</span><span class="p">(</span><span class="s">&#39;company1&#39;</span><span class="p">,</span> <span class="s">&#39;agency1&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s">&#39;worked_on&#39;</span><span class="p">,</span>
-        <span class="s">&#39;assignment_team_id&#39;</span><span class="p">,</span> <span class="s">&#39;hours&#39;</span><span class="p">,</span> <span class="s">&#39;earnings&#39;</span><span class="p">,</span> <span class="s">&#39;earnings_offline&#39;</span><span class="p">,</span>
-        <span class="s">&#39;task&#39;</span><span class="p">,</span> <span class="s">&#39;memo&#39;</span><span class="p">],</span>
-        <span class="p">[</span><span class="s">&quot;worked_on &gt; &#39;2010-05-11&#39;&quot;</span><span class="p">,</span> <span class="s">&#39;AND&#39;</span><span class="p">,</span> <span class="s">&quot;worked_on &lt;= &#39;2010-05-13&#39;&quot;</span><span class="p">])</span>
+<span class="n">client</span><span class="o">.</span><span class="n">time_reports</span><span class="o">.</span><span class="n">get_provider_report</span><span class="p">(</span><span class="s">&#39;user1&#39;</span><span class="p">,</span>
+       <span class="n">odesk</span><span class="o">.</span><span class="n">Query</span><span class="p">(</span><span class="n">select</span><span class="o">=</span><span class="n">odesk</span><span class="o">.</span><span class="n">Query</span><span class="o">.</span><span class="n">DEFAULT_TIMEREPORT_FIELDS</span><span class="p">,</span>
+                            <span class="n">where</span><span class="o">=</span><span class="p">(</span><span class="n">odesk</span><span class="o">.</span><span class="n">Q</span><span class="p">(</span><span class="s">&#39;worked_on&#39;</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">())</span> <span class="o">&amp;</span>\
+                                            <span class="p">(</span><span class="n">odesk</span><span class="o">.</span><span class="n">Q</span><span class="p">(</span><span class="s">&#39;worked_on&#39;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="s">&#39;2010-05-01&#39;</span><span class="p">)),</span> <span class="n">hours</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="n">client</span><span class="o">.</span><span class="n">time_reports</span><span class="o">.</span><span class="n">get_agency_report</span><span class="p">(</span><span class="s">&#39;company1&#39;</span><span class="p">,</span> <span class="s">&#39;agency1&#39;</span><span class="p">,</span>
+       <span class="n">odesk</span><span class="o">.</span><span class="n">Query</span><span class="p">(</span><span class="n">select</span><span class="o">=</span><span class="n">odesk</span><span class="o">.</span><span class="n">Query</span><span class="o">.</span><span class="n">DEFAULT_TIMEREPORT_FIELDS</span><span class="p">,</span>
+                            <span class="n">where</span><span class="o">=</span><span class="p">(</span><span class="n">odesk</span><span class="o">.</span><span class="n">Q</span><span class="p">(</span><span class="s">&#39;worked_on&#39;</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">())</span> <span class="o">&amp;</span>\
+                                            <span class="p">(</span><span class="n">odesk</span><span class="o">.</span><span class="n">Q</span><span class="p">(</span><span class="s">&#39;worked_on&#39;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="s">&#39;2010-05-01&#39;</span><span class="p">)),</span> <span class="n">hours</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
