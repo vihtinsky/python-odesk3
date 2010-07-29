@@ -18,9 +18,13 @@ def web_based_app(username, password):
     print client.login()
     print "HR: teams"
     print client.hr.get_teams()
+    company_id = raw_input('Enter company_id: ')
+    team_id = raw_input('Enter team_id: ')
+    print client.team.get_stream(company_id, team_id)
     print client.logout()
     print "HR: teams"
-    print client.hr.get_teams()    
+    print client.hr.get_teams() 
+       
     
    
 
