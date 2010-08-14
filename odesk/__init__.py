@@ -191,6 +191,7 @@ class Client(BaseClient):
         self.time_reports = TimeReports(self)
         self.finreports = Finreports(self)
         self.otask = OTask(self)
+        self.ticket = Ticket(self)
 
     #Shortcuts for HTTP methods
     def get(self, url, data={}):
@@ -228,6 +229,7 @@ class SessionClient(Client):
         self.time_reports = TimeReports(self)
         self.finreports = Finreports(self)
         self.otask = OTask(self)
+        self.ticket = Ticket(self)
 
     def urlencode(self, data={}):
         data = data.copy()
@@ -900,6 +902,37 @@ class OTask(Namespace):
         return self.put(url, {})
 
 
+class Ticket(Namespace):
+    api_url = 'tickets/'
+    version = 1
+    
+    def get_topics(self):
+        url = 'topics'
+        result = self.get(url)
+        return result['topics']
+    
+    def get_ticket(self, ticket_key):
+        url = 'tickets/%s' % str(ticket_key)
+        result = self.get(url)
+        return result['ticket']       
+
+    def post_new_ticket(self, message, topic_id=None, topic_api_ref=None,
+                        email=None, name=None):
+        url = 'tickets'
+        data = {'message': message,
+                'topic_id': topic_id,
+                'topic_api_ref': topic_api_ref,
+                'email': email,
+                'name': name}
+        result = self.post(url, data)
+        return result#TBD
+
+    def post_reply_ticket(self, ticket_key, message):
+        url = 'tickets/%s' % str(ticket_key)
+        data = {'message': message,}
+        result = self.post(url, data)
+        return result#TBD
+                
 
 class GdsNamespace(Namespace):
     base_url = 'https://www.odesk.com/gds/'
