@@ -7,6 +7,7 @@ VERSION = (0, 2, 0, 'alpha', 1)
 
 from datetime import date
 
+
 def get_version():
     version = '%s.%s' % (VERSION[0], VERSION[1])
     if VERSION[2]:
@@ -217,7 +218,7 @@ class SessionClient(Client):
     Session based auth API client
     """
     version = 1
-    base_url = 'https://www.odesk.com/api/'    
+    base_url = 'https://www.odesk.com/api/'
 
     def __init__(self, odesk_username=None, odesk_password=None, 
                  session_id=None, cookies=None, format='json'):
@@ -351,7 +352,7 @@ class Auth(Namespace):
     def revoke_token(self):
         url = 'keys/token'
         data = {'api_token': self.client.api_token,
-                'api_key': self.client.public_key,}
+                'api_key': self.client.public_key}
         return self.delete(url, data)
     
     
@@ -387,6 +388,17 @@ class Team(Namespace):
         #not sure we need to return user
         return result['snapshots']['user'], snapshots
 
+    def get_stream(self, company_id, team_id, user_id=None,\
+                   from_ts=None):
+        url = 'streams/%s:%s' % (company_id, team_id)
+        if user_id:
+            url += '/%s' % (user_id)
+        if from_ts:
+            data = {'from_ts': from_ts}
+        else:
+            data = {}
+        result = self.get(url, data)
+        return result['streams']['snapshot']
 
 class HR2(Namespace):
     """
@@ -456,8 +468,8 @@ class HR2(Namespace):
         result = self.get(url, data)
         return result['users']
 
-    def post_team_adjustment(self, team_reference, engagement_reference, amount,
-                             comments, notes):
+    def post_team_adjustment(self, team_reference, engagement_reference,
+                             amount, comments, notes):
         '''
         Add bonus to engagement
         '''
