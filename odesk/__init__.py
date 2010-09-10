@@ -154,6 +154,7 @@ class BaseClient(object):
         self.last_data = data
 
         query = self.urlencode(data)
+
         if method == 'GET':
             url += '?' + query
             request = HttpRequest(url=url, data=None, method=method)
@@ -949,14 +950,12 @@ class Ticket(Namespace):
         result = self.get(url)
         return result['ticket']       
 
-    def post_new_ticket(self, message, topic_id=None, topic_api_ref=None,
-                        email=None, name=None):
+    def post_new_ticket(self, message, topic_id='', topic_api_ref='',
+                        email='', name=''):
         url = 'tickets'
         data = {'message': message,
-                'topic_id': topic_id,
-                'topic_api_ref': topic_api_ref,
-                'email': email,
-                'name': name}
+                'topic_api_ref': topic_id,
+                }
         result = self.post(url, data)
         return result#TBD
 
