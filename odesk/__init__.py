@@ -954,7 +954,9 @@ class Ticket(Namespace):
                         email='', name=''):
         url = 'tickets'
         data = {'message': message,
+                'topic_id': topic_id,
                 'topic_api_ref': topic_api_ref,
+                'email': email,
                 }
         result = self.post(url, data)
         return result#TBD
