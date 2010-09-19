@@ -391,9 +391,9 @@ class Team(Namespace):
         #not sure we need to return user
         return result['snapshots']['user'], snapshots
 
-    def get_stream(self, company_id, team_id, user_id=None,\
+    def get_stream(self, team_id, user_id=None,\
                    from_ts=None):
-        url = 'streams/%s:%s' % (company_id, team_id)
+        url = 'streams/%s' % (team_id)
         if user_id:
             url += '/%s' % (user_id)
         if from_ts:
