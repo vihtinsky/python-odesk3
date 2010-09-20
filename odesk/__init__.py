@@ -296,7 +296,7 @@ class Team(Namespace):
         if date:
             url += '/%s' % str(date)
         result = self.get(url)
-        snapshots = result['snapshots']['snapshot']
+        snapshots = result.get('snapshots', {}).get('snapshot', [])
         if not isinstance(snapshots, list):
             snapshots = [snapshots]
         #not sure we need to return user
