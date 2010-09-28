@@ -11,30 +11,7 @@ Roadmap
 
 Version 0.2
 -----------------
-*August 2010*
-
-Session based client for authentication with username and password for background tasks
-=======
-Codename: Bukovets
-
-
-.. _0.3:
-
-Version 0.3
------------------
 *October 2010*
-
-
-=======
-Codename: Svalyava
-
-.. _0.4:
-
-Version 0.4
------------------
-
-
-
 
 
 

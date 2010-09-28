@@ -7,6 +7,17 @@ Changelog
 
 .. 
 
+.. _0.1.2:
+
+Version 0.1.2
+-----------------
+*29 September 2010*
+
+Bug fix release
+
+* Fixed check_token method
+* Fixed KeyError on empty workdiaries 
+
 .. _0.1.1:
 
 Version 0.1.1
