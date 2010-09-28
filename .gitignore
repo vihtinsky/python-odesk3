@@ -7,3 +7,6 @@
 docs/*
 .coverage
 .pydevproject
+.settings/*
+build/*
+dist/*
