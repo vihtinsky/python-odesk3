@@ -3,6 +3,7 @@ Python bindings to odesk API
 python-odesk version 0.2
 (C) 2010 oDesk
 """
+
 VERSION = (0, 2, 0, 'alpha', 1)
 
 from datetime import date
