@@ -841,49 +841,49 @@ class OTask(Namespace):
         return result
 
     def post_team_task(self, company_id, team_id, code, description, url):
-        url = 'tasks/companies/%s/teams/%s/tasks' % (str(company_id),
-                                                     str(team_id))
+        post_url = 'tasks/companies/%s/teams/%s/tasks' % (
+            str(company_id), str(team_id))
         data = {'code': code,
                 'description': description,
                 'url': url}
-        result = self.post(url, data)
+        result = self.post(post_url, data)
         return result
 
     def post_user_task(self, company_id, team_id, user_id, code, description,
                        url):
-        url = 'tasks/companies/%s/teams/%s/users/%s/tasks' % (str(company_id),
-                                                    str(team_id), str(user_id))
+        post_url = 'tasks/companies/%s/teams/%s/users/%s/tasks' % (
+            str(company_id), str(team_id), str(user_id))
         data = {'code': code,
                 'description': description,
                 'url': url}
-        result = self.post(url, data)
+        result = self.post(post_url, data)
         return result
 
     def put_company_task(self, company_id, code, description, url):
-        url = 'tasks/companies/%s/tasks/%s' % (str(company_id), str(code))
+        put_url = 'tasks/companies/%s/tasks/%s' % (str(company_id), str(code))
         data = {'code': code,
                 'description': description,
                 'url': url}
-        result = self.put(url, data)
+        result = self.put(put_url, data)
         return result
 
     def put_team_task(self, company_id, team_id, code, description, url):
-        url = 'tasks/companies/%s/teams/%s/tasks/%s' % (str(company_id),
-                                                    str(team_id), str(code))
+        put_url = 'tasks/companies/%s/teams/%s/tasks/%s' % (
+            str(company_id), str(team_id), str(code))
         data = {'code': code,
                 'description': description,
                 'url': url}
-        result = self.put(url, data)
+        result = self.put(put_url, data)
         return result
 
     def put_user_task(self, company_id, team_id, user_id, code,
                       description, url):
-        url = 'tasks/companies/%s/teams/%s/users/%s/tasks/%s' %\
-             (str(company_id), str(team_id), str(user_id), str(code))
+        put_url = 'tasks/companies/%s/teams/%s/users/%s/tasks/%s' % (
+            str(company_id), str(team_id), str(user_id), str(code))
         data = {'code': code,
                 'description': description,
                 'url': url}
-        result = self.put(url, data)
+        result = self.put(put_url, data)
         return result
 
     def delete_company_task(self, company_id, task_codes):
