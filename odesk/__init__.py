@@ -6,6 +6,7 @@ python-odesk version 0.2
 
 VERSION = (0, 2, 0, 'alpha', 1)
 
+import urllib
 from datetime import date
 
 
@@ -684,13 +685,7 @@ class Messages(Namespace):
         return result["thread"]
 
     def _generate_many_threads_url(self, url, threads_ids):
-        new_url = url
-        for counter, thread_id in enumerate(threads_ids):
-            if counter == 0:
-                new_url += '%s' % str(thread_id)
-            else:
-                new_url += ';%s' % str(thread_id)
-        return new_url
+        return ';'.join(urllib.quote(str(i)) for i in threads_ids)
 
     def put_threads_read_unread(self, username, thread_ids, read=True):
         """thread_ids must be a list, even of 1 item"""
@@ -803,13 +798,7 @@ class OTask(Namespace):
         return result["tasks"]
 
     def _generate_many_tasks_url(self, task_codes):
-        new_url = ''
-        for counter, task_code in enumerate(task_codes):
-            if counter == 0:
-                new_url += '%s' % str(task_code)
-            else:
-                new_url += ';%s' % str(task_code)
-        return new_url
+        return ';'.join(urllib.quote(str(c)) for c in task_codes)
 
     def get_company_specific_tasks(self, company_id, task_codes):
         url = 'tasks/companies/%s/tasks/%s' % (str(company_id),
