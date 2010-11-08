@@ -766,36 +766,36 @@ class OTask(Namespace):
     def get_company_tasks(self, company_id):
         url = 'tasks/companies/%s/tasks' % str(company_id)
         result = self.get(url)
-        return result["tasks"]
+        return result["tasks"] or []
 
     def get_team_tasks(self, company_id, team_id):
         url = 'tasks/companies/%s/teams/%s/tasks' % (str(company_id),
                                                      str(team_id))
         result = self.get(url)
-        return result["tasks"]
+        return result["tasks"] or []
 
     def get_user_tasks(self, company_id, team_id, user_id):
         url = 'tasks/companies/%s/teams/%s/users/%s/tasks' % (str(company_id),
                                                     str(team_id), str(user_id))
         result = self.get(url)
-        return result["tasks"]
+        return result["tasks"] or []
 
     def get_company_tasks_full(self, company_id):
         url = 'tasks/companies/%s/tasks/full_list' % str(company_id)
         result = self.get(url)
-        return result["tasks"]
+        return result["tasks"] or []
 
     def get_team_tasks_full(self, company_id, team_id):
         url = 'tasks/companies/%s/teams/%s/tasks/full_list' %\
                                              (str(company_id), str(team_id))
         result = self.get(url)
-        return result["tasks"]
+        return result["tasks"] or []
 
     def get_user_tasks_full(self, company_id, team_id, user_id):
         url = 'tasks/companies/%s/teams/%s/users/%s/tasks/full_list' %\
                                 (str(company_id), str(team_id), str(user_id))
         result = self.get(url)
-        return result["tasks"]
+        return result["tasks"] or []
 
     def _generate_many_tasks_url(self, task_codes):
         return ';'.join(urllib.quote(str(c)) for c in task_codes)
@@ -811,7 +811,7 @@ class OTask(Namespace):
                                              (str(company_id), str(team_id),
                                     self._generate_many_tasks_url(task_codes))
         result = self.get(url)
-        return result["tasks"]
+        return result["tasks"] or []
 
     def get_user_specific_tasks(self, company_id, team_id, user_id,
                                 task_codes):
@@ -819,7 +819,7 @@ class OTask(Namespace):
                                 (str(company_id), str(team_id), str(user_id),
                                  self._generate_many_tasks_url(task_codes))
         result = self.get(url)
-        return result["tasks"]
+        return result["tasks"] or []
 
     def post_company_task(self, company_id, code, description, url):
         url = 'tasks/companies/%s/tasks' % str(company_id)
