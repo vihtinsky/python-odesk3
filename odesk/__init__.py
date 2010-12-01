@@ -291,6 +291,20 @@ class Team(Namespace):
             snapshots = [snapshots]
         return snapshots
 
+    def get_snapshot(self, company_id, user_id, timestamp):
+        url = 'snapshots/%s/%s/%s' % (company_id, user_id, timestamp)
+        result = self.get(url)
+        snapshot = result['snapshot']
+        return snapshot
+	
+    def update_snapshot(self, company_id, user_id, timestamp, memo):
+        url = 'snapshots/%s/%s/%s' % (company_id, user_id, timestamp)
+        return self.post(url, {'memo':memo})
+
+    def delete_snapshot(self, company_id, user_id, timestamp):
+        url = 'snapshots/%s/%s/%s' % (company_id, user_id, timestamp)
+        result = self.delete(url)
+
     def get_workdiaries(self, team_id, username, date=None):
         url = 'workdiaries/%s/%s' % (str(team_id), str(username))
         if date:
