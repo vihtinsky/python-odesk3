@@ -389,13 +389,13 @@ def test_team():
          te.get_snapshots(1)
 
     #test get_snapshot
-    assert te.get_snapshot(1, 1, 1) == teamrooms_dict['snapshot'], te.get_snapshot(1, 1, 1)
+    assert te.get_snapshot(1, 1) == teamrooms_dict['snapshot'], te.get_snapshot(1, 1)
 
     #test update_snapshot
-    assert te.update_snapshot(1, 1, 1, 'memo') == teamrooms_dict, te.update_snapshot(1, 1, 1, 'memo')
+    assert te.update_snapshot(1, 1, memo='memo') == teamrooms_dict, te.update_snapshot(1, 1, memo='memo')
          
     #test update_snapshot
-    assert te.delete_snapshot(1, 1, 1, 'memo') == teamrooms_dict, te.delete_snapshot(1, 1, 1, 'memo')
+    assert te.delete_snapshot(1, 1) == teamrooms_dict, te.delete_snapshot(1, 1)
          
     #test get_workdiaries
     assert te.get_workdiaries(1, 1, 1) == (teamrooms_dict['snapshots']['user'],\
@@ -642,6 +642,8 @@ def test_get_hrv2_jobs():
     #test get_jobs
     assert hr.get_jobs() == hr_dict[u'jobs'], hr.get_jobs()
     assert hr.get_job(1) == hr_dict[u'job'], hr.get_job(1)
+    assert hr.update_job(1, {'status':'filled'}) == hr_dict, hr.update_job(1, {'status':'filled'})
+    assert hr.delete_job(1, 41) == hr_dict, hr.delete_job(1, 41)
   
 @patch('urllib2.urlopen', patched_urlopen_hr)  
 def test_get_hrv2_offers():

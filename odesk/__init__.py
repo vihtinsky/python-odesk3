@@ -293,23 +293,23 @@ class Team(Namespace):
 
     def get_snapshot(self, company_id, user_id, datetime=None):
         url = 'snapshots/%s/%s' % (str(company_id), str(user_id))
-        if date:   # date could be a list or a range also
-            url += '/%s' % date.isoformat()
+        if datetime:   # date could be a list or a range also
+            url += '/%s' % datetime.isoformat()
         result = self.get(url)
         snapshot = result['snapshot']
         return snapshot
     
     def update_snapshot(self, company_id, user_id, datetime=None, memo=''):
         url = 'snapshots/%s/%s' % (str(company_id), str(user_id))
-        if date:
+        if datetime:
             url += '/%s' % datetime.isoformat()
         return self.post(url, {'memo':memo})
 
     def delete_snapshot(self, company_id, user_id, datetime=None):
         url = 'snapshots/%s/%s' % (str(company_id), str(user_id))
-        if date:
+        if datetime:
             url += '/%s' % datetime.isoformat()
-        result = self.delete(url)
+        return self.delete(url)
 
     def get_workdiaries(self, team_id, username, date=None):
         url = 'workdiaries/%s/%s' % (str(team_id), str(username))
@@ -436,6 +436,14 @@ class HR2(Namespace):
         url = 'jobs/%s' % str(job_id)
         result = self.get(url)
         return result['job']
+
+    def update_job(self, job_id, job_data):
+        url = 'jobs/%s' % str(job_id)
+        return self.put(url, job_data)
+
+    def delete_job(self, job_id, reason_code):
+        url = 'jobs/%s' % str(job_id)
+        return self.delete(url, {'reason_code': reason_code})
 
     '''offer api'''
 
