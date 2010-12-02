@@ -503,7 +503,7 @@ class Provider(Namespace):
         result = self.get(url, data=data)
         return result['jobs']
 
-    def get_resume_info(self, provider_ciphertext, info_type):
+    def _get_resume_info(self, provider_ciphertext, info_type):
         '''info_type can be one of (otherexp|skills|tests|certificates|employments|educations|projects'''
         strinfo = str(info_type)
         if strinfo not in self.resume_info_result_keys:
@@ -513,7 +513,7 @@ class Provider(Namespace):
         result_key = self.resume_info_result_keys[strinfo]
         return result[result_key]
 
-    def add_resume_info_item(self, provider_ciphertext, info_type, item_data):
+    def _add_resume_info_item(self, provider_ciphertext, info_type, item_data):
         '''info_type can be one of (otherexp|skills|tests|certificates|employments|educations|projects'''
         strinfo = str(info_type)
         if strinfo not in self.resume_info_result_keys:
@@ -521,7 +521,7 @@ class Provider(Namespace):
         url = 'providers/%s/%s' % (str(provider_ciphertext), strinfo)
         return self.put(url, item_data)
 
-    def update_resume_info_item(self, provider_ciphertext, resource_id, info_type, item_data):
+    def _update_resume_info_item(self, provider_ciphertext, resource_id, info_type, item_data):
         '''info_type can be one of (otherexp|skills|tests|certificates|employments|educations|projects'''
         strinfo = str(info_type)
         if strinfo not in self.resume_info_result_keys:
@@ -529,13 +529,25 @@ class Provider(Namespace):
         url = 'providers/%s/%s/%s' % (str(provider_ciphertext), str(resource_id), strinfo)
         return self.post(url, item_data)
 
-    def delete_resume_info_item(self, provider_ciphertext, resource_id, info_type):
+    def _delete_resume_info_item(self, provider_ciphertext, resource_id, info_type):
         '''info_type can be one of (otherexp|skills|tests|certificates|employments|educations|projects'''
         strinfo = str(info_type)
         if strinfo not in self.resume_info_result_keys:
             raise ValueError('invalid info_type %s' % strinfo)
         url = 'providers/%s/%s/%s' % (str(provider_ciphertext), str(resource_id), strinfo)
         return self.delete(url)
+
+    def get_skills(self, provider_ciphertext):
+        return self._get_resume_info(provider_ciphertext, 'skills')
+
+    def add_skill(self, provider_ciphertext, data):
+        return self._add_resume_info_item(provider_ciphertext, 'skills', data)
+
+    def update_skill(self, provider_ciphertext, skill_id, data):
+        return self._update_resume_info_item(provider_ciphertext, skill_id, 'skills', data)
+
+    def delete_skill(self, provider_ciphertext, skill_id):
+        return self._delete_resume_info_item(provider_ciphertext, skill_id, 'skills')
 
 class Messages(Namespace):
     api_url = 'mc/'
