@@ -474,6 +474,15 @@ class Provider(Namespace):
     api_url = 'profiles/'
     version = 1
 
+    resume_info_result_keys={'otherexp':'experiences',
+                             'skills':'skills',
+                             'tests':'tests',
+                             'certificates':'certificates',
+                             'employments':'employments',
+                             'educations':'educations',
+                             'projects':'projects'
+                             }
+
     def get_provider(self, provider_ciphertext):
         url = 'providers/%s' % str(provider_ciphertext)
         result = self.get(url)
@@ -494,6 +503,39 @@ class Provider(Namespace):
         result = self.get(url, data=data)
         return result['jobs']
 
+    def get_resume_info(self, provider_ciphertext, info_type):
+        '''info_type can be one of (otherexp|skills|tests|certificates|employments|educations|projects'''
+        strinfo = str(info_type)
+        if strinfo not in self.resume_info_result_keys:
+            raise ValueError('invalid info_type %s' % strinfo)
+        url = 'providers/%s/%s' % (str(provider_ciphertext), strinfo)
+        result = self.get(url)
+        result_key = self.resume_info_result_keys[strinfo]
+        return result[result_key]
+
+    def add_resume_info_item(self, provider_ciphertext, info_type, item_data):
+        '''info_type can be one of (otherexp|skills|tests|certificates|employments|educations|projects'''
+        strinfo = str(info_type)
+        if strinfo not in self.resume_info_result_keys:
+            raise ValueError('invalid info_type %s' % strinfo)
+        url = 'providers/%s/%s' % (str(provider_ciphertext), strinfo)
+        return self.put(url, item_data)
+
+    def update_resume_info_item(self, provider_ciphertext, resource_id, info_type, item_data):
+        '''info_type can be one of (otherexp|skills|tests|certificates|employments|educations|projects'''
+        strinfo = str(info_type)
+        if strinfo not in self.resume_info_result_keys:
+            raise ValueError('invalid info_type %s' % strinfo)
+        url = 'providers/%s/%s/%s' % (str(provider_ciphertext), str(resource_id), strinfo)
+        return self.post(url, item_data)
+
+    def delete_resume_info_item(self, provider_ciphertext, resource_id, info_type):
+        '''info_type can be one of (otherexp|skills|tests|certificates|employments|educations|projects'''
+        strinfo = str(info_type)
+        if strinfo not in self.resume_info_result_keys:
+            raise ValueError('invalid info_type %s' % strinfo)
+        url = 'providers/%s/%s/%s' % (str(provider_ciphertext), str(resource_id), strinfo)
+        return self.delete(url)
 
 class Messages(Namespace):
     api_url = 'mc/'
