@@ -291,24 +291,24 @@ class Team(Namespace):
             snapshots = [snapshots]
         return snapshots
 
-    def get_snapshot(self, company_id, user_id, date=None):
-        url = 'snapshots/%s/%s/%s' % (str(company_id), str(user_id))
+    def get_snapshot(self, company_id, user_id, datetime=None):
+        url = 'snapshots/%s/%s' % (str(company_id), str(user_id))
         if date:   # date could be a list or a range also
-            url += '/%s' % str(date)
+            url += '/%s' % date.isoformat()
         result = self.get(url)
         snapshot = result['snapshot']
         return snapshot
     
-    def update_snapshot(self, company_id, user_id, date=None, memo=''):
-        url = 'snapshots/%s/%s/%s' % (str(company_id), str(user_id))
+    def update_snapshot(self, company_id, user_id, datetime=None, memo=''):
+        url = 'snapshots/%s/%s' % (str(company_id), str(user_id))
         if date:
-            url += '/%s' % str(date)
+            url += '/%s' % datetime.isoformat()
         return self.post(url, {'memo':memo})
 
-    def delete_snapshot(self, company_id, user_id, date=None):
-        url = 'snapshots/%s/%s/%s' % (str(company_id), str(user_id))
+    def delete_snapshot(self, company_id, user_id, datetime=None):
+        url = 'snapshots/%s/%s' % (str(company_id), str(user_id))
         if date:
-            url += '/%s' % str(date)
+            url += '/%s' % datetime.isoformat()
         result = self.delete(url)
 
     def get_workdiaries(self, team_id, username, date=None):
