@@ -469,6 +469,13 @@ class HR2(Namespace):
         result = self.get(url)
         return result['engagement']
 
+    '''candidacy api'''
+
+    def get_candidacy_stats(self):
+        url = 'candidacies/stats'
+        result = self.get(url)
+        return result['candidacy_stats']
+
 
 class Provider(Namespace):
     api_url = 'profiles/'
