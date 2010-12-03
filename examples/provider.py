@@ -4,14 +4,14 @@ python-odesk version 0.1
 (C) 2010 oDesk
 """
 import odesk
+from datetime import datetime
 
 PUBLIC_KEY = None
 SECRET_KEY = None
 
-
 #TODO: Desktop app example (check if it's working at all - wasn't last time)
 
-def web_based_app(public_key, secret_key):
+def time_reports(public_key, secret_key):
     print "Emulating web-based app"
     #Instantiating a client without an auth token
     client = odesk.Client(public_key, secret_key)
@@ -28,36 +28,25 @@ def web_based_app(public_key, secret_key):
     #typical for web apps, which wouldn't probably keep client instances 
     #between requests
     client = odesk.Client(public_key, secret_key, auth_token)
-
-    try:
-        print "Team rooms:"
-        print client.team.get_teamrooms()
-        #HRv2 API
-        print "HR: companies" 
-        print client.hr.get_companies()
-        print "HR: teams"
-        print client.hr.get_teams()
-        print "HR: offers"
-        print client.hr.get_offers()
-        print "HR: get_engagements"
-        print client.hr.get_engagements()   
-        print "HR: userroles"
-        print client.hr.get_user_role()
-        print "Get jobs"
-        print client.provider.get_jobs({'q': 'python'})    
-        print "Financial: withdrawal methods"
-        print client.finance.get_withdrawal_methods()
-        print "Revoke access"
-        print client.auth.revoke_token()    
-    except Exception, e:
-        print "Exception at %s %s" % (client.last_method, client.last_url)
-        raise e
-
-
-
+    # get skills
+    print client.provider.get_skills('~~0c47747db0d04b5f')
+    # add new skill
+    client.provider.add_skill('~~0c47747db0d04b5f', {'skill':'skill'})
+    # update a skill by giving a skill_id and new data
+    client.provider.update_skill('~~0c47747db0d04b5f', 123, {'skill':'skill'})
+    # delete a skill by giving a skill_id
+    client.provider.delete_skill('~~0c47747db0d04b5f', 123)
+    # get quickinfo
+    print client.provider.get_quickinfo('~~0c47747db0d04b5f')
+    # update a quickinfo by giving new data
+    client.provider.update_quickinfo('~~0c47747db0d04b5f', {'skill':'skill'})
+    print "Revoke access"
+    print client.auth.revoke_token()    
+    
+ 
 if __name__ == '__main__':
     public_key = PUBLIC_KEY or raw_input('Enter public key: ')
     secret_key = SECRET_KEY or raw_input('Enter secret key: ')
 
-    web_based_app(public_key, secret_key)
+    time_reports(public_key, secret_key)
 
