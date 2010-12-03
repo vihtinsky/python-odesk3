@@ -774,6 +774,8 @@ def test_provider():
     assert pr.update_quickinfo(1, {'quickinfo':'quickinfo'}) == provider_dict,\
         pr.update_quickinfo(1, {'quickinfo':'quickinfo'})
 
+    result = pr.get_affiliates(1)
+    assert result == provider_dict['profile']
 
 trays_dict = {'trays': [{u'unread': u'0', 
               u'type': u'sent', 
