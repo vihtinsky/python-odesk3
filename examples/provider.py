@@ -40,6 +40,8 @@ def time_reports(public_key, secret_key):
     print client.provider.get_quickinfo('~~0c47747db0d04b5f')
     # update a quickinfo by giving new data
     client.provider.update_quickinfo('~~0c47747db0d04b5f', {'skill':'skill'})
+    # get affiliate profile
+    print client.provider.get_affiliates('47325228f2f84188')
     print "Revoke access"
     print client.auth.revoke_token()    
     
