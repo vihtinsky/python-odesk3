@@ -36,6 +36,10 @@ def time_reports(public_key, secret_key):
     client.provider.update_skill('~~0c47747db0d04b5f', 123, {'skill':'skill'})
     # delete a skill by giving a skill_id
     client.provider.delete_skill('~~0c47747db0d04b5f', 123)
+    # get quickinfo
+    print client.provider.get_quickinfo('~~0c47747db0d04b5f')
+    # update a quickinfo by giving new data
+    client.provider.update_quickinfo('~~0c47747db0d04b5f', {'skill':'skill'})
     print "Revoke access"
     print client.auth.revoke_token()    
     
