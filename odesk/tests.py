@@ -722,7 +722,8 @@ provider_dict = {'profile':
                    'certificates':'certificates',
                    'employments':'employments',
                    'educations':'employments',
-                   'projects':'projects'}
+                   'projects':'projects',
+                   'quick_info':'quick_info'}
          
          
 def return_provider_json():
@@ -766,6 +767,13 @@ def test_provider():
 
     assert pr.delete_skill(1, 1) == provider_dict,\
         pr.delete_skill(1, 1)
+
+    assert pr.get_quickinfo(1) == provider_dict['quick_info'],\
+        pr.get_quickinfo(1)
+
+    assert pr.update_quickinfo(1, {'quickinfo':'quickinfo'}) == provider_dict,\
+        pr.update_quickinfo(1, {'quickinfo':'quickinfo'})
+
 
 trays_dict = {'trays': [{u'unread': u'0', 
               u'type': u'sent', 
