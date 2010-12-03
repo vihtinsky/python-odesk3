@@ -494,9 +494,14 @@ class HR2(Namespace):
         result = self.get(url)
         return result['job']
 
+    def post_job(self, job_data):
+        url = 'jobs'
+        result = self.post(url, {'job_data': job_data})
+        return result
+        
     def update_job(self, job_id, job_data):
         url = 'jobs/%s' % str(job_id)
-        return self.put(url, job_data)
+        return self.put(url, {'job_data': job_data})
 
     def delete_job(self, job_id, reason_code):
         url = 'jobs/%s' % str(job_id)

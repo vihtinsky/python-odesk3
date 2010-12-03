@@ -11,7 +11,7 @@ SECRET_KEY = None
 
 #TODO: Desktop app example (check if it's working at all - wasn't last time)
 
-def user_snapshots(public_key, secret_key):
+def hr_post_job(public_key, secret_key):
     print "Emulating web-based app"
     #Instantiating a client without an auth token
     client = odesk.Client(public_key, secret_key)
@@ -28,9 +28,22 @@ def user_snapshots(public_key, secret_key):
     #typical for web apps, which wouldn't probably keep client instances 
     #between requests
     client = odesk.Client(public_key, secret_key, auth_token)
-    print client.team.get_snapshot('company1', 'user1')
-	print client.team.update_snapshot('company1', 'user1', memo='Updated Memo')
-	print client.team.delete_snapshot('company1', 'user1', datetime=datetime.utcnow())
+    job_data = {
+                'buyer_team_reference': 111,
+                'title': 'Test job from API',
+                'job_type': 'hourly',
+                'description': 'this is test job, please do not apply to it',
+                'visibility': 'odesk',
+                'duration': 10,
+                'category': 'Web Development',
+                'subcategory': 'Other - Web Development',
+                }
+    try:
+        print client.hr.post_job(job_data)
+    except Exception, e:
+        print "Exception at %s %s" % (client.last_method, client.last_url)
+        raise e
+
 
     
  
@@ -38,5 +51,5 @@ if __name__ == '__main__':
     public_key = PUBLIC_KEY or raw_input('Enter public key: ')
     secret_key = SECRET_KEY or raw_input('Enter secret key: ')
 
-    user_snapshots(public_key, secret_key)
+    hr_post_job(public_key, secret_key)
 
