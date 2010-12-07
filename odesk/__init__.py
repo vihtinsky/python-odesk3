@@ -561,7 +561,8 @@ class HR2(Namespace):
 
     def get_engagements(self, buyer_team_reference=None, include_sub_teams=False,
                  status=None, provider_ref=None, agency_ref=None, 
-                 created_time_from=None, created_time_to=None):
+                 created_time_from=None, created_time_to=None,
+                 page_offset=0, page_size=20, order_by=None):
         url = 'engagements'
         
         data = {}
@@ -587,6 +588,11 @@ class HR2(Namespace):
         if created_time_to:
             data['created_time_to'] = created_time_to           
         
+        data['page'] = '%d;%d' % (page_offset, page_size)
+
+        if order_by is not None:
+            data['order_by'] = order_by
+
         result = self.get(url, data)
         return result['engagements']
 
