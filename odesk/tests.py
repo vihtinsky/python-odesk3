@@ -522,13 +522,6 @@ company = {u'status': u'active',
              u'company_id': u'1',
              u'owner_user_id': u'1', }
                         
-candidacy_stats = {u'job_application_quota': u'20',
-                   u'job_application_quota_remaining': u'20',
-                   u'number_of_applications': u'2',
-                   u'number_of_interviews': u'3',
-                   u'number_of_invites': u'0',
-                   u'number_of_offers': u'0'}
-
 hr_dict = {u'auth_user': auth_user,
            u'server_time': u'0000', 
            u'user': user,
@@ -544,8 +537,7 @@ hr_dict = {u'auth_user': auth_user,
             u'offer': offer,
             u'offers': offers,   
             u'job': job,
-            u'jobs': jobs,
-            u'candidacy_stats': candidacy_stats,}
+            u'jobs': jobs,}
 
 def return_hr_json():
     return json.dumps(hr_dict)
@@ -683,13 +675,6 @@ def test_hrv2_post_adjustment():
     result = hr.post_team_adjustment(1, 2, 100000, 'test', 'test note')
     assert result == adjustments[u'adjustment'], result
     
-@patch('urllib2.urlopen', patched_urlopen_hr)  
-def test_get_hrv2_candidacy_stats():
-    hr = get_client().hr
-    #test get_candidacy_stats
-    result = hr.get_candidacy_stats()
-    assert result == hr_dict['candidacy_stats'], result
-
 provider_dict = {'profile': 
                  {u'response_time': u'31.0000000000000000', 
                   u'dev_agency_ref': u'', 
@@ -715,15 +700,7 @@ provider_dict = {'profile':
                       ] 
                    }},
                    'providers': {'test': 'test'},
-                   'jobs': {'test': 'test'},
-                   'otherexp':'experiences',
-                   'skills':'skills',
-                   'tests':'tests',
-                   'certificates':'certificates',
-                   'employments':'employments',
-                   'educations':'employments',
-                   'projects':'projects',
-                   'quick_info':'quick_info'}
+                   'jobs': {'test': 'test'}}
          
          
 def return_provider_json():
@@ -755,28 +732,7 @@ def test_provider():
     #test get_jobs
     assert pr.get_jobs(data={'a': 1}) == provider_dict['jobs'],\
         pr.get_jobs(data={'a': 1})    
-
-    assert pr.get_skills(1) == provider_dict['skills'],\
-        pr.get_skills(1)
-
-    assert pr.add_skill(1, {'skill':'skill'}) == provider_dict,\
-        pr.add_skill(1, {'skill':'skill'})
-
-    assert pr.update_skill(1, 1, {'skill':'skill'}) == provider_dict,\
-        pr.update_skill(1, 1, {'skill':'skill'})
-
-    assert pr.delete_skill(1, 1) == provider_dict,\
-        pr.delete_skill(1, 1)
-
-    assert pr.get_quickinfo(1) == provider_dict['quick_info'],\
-        pr.get_quickinfo(1)
-
-    assert pr.update_quickinfo(1, {'quickinfo':'quickinfo'}) == provider_dict,\
-        pr.update_quickinfo(1, {'quickinfo':'quickinfo'})
-
-    result = pr.get_affiliates(1)
-    assert result == provider_dict['profile']
-
+    
 trays_dict = {'trays': [{u'unread': u'0', 
               u'type': u'sent', 
               u'id': u'1', 

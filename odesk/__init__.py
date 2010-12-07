@@ -469,27 +469,10 @@ class HR2(Namespace):
         result = self.get(url)
         return result['engagement']
 
-    '''candidacy api'''
-
-    def get_candidacy_stats(self):
-        url = 'candidacies/stats'
-        result = self.get(url)
-        return result['candidacy_stats']
-
 
 class Provider(Namespace):
     api_url = 'profiles/'
     version = 1
-
-    resume_info_result_keys={'otherexp':'experiences',
-                             'skills':'skills',
-                             'tests':'tests',
-                             'certificates':'certificates',
-                             'employments':'employments',
-                             'educations':'educations',
-                             'projects':'projects',
-                             'quickinfo':'quick_info'
-                             }
 
     def get_provider(self, provider_ciphertext):
         url = 'providers/%s' % str(provider_ciphertext)
@@ -510,69 +493,6 @@ class Provider(Namespace):
         url = 'search/jobs'
         result = self.get(url, data=data)
         return result['jobs']
-
-    def _get_resume_info(self, provider_ciphertext, info_type):
-        '''info_type can be one of (otherexp|skills|tests|certificates|employments|educations|projects'''
-        strinfo = str(info_type)
-        if strinfo not in self.resume_info_result_keys:
-            raise ValueError('invalid info_type %s' % strinfo)
-        url = 'providers/%s/%s' % (str(provider_ciphertext), strinfo)
-        result = self.get(url)
-        result_key = self.resume_info_result_keys[strinfo]
-        return result[result_key]
-
-    def _add_resume_info_item(self, provider_ciphertext, info_type, item_data):
-        '''info_type can be one of (otherexp|skills|tests|certificates|employments|educations|projects'''
-        strinfo = str(info_type)
-        if strinfo not in self.resume_info_result_keys:
-            raise ValueError('invalid info_type %s' % strinfo)
-        url = 'providers/%s/%s' % (str(provider_ciphertext), strinfo)
-        return self.put(url, item_data)
-
-    def _update_resume_info_item(self, provider_ciphertext, resource_id, info_type, item_data):
-        '''info_type can be one of (otherexp|skills|tests|certificates|employments|educations|projects'''
-        strinfo = str(info_type)
-        if strinfo not in self.resume_info_result_keys:
-            raise ValueError('invalid info_type %s' % strinfo)
-        if resource_id is not None:
-            url = 'providers/%s/%s/%s' % (str(provider_ciphertext), str(resource_id), strinfo)
-        else:
-            url = 'providers/%s/%s' % (str(provider_ciphertext), strinfo)
-        return self.post(url, item_data)
-
-    def _delete_resume_info_item(self, provider_ciphertext, resource_id, info_type):
-        '''info_type can be one of (otherexp|skills|tests|certificates|employments|educations|projects'''
-        strinfo = str(info_type)
-        if strinfo not in self.resume_info_result_keys:
-            raise ValueError('invalid info_type %s' % strinfo)
-        if resource_id is not None:
-            url = 'providers/%s/%s/%s' % (str(provider_ciphertext), str(resource_id), strinfo)
-        else:
-            url = 'providers/%s/%s' % (str(provider_ciphertext), strinfo)
-        return self.delete(url)
-
-    def get_skills(self, provider_ciphertext):
-        return self._get_resume_info(provider_ciphertext, 'skills')
-
-    def add_skill(self, provider_ciphertext, data):
-        return self._add_resume_info_item(provider_ciphertext, 'skills', data)
-
-    def update_skill(self, provider_ciphertext, skill_id, data):
-        return self._update_resume_info_item(provider_ciphertext, skill_id, 'skills', data)
-
-    def delete_skill(self, provider_ciphertext, skill_id):
-        return self._delete_resume_info_item(provider_ciphertext, skill_id, 'skills')
-    
-    def get_quickinfo(self, provider_ciphertext):
-        return self._get_resume_info(provider_ciphertext, 'quickinfo')
-
-    def update_quickinfo(self, provider_ciphertext, data):
-        return self._update_resume_info_item(provider_ciphertext, None, 'quickinfo', data)
-
-    def get_affiliates(self, affiliate_key):
-        url = 'affiliates/%s' % affiliate_key
-        result = self.get(url)
-        return result['profile']
 
 
 class Messages(Namespace):

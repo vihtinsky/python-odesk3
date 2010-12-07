@@ -41,8 +41,6 @@ def web_based_app(public_key, secret_key):
     print client.hr.get_engagements()   
     print "HR: userroles"
     print client.hr.get_user_role()
-    print "HR: candidacy stats"
-    print client.hr.get_candidacy_stats()
     print "Get jobs"
     print client.provider.get_jobs({'q': 'python'})    
     print "Revoke access"
