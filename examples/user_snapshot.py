@@ -11,7 +11,7 @@ SECRET_KEY = None
 
 #TODO: Desktop app example (check if it's working at all - wasn't last time)
 
-def time_reports(public_key, secret_key):
+def user_snapshots(public_key, secret_key):
     print "Emulating web-based app"
     #Instantiating a client without an auth token
     client = odesk.Client(public_key, secret_key)
@@ -38,5 +38,5 @@ if __name__ == '__main__':
     public_key = PUBLIC_KEY or raw_input('Enter public key: ')
     secret_key = SECRET_KEY or raw_input('Enter secret key: ')
 
-    time_reports(public_key, secret_key)
+    user_snapshots(public_key, secret_key)
 
