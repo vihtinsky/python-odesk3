@@ -595,7 +595,8 @@ class Provider(Namespace):
                              'certificates':'certificates',
                              'employments':'employments',
                              'educations':'educations',
-                             'projects':'projects'
+                             'projects':'projects',
+                             'quickinfo':'quick_info'
                              }
 
     def get_provider(self, provider_ciphertext):
@@ -641,7 +642,10 @@ class Provider(Namespace):
         strinfo = str(info_type)
         if strinfo not in self.resume_info_result_keys:
             raise ValueError('invalid info_type %s' % strinfo)
-        url = 'providers/%s/%s/%s' % (str(provider_ciphertext), str(resource_id), strinfo)
+        if resource_id is not None:
+            url = 'providers/%s/%s/%s' % (str(provider_ciphertext), str(resource_id), strinfo)
+        else:
+            url = 'providers/%s/%s' % (str(provider_ciphertext), strinfo)
         return self.post(url, item_data)
 
     def _delete_resume_info_item(self, provider_ciphertext, resource_id, info_type):
@@ -649,7 +653,10 @@ class Provider(Namespace):
         strinfo = str(info_type)
         if strinfo not in self.resume_info_result_keys:
             raise ValueError('invalid info_type %s' % strinfo)
-        url = 'providers/%s/%s/%s' % (str(provider_ciphertext), str(resource_id), strinfo)
+        if resource_id is not None:
+            url = 'providers/%s/%s/%s' % (str(provider_ciphertext), str(resource_id), strinfo)
+        else:
+            url = 'providers/%s/%s' % (str(provider_ciphertext), strinfo)
         return self.delete(url)
 
     def get_skills(self, provider_ciphertext):
@@ -663,6 +670,13 @@ class Provider(Namespace):
 
     def delete_skill(self, provider_ciphertext, skill_id):
         return self._delete_resume_info_item(provider_ciphertext, skill_id, 'skills')
+    
+    def get_quickinfo(self, provider_ciphertext):
+        return self._get_resume_info(provider_ciphertext, 'quickinfo')
+
+    def update_quickinfo(self, provider_ciphertext, data):
+        return self._update_resume_info_item(provider_ciphertext, None, 'quickinfo', data)
+
 
 class Messages(Namespace):
     api_url = 'mc/'
