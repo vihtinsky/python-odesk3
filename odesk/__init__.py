@@ -677,6 +677,11 @@ class Provider(Namespace):
     def update_quickinfo(self, provider_ciphertext, data):
         return self._update_resume_info_item(provider_ciphertext, None, 'quickinfo', data)
 
+    def get_affiliates(self, affiliate_key):
+        url = 'affiliates/%s' % affiliate_key
+        result = self.get(url)
+        return result['profile']
+
 
 class Messages(Namespace):
     api_url = 'mc/'
