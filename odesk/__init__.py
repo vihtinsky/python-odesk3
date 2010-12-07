@@ -599,13 +599,23 @@ class Provider(Namespace):
         result = self.get(url)
         return result['profile']
 
-    def get_providers(self, data={}):
+    def get_providers(self, data=None, page_offset=0, page_size=20, order_by=None):
         url = 'search/providers'
+        if data is None:
+            data = {}     # shouldn't use data={} as default arg value (mutations persist throughout calls)
+        data['page'] = '%d;%d' % (page_offset, page_size)
+        if order_by is not None:
+            data['order_by'] = order_by
         result = self.get(url, data=data)
         return result['providers']
 
-    def get_jobs(self, data={}):
+    def get_jobs(self, data=None, page_offset=0, page_size=20, order_by=None):
         url = 'search/jobs'
+        if data is None:
+            data = {}     # shouldn't use data={} as default arg value (mutations persist throughout calls)
+        data['page'] = '%d;%d' % (page_offset, page_size)
+        if order_by is not None:
+            data['order_by'] = order_by
         result = self.get(url, data=data)
         return result['jobs']
 
