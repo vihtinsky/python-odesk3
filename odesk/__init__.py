@@ -652,6 +652,18 @@ class Provider(Namespace):
         url = 'providers/%s/%s/%s' % (str(provider_ciphertext), str(resource_id), strinfo)
         return self.delete(url)
 
+    def get_skills(self, provider_ciphertext):
+        return self._get_resume_info(provider_ciphertext, 'skills')
+
+    def add_skill(self, provider_ciphertext, data):
+        return self._add_resume_info_item(provider_ciphertext, 'skills', data)
+
+    def update_skill(self, provider_ciphertext, skill_id, data):
+        return self._update_resume_info_item(provider_ciphertext, skill_id, 'skills', data)
+
+    def delete_skill(self, provider_ciphertext, skill_id):
+        return self._delete_resume_info_item(provider_ciphertext, skill_id, 'skills')
+
 class Messages(Namespace):
     api_url = 'mc/'
     version = 1
