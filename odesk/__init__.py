@@ -201,6 +201,7 @@ class Client(BaseClient):
         self.finance = Finance(self)
         self.ticket = Ticket(self)
         self.url = Url(self)
+        self.oconomy = OConomy(self)
 
     #Shortcuts for HTTP methods
     def get(self, url, data={}):
@@ -1092,6 +1093,87 @@ class Finreports(GdsNamespace):
         url = 'financial_account_owner/%s' % str(provider_id)
         tq = str(query)
         result = self.get(url, data={'tq': tq})
+        return result
+
+
+class NonauthGdsNamespace(GdsNamespace):
+    ''' This class does not add authentication parameters
+        to request urls (api_sig, api_key & api_token)
+        Some APIs return error if called with authentication parameters
+    '''
+    def urlopen(self, url, data={}, method='GET'):
+        if method == 'GET':
+            request = HttpRequest(url=url, data=data.copy(), method=method)
+            return urllib2.urlopen(request)
+        return None
+
+
+class OConomy(NonauthGdsNamespace):
+    ''' oConomy Reports API
+    '''
+    api_url = 'oconomy/'
+    version = 1
+
+    def get_monthly_summary(self, month):
+        ''' get_monthly_summary(month)
+
+            Monthly oDesk job market report
+            - 'month' is 'YYYYMM' or a datetime.date object
+        '''
+        if isinstance(month, date):
+            month = '%04d%02d' % (date.year, date.month)
+        else:
+            month = str(month)
+            _month_fmt = 'YYYYMM'
+            if not len(month) == len(_month_fmt):
+                raise ValueError('Format of month parameter (%s) should be %s' % (month, _month_fmt))
+        url = 'summary/%s' % month
+        result = self.get(url)
+        return result
+
+    def get_hours_worked_by_locations(self):
+        ''' get_hours_worked_by_locations
+
+            Hours worked by location report
+        '''
+        url = 'hours_worked_by_locations'
+        result = self.get(url)
+        return result
+
+    def get_hours_worked_by_weeks(self):
+        ''' get_hours_worked_by_weeks()
+
+            oConomy weekly growth report
+        '''
+        url = 'hours_worked_by_weeks'
+        result = self.get(url)
+        return result
+
+    def get_top_countries_by_hours(self):
+        ''' OConomy.get_top_countries_by_hours()
+
+            Top countries by hours worked for last 30 days report
+        '''
+        url = 'top_countries_by_hours'
+        result = self.get(url)
+        return result
+
+    def get_earnings_by_categories(self):
+        ''' OConomy.get_earnings_by_categories()
+
+            Earnings by category report
+        '''
+        url = 'charges_by_categories'
+        result = self.get(url)
+        return result
+
+    def get_most_requested_skills(self):
+        ''' OConomy.get_most_requested_skills()
+
+            Monthly most requested skills report
+        '''
+        url = 'most_requested_skills'
+        result = self.get(url)
         return result
 
 
