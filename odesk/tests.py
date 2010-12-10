@@ -768,7 +768,15 @@ provider_dict = {'profile':
                       ] 
                    }},
                    'providers': {'test': 'test'},
-                   'jobs': {'test': 'test'}}
+                   'jobs': {'test': 'test'},
+                   'otherexp':'experiences',
+                   'skills':'skills',
+                   'tests':'tests',
+                   'certificates':'certificates',
+                   'employments':'employments',
+                   'educations':'employments',
+                   'projects':'projects',
+                   'quick_info':'quick_info'}
          
          
 def return_provider_json():
@@ -800,7 +808,28 @@ def test_provider():
     #test get_jobs
     assert pr.get_jobs(data={'a': 1}) == provider_dict['jobs'],\
         pr.get_jobs(data={'a': 1})    
-    
+
+    assert pr.get_skills(1) == provider_dict['skills'],\
+        pr.get_skills(1)
+
+    assert pr.add_skill(1, {'skill':'skill'}) == provider_dict,\
+        pr.add_skill(1, {'skill':'skill'})
+
+    assert pr.update_skill(1, 1, {'skill':'skill'}) == provider_dict,\
+        pr.update_skill(1, 1, {'skill':'skill'})
+
+    assert pr.delete_skill(1, 1) == provider_dict,\
+        pr.delete_skill(1, 1)
+
+    assert pr.get_quickinfo(1) == provider_dict['quick_info'],\
+        pr.get_quickinfo(1)
+
+    assert pr.update_quickinfo(1, {'quickinfo':'quickinfo'}) == provider_dict,\
+        pr.update_quickinfo(1, {'quickinfo':'quickinfo'})
+
+    result = pr.get_affiliates(1)
+    assert result == provider_dict['profile']
+
 trays_dict = {'trays': [{u'unread': u'0', 
               u'type': u'sent', 
               u'id': u'1', 
