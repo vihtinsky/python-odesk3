@@ -6,6 +6,7 @@ python-odesk version 0.2
 
 VERSION = (0, 2, 0, 'beta', 1)
 
+import urllib
 from datetime import date
 
 
@@ -1113,13 +1114,7 @@ class Messages(Namespace):
         return result["thread"]
 
     def _generate_many_threads_url(self, url, threads_ids):
-        new_url = url
-        for counter, thread_id in enumerate(threads_ids):
-            if counter == 0:
-                new_url += '%s' % str(thread_id)
-            else:
-                new_url += ';%s' % str(thread_id)
-        return new_url
+        return ';'.join(urllib.quote(str(i)) for i in threads_ids)
 
     def put_threads_read_unread(self, username, thread_ids, read=True):
         """
@@ -1284,7 +1279,7 @@ class OTask(Namespace):
         """
         url = 'tasks/companies/%s/tasks' % str(company_id)
         result = self.get(url)
-        return result["tasks"]
+        return result["tasks"] or []
 
     def get_team_tasks(self, company_id, team_id):
         """
@@ -1299,7 +1294,7 @@ class OTask(Namespace):
         url = 'tasks/companies/%s/teams/%s/tasks' % (str(company_id),
                                                      str(team_id))
         result = self.get(url)
-        return result["tasks"]
+        return result["tasks"] or []
 
     def get_user_tasks(self, company_id, team_id, user_id):
         """
@@ -1315,7 +1310,7 @@ class OTask(Namespace):
         url = 'tasks/companies/%s/teams/%s/users/%s/tasks' % (str(company_id),
                                                     str(team_id), str(user_id))
         result = self.get(url)
-        return result["tasks"]
+        return result["tasks"] or []
 
     def get_company_tasks_full(self, company_id):
         """
@@ -1329,7 +1324,7 @@ class OTask(Namespace):
         """
         url = 'tasks/companies/%s/tasks/full_list' % str(company_id)
         result = self.get(url)
-        return result["tasks"]
+        return result["tasks"] or []
 
     def get_team_tasks_full(self, company_id, team_id):
         """
@@ -1345,7 +1340,7 @@ class OTask(Namespace):
         url = 'tasks/companies/%s/teams/%s/tasks/full_list' %\
                                              (str(company_id), str(team_id))
         result = self.get(url)
-        return result["tasks"]
+        return result["tasks"] or []
 
     def get_user_tasks_full(self, company_id, team_id, user_id):
         """
@@ -1362,16 +1357,10 @@ class OTask(Namespace):
         url = 'tasks/companies/%s/teams/%s/users/%s/tasks/full_list' %\
                                 (str(company_id), str(team_id), str(user_id))
         result = self.get(url)
-        return result["tasks"]
+        return result["tasks"] or []
 
     def _generate_many_tasks_url(self, task_codes):
-        new_url = ''
-        for counter, task_code in enumerate(task_codes):
-            if counter == 0:
-                new_url += '%s' % str(task_code)
-            else:
-                new_url += ';%s' % str(task_code)
-        return new_url
+        return ';'.join(urllib.quote(str(c)) for c in task_codes)
 
     def get_company_specific_tasks(self, company_id, task_codes):
         """
@@ -1399,7 +1388,7 @@ class OTask(Namespace):
                                              (str(company_id), str(team_id),
                                     self._generate_many_tasks_url(task_codes))
         result = self.get(url)
-        return result["tasks"]
+        return result["tasks"] or []
 
     def get_user_specific_tasks(self, company_id, team_id, user_id,
                                 task_codes):
@@ -1416,7 +1405,7 @@ class OTask(Namespace):
                                 (str(company_id), str(team_id), str(user_id),
                                  self._generate_many_tasks_url(task_codes))
         result = self.get(url)
-        return result["tasks"]
+        return result["tasks"] or []
 
     def post_company_task(self, company_id, code, description, url):
         """
@@ -1448,12 +1437,12 @@ class OTask(Namespace):
           description   Task description
           url           Task URL
         """
-        url = 'tasks/companies/%s/teams/%s/tasks' % (str(company_id),
-                                                     str(team_id))
+        post_url = 'tasks/companies/%s/teams/%s/tasks' % (
+            str(company_id), str(team_id))
         data = {'code': code,
                 'description': description,
                 'url': url}
-        result = self.post(url, data)
+        result = self.post(post_url, data)
         return result
 
     def post_user_task(self, company_id, team_id, user_id, code, description,
@@ -1469,12 +1458,12 @@ class OTask(Namespace):
           description   Task description
           url           Task URL
         """
-        url = 'tasks/companies/%s/teams/%s/users/%s/tasks' % (str(company_id),
-                                                    str(team_id), str(user_id))
+        post_url = 'tasks/companies/%s/teams/%s/users/%s/tasks' % (
+            str(company_id), str(team_id), str(user_id))
         data = {'code': code,
                 'description': description,
                 'url': url}
-        result = self.post(url, data)
+        result = self.post(post_url, data)
         return result
 
     def put_company_task(self, company_id, code, description, url):
@@ -1488,11 +1477,11 @@ class OTask(Namespace):
           description   Task description
           url           Task URL
         """
-        url = 'tasks/companies/%s/tasks/%s' % (str(company_id), str(code))
+        put_url = 'tasks/companies/%s/tasks/%s' % (str(company_id), str(code))
         data = {'code': code,
                 'description': description,
                 'url': url}
-        result = self.put(url, data)
+        result = self.put(put_url, data)
         return result
 
     def put_team_task(self, company_id, team_id, code, description, url):
@@ -1507,12 +1496,12 @@ class OTask(Namespace):
           description   Task description
           url           Task URL
         """
-        url = 'tasks/companies/%s/teams/%s/tasks/%s' % (str(company_id),
-                                                    str(team_id), str(code))
+        put_url = 'tasks/companies/%s/teams/%s/tasks/%s' % (
+            str(company_id), str(team_id), str(code))
         data = {'code': code,
                 'description': description,
                 'url': url}
-        result = self.put(url, data)
+        result = self.put(put_url, data)
         return result
 
     def put_user_task(self, company_id, team_id, user_id, code,
@@ -1528,12 +1517,12 @@ class OTask(Namespace):
           description   Task description
           url           Task URL
         """
-        url = 'tasks/companies/%s/teams/%s/users/%s/tasks/%s' %\
-             (str(company_id), str(team_id), str(user_id), str(code))
+        put_url = 'tasks/companies/%s/teams/%s/users/%s/tasks/%s' % (
+            str(company_id), str(team_id), str(user_id), str(code))
         data = {'code': code,
                 'description': description,
                 'url': url}
-        result = self.put(url, data)
+        result = self.put(put_url, data)
         return result
 
     def delete_company_task(self, company_id, task_codes):
