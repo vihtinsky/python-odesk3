@@ -799,6 +799,9 @@ class Messages(Namespace):
     def post_message(self, username, recipients, subject, body,
                      thread_id=None):
         url = 'threads/%s' % str(username)
+        if not isinstance(recipients, (list, tuple)):
+            recipients = [recipients]
+        recipients = ','.join(map(str, recipients))
         if thread_id:
             url += '/%s' % str(thread_id)
         result = self.post(url, data={'recipients': recipients,
