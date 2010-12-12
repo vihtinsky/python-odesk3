@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Python bindings to odesk API
 python-odesk version 0.2
@@ -945,15 +946,24 @@ def test_put_threads_deleted_undeleted():
     
     undeleted = mc.put_threads_undeleted('test', [5,6,7])    
     assert undeleted == read_thread_content_dict, undeleted
-     
-@patch('urllib2.urlopen', patched_urlopen_read_thread_content)       
-def test_post_message():                                                
+
+
+@patch('urllib2.urlopen', patched_urlopen_read_thread_content)
+def test_post_message():
     mc = get_client().mc
     
     message = mc.post_message('username', 'recepient1,recepient2', 'subject', 
                               'body')
     assert message == read_thread_content_dict, message
 
+    message = mc.post_message('username', ('recepient1@sss', 'recepient`іваівsss'), 'subject', 
+                              'body')
+    assert message == read_thread_content_dict, message
+
+    message = mc.post_message('username', 'recepient1@sss,1%&&|-!@#recepient`іваівsss', 'subject', 
+                              'body')
+    assert message == read_thread_content_dict, message
+    
     reply = mc.post_message('username', 'recepient1,recepient2', 'subject', 
                               'body', 123)
     assert reply == read_thread_content_dict, reply
