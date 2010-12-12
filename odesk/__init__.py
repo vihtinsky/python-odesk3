@@ -627,69 +627,99 @@ class Provider(Namespace):
         return result['jobs']
 
     def _get_resume_info(self, provider_ciphertext, info_type):
-        '''info_type can be one of (otherexp|skills|tests|certificates|employments|educations|projects'''
+        '''
+        info_type can be one of 
+        (otherexp|skills|tests|certificates|employments|\
+        educations|projects)
+        '''
         strinfo = str(info_type)
         if strinfo not in self.resume_info_result_keys:
             raise ValueError('invalid info_type %s' % strinfo)
         url = 'providers/%s/%s' % (str(provider_ciphertext), strinfo)
         result = self.get(url)
         result_key = self.resume_info_result_keys[strinfo]
-        return result[result_key]
+        return result
 
-    def _add_resume_info_item(self, provider_ciphertext, info_type, item_data):
-        '''info_type can be one of (otherexp|skills|tests|certificates|employments|educations|projects'''
+    def _add_resume_info_item(self, provider_ciphertext, info_type,\
+        item_data):
+        '''
+        info_type can be one of 
+        (otherexp|skills|tests|certificates|employments|\
+        educations|projects
+        '''
         strinfo = str(info_type)
         if strinfo not in self.resume_info_result_keys:
             raise ValueError('invalid info_type %s' % strinfo)
         url = 'providers/%s/%s' % (str(provider_ciphertext), strinfo)
-        return self.put(url, item_data)
-
-    def _update_resume_info_item(self, provider_ciphertext, resource_id, info_type, item_data):
-        '''info_type can be one of (otherexp|skills|tests|certificates|employments|educations|projects'''
-        strinfo = str(info_type)
-        if strinfo not in self.resume_info_result_keys:
-            raise ValueError('invalid info_type %s' % strinfo)
-        if resource_id is not None:
-            url = 'providers/%s/%s/%s' % (str(provider_ciphertext), str(resource_id), strinfo)
-        else:
-            url = 'providers/%s/%s' % (str(provider_ciphertext), strinfo)
         return self.post(url, item_data)
 
-    def _delete_resume_info_item(self, provider_ciphertext, resource_id, info_type):
-        '''info_type can be one of (otherexp|skills|tests|certificates|employments|educations|projects'''
+    def _update_resume_info_item(self, provider_ciphertext,\
+        resource_id, info_type, item_data):
+        '''
+        info_type can be one of (otherexp|skills|tests|certificates|\
+        employments|educations|projects
+        '''
         strinfo = str(info_type)
         if strinfo not in self.resume_info_result_keys:
             raise ValueError('invalid info_type %s' % strinfo)
+
         if resource_id is not None:
-            url = 'providers/%s/%s/%s' % (str(provider_ciphertext), str(resource_id), strinfo)
+            url = 'providers/%s/%s/%s' % (str(provider_ciphertext),\
+                str(resource_id), strinfo)
         else:
-            url = 'providers/%s/%s' % (str(provider_ciphertext), strinfo)
+            url = 'providers/%s/%s' % (str(provider_ciphertext),\
+                strinfo)
+
+        return self.post(url, item_data)
+
+    def _delete_resume_info_item(self, provider_ciphertext,\
+        resource_id, info_type):
+        '''
+        info_type can be one of (otherexp|skills|tests|certificates|\
+        employments|educations|projects
+        '''
+        strinfo = str(info_type)
+        if strinfo not in self.resume_info_result_keys:
+            raise ValueError('invalid info_type %s' % strinfo)
+
+        if resource_id is not None:
+            url = 'providers/%s/%s/%s' % (str(provider_ciphertext),\
+                str(resource_id), strinfo)
+        else:
+            url = 'providers/%s/%s' % (str(provider_ciphertext),\
+                strinfo)
+
         return self.delete(url)
 
     def get_skills(self, provider_ciphertext):
         return self._get_resume_info(provider_ciphertext, 'skills')
 
     def add_skill(self, provider_ciphertext, data):
-        return self._add_resume_info_item(provider_ciphertext, 'skills', data)
+        return self._add_resume_info_item(provider_ciphertext,\
+            'skills', data)
 
     def update_skill(self, provider_ciphertext, skill_id, data):
-        return self._update_resume_info_item(provider_ciphertext, skill_id, 'skills', data)
+        return self._update_resume_info_item(provider_ciphertext,\
+            skill_id, 'skills', data)
 
     def delete_skill(self, provider_ciphertext, skill_id):
-        return self._delete_resume_info_item(provider_ciphertext, skill_id, 'skills')
+        return self._delete_resume_info_item(provider_ciphertext,\
+            skill_id, 'skills')
     
     def get_quickinfo(self, provider_ciphertext):
         return self._get_resume_info(provider_ciphertext, 'quickinfo')
 
     def update_quickinfo(self, provider_ciphertext, data):
-        return self._update_resume_info_item(provider_ciphertext, None, 'quickinfo', data)
+        return self._update_resume_info_item(provider_ciphertext,\
+            None, 'quickinfo', data)
 
 
 class Messages(Namespace):
     api_url = 'mc/'
     version = 1
 
-    def get_trays(self, username=None, paging_offset=0, paging_count=20):
+    def get_trays(self, username=None, paging_offset=0,\
+        paging_count=20):
         url = 'trays'
         if paging_offset or not paging_count == 20:
             data = {'paging': '%s;%s' % (str(paging_offset),
@@ -742,15 +772,17 @@ class Messages(Namespace):
             data = {'read': 'true'}
         else:
             data = {'read': 'false'}
-        result = self.put(self._generate_many_threads_url(url, thread_ids),
-                          data=data)
+        result = self.put(self._generate_many_threads_url(url,\
+                            thread_ids), data=data)
         return result
 
     def put_threads_read(self, username, thread_ids):
-        return self.put_threads_read_unread(username, thread_ids, read=True)
+        return self.put_threads_read_unread(username, thread_ids,\
+            read=True)
 
     def put_threads_unread(self, username, thread_ids):
-        return self.put_threads_read_unread(username, thread_ids, read=False)
+        return self.put_threads_read_unread(username, thread_ids,\
+            read=False)
 
     def put_threads_starred_or_unstarred(self, username, thread_ids,
                                          starred=True):
@@ -762,17 +794,17 @@ class Messages(Namespace):
         else:
             data = {'starred': 'false'}
 
-        result = self.put(self._generate_many_threads_url(url, thread_ids),
-                          data=data)
+        result = self.put(self._generate_many_threads_url(url,\
+                            thread_ids), data=data)
         return result
 
     def put_threads_starred(self, username, thread_ids):
         return self.put_threads_starred_or_unstarred(username,
-                                                thread_ids, starred=True)
+                                            thread_ids, starred=True)
 
     def put_threads_unstarred(self, username, thread_ids):
         return self.put_threads_starred_or_unstarred(username,
-                                                thread_ids, starred=False)
+                                            thread_ids, starred=False)
 
     def put_threads_deleted_or_undeleted(self, username, thread_ids,
                                          deleted=True):

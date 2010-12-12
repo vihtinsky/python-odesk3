@@ -11,7 +11,7 @@ SECRET_KEY = None
 
 #TODO: Desktop app example (check if it's working at all - wasn't last time)
 
-def time_reports(public_key, secret_key):
+def provider(public_key, secret_key):
     print "Emulating web-based app"
     #Instantiating a client without an auth token
     client = odesk.Client(public_key, secret_key)
@@ -29,24 +29,29 @@ def time_reports(public_key, secret_key):
     #between requests
     client = odesk.Client(public_key, secret_key, auth_token)
     # get skills
-    print client.provider.get_skills('~~0c47747db0d04b5f')
+    print "Provider skills:"
+    print client.provider.get_skills('~~someref')
     # add new skill
-    client.provider.add_skill('~~0c47747db0d04b5f', {'skill':'skill'})
+    print "Adding provider skill"
+    print client.provider.add_skill('~~someref', {'skill':'skill'})
     # update a skill by giving a skill_id and new data
-    client.provider.update_skill('~~0c47747db0d04b5f', 123, {'skill':'skill'})
+    print "Updating provider skill"
+    print client.provider.update_skill('~~someref', 123, {'skill':'skill'})
     # delete a skill by giving a skill_id
-    client.provider.delete_skill('~~0c47747db0d04b5f', 123)
+    print "Deleting provider skill"
+    print client.provider.delete_skill('~~someref', 123)
     # get quickinfo
-    print client.provider.get_quickinfo('~~0c47747db0d04b5f')
+    print "Get quick info"
+    print client.provider.get_quickinfo('~~someref')
     # update a quickinfo by giving new data
-    client.provider.update_quickinfo('~~0c47747db0d04b5f', {'skill':'skill'})
+    client.provider.update_quickinfo('~~someref', {'skill':'skill'})
     print "Revoke access"
     print client.auth.revoke_token()    
-    
+
  
 if __name__ == '__main__':
     public_key = PUBLIC_KEY or raw_input('Enter public key: ')
     secret_key = SECRET_KEY or raw_input('Enter secret key: ')
 
-    time_reports(public_key, secret_key)
+    provider(public_key, secret_key)
 
