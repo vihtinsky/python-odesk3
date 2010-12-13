@@ -4,8 +4,9 @@ python-odesk version 0.2
 (C) 2010 oDesk
 """
 
-VERSION = (0, 2, 0, 'alpha', 1)
+VERSION = (0, 2, 0, 'beta', 1)
 
+import urllib
 from datetime import date
 
 
@@ -473,7 +474,9 @@ class HR2(Namespace):
         return result['teams']
 
     def get_company_tasks(self, company_referece):
-        "API doesn't support this call yet"
+        """
+        API doesn't support this call yet
+        """
         raise APINotImplementedException("API doesn't support this call yet")
 
     def get_company_users(self, company_referece, active=True):
@@ -518,7 +521,9 @@ class HR2(Namespace):
         return result['team']
 
     def get_team_tasks(self, team_reference):
-        "API doesn't support this call yet"
+        """
+        API doesn't support this call yet
+        """
         raise APINotImplementedException("API doesn't support this call yet")
 
     def get_team_users(self, team_reference, active=True):
@@ -905,7 +910,11 @@ class Provider(Namespace):
         return result['jobs']
 
     def _get_resume_info(self, provider_ciphertext, info_type):
-        '''info_type can be one of (otherexp|skills|tests|certificates|employments|educations|projects'''
+        '''
+        info_type can be one of 
+        (otherexp|skills|tests|certificates|employments|\
+        educations|projects)
+        '''
         strinfo = str(info_type)
         if strinfo not in self.resume_info_result_keys:
             raise ValueError('invalid info_type %s' % strinfo)
@@ -914,34 +923,54 @@ class Provider(Namespace):
         result_key = self.resume_info_result_keys[strinfo]
         return result[result_key]
 
-    def _add_resume_info_item(self, provider_ciphertext, info_type, item_data):
-        '''info_type can be one of (otherexp|skills|tests|certificates|employments|educations|projects'''
+    def _add_resume_info_item(self, provider_ciphertext, info_type,\
+        item_data):
+        '''
+        info_type can be one of 
+        (otherexp|skills|tests|certificates|employments|\
+        educations|projects
+        '''
         strinfo = str(info_type)
         if strinfo not in self.resume_info_result_keys:
             raise ValueError('invalid info_type %s' % strinfo)
         url = 'providers/%s/%s' % (str(provider_ciphertext), strinfo)
-        return self.put(url, item_data)
-
-    def _update_resume_info_item(self, provider_ciphertext, resource_id, info_type, item_data):
-        '''info_type can be one of (otherexp|skills|tests|certificates|employments|educations|projects'''
-        strinfo = str(info_type)
-        if strinfo not in self.resume_info_result_keys:
-            raise ValueError('invalid info_type %s' % strinfo)
-        if resource_id is not None:
-            url = 'providers/%s/%s/%s' % (str(provider_ciphertext), str(resource_id), strinfo)
-        else:
-            url = 'providers/%s/%s' % (str(provider_ciphertext), strinfo)
         return self.post(url, item_data)
 
-    def _delete_resume_info_item(self, provider_ciphertext, resource_id, info_type):
-        '''info_type can be one of (otherexp|skills|tests|certificates|employments|educations|projects'''
+    def _update_resume_info_item(self, provider_ciphertext,\
+        resource_id, info_type, item_data):
+        '''
+        info_type can be one of (otherexp|skills|tests|certificates|\
+        employments|educations|projects
+        '''
         strinfo = str(info_type)
         if strinfo not in self.resume_info_result_keys:
             raise ValueError('invalid info_type %s' % strinfo)
+
         if resource_id is not None:
-            url = 'providers/%s/%s/%s' % (str(provider_ciphertext), str(resource_id), strinfo)
+            url = 'providers/%s/%s/%s' % (str(provider_ciphertext),\
+                str(resource_id), strinfo)
         else:
-            url = 'providers/%s/%s' % (str(provider_ciphertext), strinfo)
+            url = 'providers/%s/%s' % (str(provider_ciphertext),\
+                strinfo)
+        return self.post(url, item_data)
+
+    def _delete_resume_info_item(self, provider_ciphertext,\
+        resource_id, info_type):
+        '''
+        info_type can be one of (otherexp|skills|tests|certificates|\
+        employments|educations|projects
+        '''
+        strinfo = str(info_type)
+        if strinfo not in self.resume_info_result_keys:
+            raise ValueError('invalid info_type %s' % strinfo)
+
+        if resource_id is not None:
+            url = 'providers/%s/%s/%s' % (str(provider_ciphertext),\
+                str(resource_id), strinfo)
+        else:
+            url = 'providers/%s/%s' % (str(provider_ciphertext),\
+                strinfo)
+
         return self.delete(url)
 
     def get_skills(self, provider_ciphertext):
@@ -961,7 +990,8 @@ class Provider(Namespace):
           provider_ciphertext   Provider cipher text (key)
           data                  dict containing details of skill to add
           """
-        return self._add_resume_info_item(provider_ciphertext, 'skills', data)
+        return self._add_resume_info_item(provider_ciphertext,\
+            'skills', data)
 
     def update_skill(self, provider_ciphertext, skill_id, data):
         """
@@ -971,8 +1001,9 @@ class Provider(Namespace):
           provider_ciphertext   Provider cipher text (key)
           skill_id              Resource id of the referenced skill
           data                  dict containing details of skill to delete
-          """
-        return self._update_resume_info_item(provider_ciphertext, skill_id, 'skills', data)
+          """        
+        return self._update_resume_info_item(provider_ciphertext,\
+            skill_id, 'skills', data)
 
     def delete_skill(self, provider_ciphertext, skill_id):
         """
@@ -982,7 +1013,8 @@ class Provider(Namespace):
           provider_ciphertext   Provider cipher text (key)
           skill_id              Resource id of the referenced skill
           """
-        return self._delete_resume_info_item(provider_ciphertext, skill_id, 'skills')
+        return self._delete_resume_info_item(provider_ciphertext,\
+            skill_id, 'skills')
     
     def get_quickinfo(self, provider_ciphertext):
         """
@@ -1001,7 +1033,8 @@ class Provider(Namespace):
           provider_ciphertext   Provider cipher text (key)
           data                  A dict containing updated 'quick info'
         """
-        return self._update_resume_info_item(provider_ciphertext, None, 'quickinfo', data)
+        return self._update_resume_info_item(provider_ciphertext, None,\
+                                            'quickinfo', data)
 
     def get_affiliates(self, affiliate_key):
         """
@@ -1081,13 +1114,7 @@ class Messages(Namespace):
         return result["thread"]
 
     def _generate_many_threads_url(self, url, threads_ids):
-        new_url = url
-        for counter, thread_id in enumerate(threads_ids):
-            if counter == 0:
-                new_url += '%s' % str(thread_id)
-            else:
-                new_url += ';%s' % str(thread_id)
-        return new_url
+        return ';'.join(urllib.quote(str(i)) for i in threads_ids)
 
     def put_threads_read_unread(self, username, thread_ids, read=True):
         """
@@ -1103,8 +1130,8 @@ class Messages(Namespace):
             data = {'read': 'true'}
         else:
             data = {'read': 'false'}
-        result = self.put(self._generate_many_threads_url(url, thread_ids),
-                          data=data)
+        result = self.put(self._generate_many_threads_url(url,\
+                            thread_ids), data=data)
         return result
 
     def put_threads_read(self, username, thread_ids):
@@ -1144,8 +1171,8 @@ class Messages(Namespace):
         else:
             data = {'starred': 'false'}
 
-        result = self.put(self._generate_many_threads_url(url, thread_ids),
-                          data=data)
+        result = self.put(self._generate_many_threads_url(url,\
+                            thread_ids), data=data)
         return result
 
     def put_threads_starred(self, username, thread_ids):
@@ -1157,7 +1184,7 @@ class Messages(Namespace):
           thread_ids        must be a list, even of 1 item
         """
         return self.put_threads_starred_or_unstarred(username,
-                                                thread_ids, starred=True)
+                                            thread_ids, starred=True)
 
     def put_threads_unstarred(self, username, thread_ids):
         """
@@ -1168,7 +1195,7 @@ class Messages(Namespace):
           thread_ids        must be a list, even of 1 item
         """
         return self.put_threads_starred_or_unstarred(username,
-                                                thread_ids, starred=False)
+                                            thread_ids, starred=False)
 
     def put_threads_deleted_or_undeleted(self, username, thread_ids,
                                          deleted=True):
@@ -1252,7 +1279,7 @@ class OTask(Namespace):
         """
         url = 'tasks/companies/%s/tasks' % str(company_id)
         result = self.get(url)
-        return result["tasks"]
+        return result["tasks"] or []
 
     def get_team_tasks(self, company_id, team_id):
         """
@@ -1267,7 +1294,7 @@ class OTask(Namespace):
         url = 'tasks/companies/%s/teams/%s/tasks' % (str(company_id),
                                                      str(team_id))
         result = self.get(url)
-        return result["tasks"]
+        return result["tasks"] or []
 
     def get_user_tasks(self, company_id, team_id, user_id):
         """
@@ -1283,7 +1310,7 @@ class OTask(Namespace):
         url = 'tasks/companies/%s/teams/%s/users/%s/tasks' % (str(company_id),
                                                     str(team_id), str(user_id))
         result = self.get(url)
-        return result["tasks"]
+        return result["tasks"] or []
 
     def get_company_tasks_full(self, company_id):
         """
@@ -1297,7 +1324,7 @@ class OTask(Namespace):
         """
         url = 'tasks/companies/%s/tasks/full_list' % str(company_id)
         result = self.get(url)
-        return result["tasks"]
+        return result["tasks"] or []
 
     def get_team_tasks_full(self, company_id, team_id):
         """
@@ -1313,7 +1340,7 @@ class OTask(Namespace):
         url = 'tasks/companies/%s/teams/%s/tasks/full_list' %\
                                              (str(company_id), str(team_id))
         result = self.get(url)
-        return result["tasks"]
+        return result["tasks"] or []
 
     def get_user_tasks_full(self, company_id, team_id, user_id):
         """
@@ -1330,16 +1357,10 @@ class OTask(Namespace):
         url = 'tasks/companies/%s/teams/%s/users/%s/tasks/full_list' %\
                                 (str(company_id), str(team_id), str(user_id))
         result = self.get(url)
-        return result["tasks"]
+        return result["tasks"] or []
 
     def _generate_many_tasks_url(self, task_codes):
-        new_url = ''
-        for counter, task_code in enumerate(task_codes):
-            if counter == 0:
-                new_url += '%s' % str(task_code)
-            else:
-                new_url += ';%s' % str(task_code)
-        return new_url
+        return ';'.join(urllib.quote(str(c)) for c in task_codes)
 
     def get_company_specific_tasks(self, company_id, task_codes):
         """
@@ -1367,7 +1388,7 @@ class OTask(Namespace):
                                              (str(company_id), str(team_id),
                                     self._generate_many_tasks_url(task_codes))
         result = self.get(url)
-        return result["tasks"]
+        return result["tasks"] or []
 
     def get_user_specific_tasks(self, company_id, team_id, user_id,
                                 task_codes):
@@ -1384,7 +1405,7 @@ class OTask(Namespace):
                                 (str(company_id), str(team_id), str(user_id),
                                  self._generate_many_tasks_url(task_codes))
         result = self.get(url)
-        return result["tasks"]
+        return result["tasks"] or []
 
     def post_company_task(self, company_id, code, description, url):
         """
@@ -1416,12 +1437,12 @@ class OTask(Namespace):
           description   Task description
           url           Task URL
         """
-        url = 'tasks/companies/%s/teams/%s/tasks' % (str(company_id),
-                                                     str(team_id))
+        post_url = 'tasks/companies/%s/teams/%s/tasks' % (
+            str(company_id), str(team_id))
         data = {'code': code,
                 'description': description,
                 'url': url}
-        result = self.post(url, data)
+        result = self.post(post_url, data)
         return result
 
     def post_user_task(self, company_id, team_id, user_id, code, description,
@@ -1437,12 +1458,12 @@ class OTask(Namespace):
           description   Task description
           url           Task URL
         """
-        url = 'tasks/companies/%s/teams/%s/users/%s/tasks' % (str(company_id),
-                                                    str(team_id), str(user_id))
+        post_url = 'tasks/companies/%s/teams/%s/users/%s/tasks' % (
+            str(company_id), str(team_id), str(user_id))
         data = {'code': code,
                 'description': description,
                 'url': url}
-        result = self.post(url, data)
+        result = self.post(post_url, data)
         return result
 
     def put_company_task(self, company_id, code, description, url):
@@ -1456,11 +1477,11 @@ class OTask(Namespace):
           description   Task description
           url           Task URL
         """
-        url = 'tasks/companies/%s/tasks/%s' % (str(company_id), str(code))
+        put_url = 'tasks/companies/%s/tasks/%s' % (str(company_id), str(code))
         data = {'code': code,
                 'description': description,
                 'url': url}
-        result = self.put(url, data)
+        result = self.put(put_url, data)
         return result
 
     def put_team_task(self, company_id, team_id, code, description, url):
@@ -1475,12 +1496,12 @@ class OTask(Namespace):
           description   Task description
           url           Task URL
         """
-        url = 'tasks/companies/%s/teams/%s/tasks/%s' % (str(company_id),
-                                                    str(team_id), str(code))
+        put_url = 'tasks/companies/%s/teams/%s/tasks/%s' % (
+            str(company_id), str(team_id), str(code))
         data = {'code': code,
                 'description': description,
                 'url': url}
-        result = self.put(url, data)
+        result = self.put(put_url, data)
         return result
 
     def put_user_task(self, company_id, team_id, user_id, code,
@@ -1496,12 +1517,12 @@ class OTask(Namespace):
           description   Task description
           url           Task URL
         """
-        url = 'tasks/companies/%s/teams/%s/users/%s/tasks/%s' %\
-             (str(company_id), str(team_id), str(user_id), str(code))
+        put_url = 'tasks/companies/%s/teams/%s/users/%s/tasks/%s' % (
+            str(company_id), str(team_id), str(user_id), str(code))
         data = {'code': code,
                 'description': description,
                 'url': url}
-        result = self.put(url, data)
+        result = self.put(put_url, data)
         return result
 
     def delete_company_task(self, company_id, task_codes):
@@ -1965,9 +1986,10 @@ class Finreports(GdsNamespace):
 
 
 class NonauthGdsNamespace(GdsNamespace):
-    ''' This class does not add authentication parameters
-        to request urls (api_sig, api_key & api_token)
-        Some APIs return error if called with authentication parameters
+    '''
+    This class does not add authentication parameters
+    to request urls (api_sig, api_key & api_token)
+    Some APIs return error if called with authentication parameters
     '''
     def urlopen(self, url, data={}, method='GET'):
         if method == 'GET':
@@ -1977,7 +1999,8 @@ class NonauthGdsNamespace(GdsNamespace):
 
 
 class OConomy(NonauthGdsNamespace):
-    ''' oConomy Reports API
+    '''
+    oConomy Reports API
     '''
     api_url = 'oconomy/'
     version = 1

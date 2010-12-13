@@ -28,6 +28,7 @@ def web_based_app(public_key, secret_key):
     #typical for web apps, which wouldn't probably keep client instances 
     #between requests
     client = odesk.Client(public_key, secret_key, auth_token)
+
     try:
         print "Team rooms:"
         print client.team.get_teamrooms()
@@ -53,6 +54,7 @@ def web_based_app(public_key, secret_key):
     except Exception, e:
         print "Exception at %s %s" % (client.last_method, client.last_url)
         raise e
+
 
 
 if __name__ == '__main__':

@@ -30,25 +30,25 @@ def provider(public_key, secret_key):
     client = odesk.Client(public_key, secret_key, auth_token)
     # get skills
     print "Provider skills:"
-    print client.provider.get_skills('~~0c47747db0d04b5f')
+    print client.provider.get_skills('~~someref')
     # add new skill
     print "Adding provider skill"
-    client.provider.add_skill('~~0c47747db0d04b5f', {'skill':'skill'})
+    print client.provider.add_skill('~~someref', {'skill':'skill'})
     # update a skill by giving a skill_id and new data
     print "Updating provider skill"
-    client.provider.update_skill('~~0c47747db0d04b5f', 123, {'skill':'skill'})
+    print client.provider.update_skill('~~someref', 123, {'skill':'skill'})
     # delete a skill by giving a skill_id
     print "Deleting provider skill"
-    client.provider.delete_skill('~~0c47747db0d04b5f', 123)
+    print client.provider.delete_skill('~~someref', 123)
     # get quickinfo
-    print client.provider.get_quickinfo('~~0c47747db0d04b5f')
+    print "Get quick info"
+    print client.provider.get_quickinfo('~~someref')
     # update a quickinfo by giving new data
-    client.provider.update_quickinfo('~~0c47747db0d04b5f', {'skill':'skill'})
-    # get affiliate profile
-    print client.provider.get_affiliates('47325228f2f84188')
+    client.provider.update_quickinfo('~~someref', {'skill':'skill'})
+    print client.provider.get_affiliates('someref')
     print "Revoke access"
     print client.auth.revoke_token()    
-    
+
  
 if __name__ == '__main__':
     public_key = PUBLIC_KEY or raw_input('Enter public key: ')
