@@ -193,6 +193,7 @@ class Client(BaseClient):
         #Namespaces
         self.auth = Auth(self)
         self.team = Team(self)
+        self.team2 = Team2(self)
         self.hr = HR2(self)
         self.provider = Provider(self)
         self.mc = Messages(self)
@@ -418,6 +419,42 @@ class Team(Namespace):
             data = {}
         result = self.get(url, data)
         return result['streams']['snapshot']
+
+
+class Team2(Namespace):
+    """
+    Team v2 API
+    """
+
+    api_url = 'team/'
+    version = 2
+
+    def get_teamrooms(self):
+        """
+        Retrieve all teamrooms accessible to the authenticated user
+        """
+        url = 'teamrooms'
+        result = self.get(url)
+        teamrooms = result['teamrooms']['teamroom']
+        if not isinstance(teamrooms, list):
+            teamrooms = [teamrooms]
+        return teamrooms
+
+    def get_snapshots(self, team_id, online='now'):
+        """
+        Retrieve team member snapshots
+
+        Parameters:
+          team_id   The Team ID
+          online    'now' / 'last_24h' / 'all' (default 'now')
+                    Filter for logged in users / users active in last 24 hours / all users
+        """
+        url = 'teamrooms/%s' % team_id
+        result = self.get(url, {'online': online})
+        snapshots = result['teamroom']['snapshot']
+        if not isinstance(snapshots, list):
+            snapshots = [snapshots]
+        return snapshots
 
 
 class HR2(Namespace):
