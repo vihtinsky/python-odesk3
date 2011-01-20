@@ -181,6 +181,7 @@ class Client(BaseClient):
         self.finreports = Finreports(self)
         self.otask = OTask(self)
         self.oconomy = OConomy(self)
+        self.gds_oconomy = GdsOConomy(self)
 
     #Shortcuts for HTTP methods
     def get(self, url, data={}):
@@ -1018,6 +1019,47 @@ class OConomy(Namespace):
         return result['home']['most_requested_skills']
 
 
+class GdsOConomy(GdsNamespace):
+    api_url = 'oconomy/'
+    version = 1
+    
+    def get_summary(self, year=None, month=None):
+        if month and year:
+            url = 'summary/%s%s' % (str(year), str(month))
+        else:
+            url = 'summary'
+        result = self.get(url)
+
+        return result
+
+    def get_hours_worked_by_locations(self):
+        url = 'hours_worked_by_locations'
+        result = self.get(url)
+        return result
+
+
+    def get_hours_worked_by_weeks(self):
+        url = 'hours_worked_by_weeks'
+        result = self.get(url)
+        return result
+
+
+    def get_top_countries_by_hours(self):
+        url = 'top_countries_by_hours'
+        result = self.get(url)
+        return result
+
+
+    def get_charges_by_categories(self):
+        url = 'charges_by_categories'
+        result = self.get(url)
+        return result
+
+
+    def get_most_requested_skills(self):
+        url = 'most_requested_skills'
+        result = self.get(url)
+        return result
 
 if __name__ == "__main__":
     import doctest

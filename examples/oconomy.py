@@ -36,6 +36,14 @@ def oconomy(public_key, secret_key):
     print client.oconomy.get_charges_by_categories()
     print client.oconomy.get_most_requested_skills()
     
+    print client.gds_oconomy.get_summary(2010,12)
+    
+    print client.gds_oconomy.get_hours_worked_by_locations()
+    print client.gds_oconomy.get_hours_worked_by_weeks()
+    print client.gds_oconomy.get_top_countries_by_hours()
+    print client.gds_oconomy.get_charges_by_categories()
+    print client.gds_oconomy.get_most_requested_skills()
+    
     
 
 
