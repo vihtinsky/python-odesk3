@@ -180,6 +180,7 @@ class Client(BaseClient):
         self.time_reports = TimeReports(self)
         self.finreports = Finreports(self)
         self.otask = OTask(self)
+        self.url = Url(self)
 
     #Shortcuts for HTTP methods
     def get(self, url, data={}):
@@ -836,7 +837,24 @@ class Query(object):
         if self.order_by:
             order_by_str = ' ORDER BY ' + ','.join(self.order_by)
         return ''.join([select_str, where_str, order_by_str])
-        
+
+
+class Url(Namespace):
+    api_url = 'shorturl/'
+    version = 1
+
+    def get_shorten(self, long_url):
+        url = 'shorten'
+        data = {'url': long_url}
+        result = self.get(url, data=data)
+        return result['short_url']
+
+    def get_expand(self, short_url):
+        url = 'expand'
+        data = {'url': short_url}
+        result = self.get(url, data=data)
+        return result['long_url']
+
 
 class GdsNamespace(Namespace):
     base_url = 'https://www.odesk.com/gds/'
