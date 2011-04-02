@@ -4,10 +4,10 @@ python-odesk version 0.1
 (C) 2010 oDesk
 """
 import odesk
+from datetime import date
 
 PUBLIC_KEY = None
 SECRET_KEY = None
-
 
 #TODO: Desktop app example (check if it's working at all - wasn't last time)
 
@@ -43,14 +43,23 @@ def oconomy(public_key, secret_key):
     print client.gds_oconomy.get_top_countries_by_hours()
     print client.gds_oconomy.get_charges_by_categories()
     print client.gds_oconomy.get_most_requested_skills()
+
+    print "monthly summary"
+    print client.oconomy.get_monthly_summary('201011')
+    print "hours worked by locations"
+    print client.oconomy.get_hours_worked_by_locations()
+    print "hours worked by weeks"
+    print client.oconomy.get_hours_worked_by_weeks()
+    print "top countries by hours"
+    print client.oconomy.get_top_countries_by_hours()
+    print "earnings by categories"
+    print client.oconomy.get_earnings_by_categories()
+    print "most requested skills"
+    print client.oconomy.get_most_requested_skills()
     
-    
-
-
-
+ 
 if __name__ == '__main__':
     public_key = PUBLIC_KEY or raw_input('Enter public key: ')
     secret_key = SECRET_KEY or raw_input('Enter secret key: ')
 
     oconomy(public_key, secret_key)
-

@@ -1,6 +1,7 @@
+# -*- coding: utf-8 -*-
 """
 Python bindings to odesk API
-python-odesk version 0.1
+python-odesk version 0.2
 (C) 2010 oDesk
 """
 from odesk import *
@@ -334,7 +335,12 @@ def test_auth_get_token():
 def test_check_token_true(): 
     #check if ok  
     au = setup_auth()
-    assert au.check_token(), au.check_token()
+    try:
+        au.check_token()
+    except:
+        pass
+    else:
+        assert "Not Raised"
 
 @patch('urllib2.urlopen', patched_urlopen_token)      
 def test_revoke_token_true(): 
@@ -347,21 +353,29 @@ def test_revoke_token_true():
 def test_check_token_false():
     #check if denied
     au = setup_auth()
-    assert not au.check_token(), au.check_token()
+    try:
+        au.check_token()
+    except:
+        pass
+    else:
+        assert "Not Raised"
 
 
 teamrooms_dict = {'teamrooms': 
-                  {'teamroom': {u'team_ref': u'1', 
-                  u'name': u'oDesk', 
-                  u'recno': u'1', 
-                  u'parent_team_ref': u'1', 
-                  u'company_name': u'oDesk', 
-                  u'company_recno': u'1', 
-                  u'teamroom_api': u'/api/team/v1/teamrooms/odesk:some.json', 
-                  u'id': u'odesk:some'}},
+                  {'teamroom': 
+                   {u'team_ref': u'1', 
+                    u'name': u'oDesk', 
+                    u'recno': u'1', 
+                    u'parent_team_ref': u'1', 
+                    u'company_name': u'oDesk', 
+                    u'company_recno': u'1', 
+                    u'teamroom_api': u'/api/team/v1/teamrooms/odesk:some.json', 
+                    u'id': u'odesk:some'}},
                   'teamroom': {'snapshot': 'test snapshot'},
-                  'snapshots': {'user': 'test', 'snapshot': 'test'}
-                               }
+                  'snapshots': {'user': 'test', 'snapshot': 'test'},
+				  'snapshot': {'status': 'private'}
+                 }
+
 
 def return_teamrooms_json():
     return json.dumps(teamrooms_dict)
@@ -385,14 +399,65 @@ def test_team():
     #test get_snapshots
     assert te.get_snapshots(1) == [teamrooms_dict['teamroom']['snapshot']],\
          te.get_snapshots(1)
+
+    #test get_snapshot
+    assert te.get_snapshot(1, 1) == teamrooms_dict['snapshot'], te.get_snapshot(1, 1)
+
+    #test update_snapshot
+    assert te.update_snapshot(1, 1, memo='memo') == teamrooms_dict, te.update_snapshot(1, 1, memo='memo')
+         
+    #test update_snapshot
+    assert te.delete_snapshot(1, 1) == teamrooms_dict, te.delete_snapshot(1, 1)
          
     #test get_workdiaries
     assert te.get_workdiaries(1, 1, 1) == (teamrooms_dict['snapshots']['user'],\
         [teamrooms_dict['snapshots']['snapshot']]), te.get_workdiaries(1, 1, 1)
     
     
-    
+stream_dict = {'streams': {'snapshot': [{u'uid': u'test', 
+ u'portrait_50_img': u'http://www.odesk.com/att/~~test', 
+ u'account_status': u'', 
+ u'billing_status': u'billed.active', 
+ u'screenshot_img_thmb': u'http://team.odesk.com/team/images.cache/test.jpg', 
+ u'screenshot_url': u'https://team.odesk.com/team/scripts/image.jpg', 
+ u'timezone': u'', u'digest': u'0', u'user_id': u'test', 
+ u'company_id': u'test:test', u'report_url': u'http://team.url',
+ u'profile_url': u'http://www.odesk.com/users/~~test', 
+ u'status': u'NORMAL', 
+ u'report24_img': u'http://chart.apis.google.com/chart.png',
+ u'screenshot_img': u'http://team.odesk.com/team/images/test:test/test/2010/01/01/test.jpg', 
+ u'memo': u'Bug 1: Test:Test', 
+ u'time': u'test', u'cellts': u'test', 
+ u'screenshot_img_med': u'http://team.odesk.com/team/scripts/image.jpg',
+ u'user': {u'first_name': u'Test', u'last_name': u'Test', 
+  u'uid': u'test', u'timezone_offset': u'10000', u'creation_time': u'', 
+  u'mail': u'test@odesk.com', u'timezone': u'Europe/Athens', 
+  u'messenger_id': u'', u'messenger_type': u''}, u'computer_name': u'laptop', 
+  u'active_window_title': u'2010-01-01 - Google Chrome',
+  u'task': {u'code': u'484',  u'id': u'{type=bugzilla,cny=test:test,code=1}', 
+   u'description': u'Bug 1: Test: Test'}, 
+ u'keyboard_events_count': u'1', u'mouse_events_count': u'1', u'activity': u'1', 
+ u'client_version': u'Linux/2.0.0', u'screenshot_img_lrg': u'http://test.com', 
+ u'portrait_img': u'http://www.test.com'},]}}    
 
+
+def return_stream_json():
+    return json.dumps(stream_dict)
+
+def patched_urlopen_stream(request, *args, **kwargs):
+    request.read = return_stream_json
+    return request
+
+@patch('urllib2.urlopen', patched_urlopen_stream)  
+def test_stream():
+    te = Team(get_client())
+    
+    #test get_stream
+    assert te.get_stream('test', 'test') == stream_dict['streams']['snapshot'],\
+         te.get_stream('test', 'test')
+
+    
+    
 userroles = {u'userrole': 
              [{u'parent_team__reference': u'1', 
               u'user__id': u'testuser', u'team__id': u'test:t', 
@@ -511,6 +576,13 @@ company = {u'status': u'active',
              u'company_id': u'1',
              u'owner_user_id': u'1', }
                         
+candidacy_stats = {u'job_application_quota': u'20',
+                   u'job_application_quota_remaining': u'20',
+                   u'number_of_applications': u'2',
+                   u'number_of_interviews': u'3',
+                   u'number_of_invites': u'0',
+                   u'number_of_offers': u'0'}
+
 hr_dict = {u'auth_user': auth_user,
            u'server_time': u'0000', 
            u'user': user,
@@ -526,7 +598,8 @@ hr_dict = {u'auth_user': auth_user,
             u'offer': offer,
             u'offers': offers,   
             u'job': job,
-            u'jobs': jobs,}
+            u'jobs': jobs,
+            u'candidacy_stats': candidacy_stats,}
 
 def return_hr_json():
     return json.dumps(hr_dict)
@@ -610,10 +683,10 @@ def test_get_hrv2_team_tasks():
 def test_get_hrv2_userroles():
     hr = get_client().hr        
     #test get_user_role
-    assert hr.get_user_role(user_id=1) == hr_dict['userroles'],\
-                                                 hr.get_user_role(user_id=1)
-    assert hr.get_user_role(team_id=1) == hr_dict['userroles'],\
-                                                 hr.get_user_role(team_id=1)
+    assert hr.get_user_role(user_reference=1) == hr_dict['userroles'],\
+                                                 hr.get_user_role(user_reference=1)
+    assert hr.get_user_role(team_reference=1) == hr_dict['userroles'],\
+                                                 hr.get_user_role(team_reference=1)
     assert hr.get_user_role() == hr_dict['userroles'], hr.get_user_role()
 
         
@@ -631,6 +704,8 @@ def test_get_hrv2_jobs():
     #test get_jobs
     assert hr.get_jobs() == hr_dict[u'jobs'], hr.get_jobs()
     assert hr.get_job(1) == hr_dict[u'job'], hr.get_job(1)
+    assert hr.update_job(1, {'status':'filled'}) == hr_dict, hr.update_job(1, {'status':'filled'})
+    assert hr.delete_job(1, 41) == hr_dict, hr.delete_job(1, 41)
   
 @patch('urllib2.urlopen', patched_urlopen_hr)  
 def test_get_hrv2_offers():
@@ -662,6 +737,13 @@ def test_hrv2_post_adjustment():
     result = hr.post_team_adjustment(1, 2, 100000, 'test', 'test note')
     assert result == adjustments[u'adjustment'], result
     
+@patch('urllib2.urlopen', patched_urlopen_hr)  
+def test_get_hrv2_candidacy_stats():
+    hr = get_client().hr
+    #test get_candidacy_stats
+    result = hr.get_candidacy_stats()
+    assert result == hr_dict['candidacy_stats'], result
+
 provider_dict = {'profile': 
                  {u'response_time': u'31.0000000000000000', 
                   u'dev_agency_ref': u'', 
@@ -687,7 +769,15 @@ provider_dict = {'profile':
                       ] 
                    }},
                    'providers': {'test': 'test'},
-                   'jobs': {'test': 'test'}}
+                   'jobs': {'test': 'test'},
+                   'otherexp':'experiences',
+                   'skills':'skills',
+                   'tests':'tests',
+                   'certificates':'certificates',
+                   'employments':'employments',
+                   'educations':'employments',
+                   'projects':'projects',
+                   'quick_info':'quick_info'}
          
          
 def return_provider_json():
@@ -719,7 +809,28 @@ def test_provider():
     #test get_jobs
     assert pr.get_jobs(data={'a': 1}) == provider_dict['jobs'],\
         pr.get_jobs(data={'a': 1})    
-    
+
+    assert pr.get_skills(1) == provider_dict['skills'],\
+        pr.get_skills(1)
+
+    assert pr.add_skill(1, {'skill':'skill'}) == provider_dict,\
+        pr.add_skill(1, {'skill':'skill'})
+
+    assert pr.update_skill(1, 1, {'skill':'skill'}) == provider_dict,\
+        pr.update_skill(1, 1, {'skill':'skill'})
+
+    assert pr.delete_skill(1, 1) == provider_dict,\
+        pr.delete_skill(1, 1)
+
+    assert pr.get_quickinfo(1) == provider_dict['quick_info'],\
+        pr.get_quickinfo(1)
+
+    assert pr.update_quickinfo(1, {'quickinfo':'quickinfo'}) == provider_dict,\
+        pr.update_quickinfo(1, {'quickinfo':'quickinfo'})
+
+    result = pr.get_affiliates(1)
+    assert result == provider_dict['profile']
+
 trays_dict = {'trays': [{u'unread': u'0', 
               u'type': u'sent', 
               u'id': u'1', 
@@ -837,15 +948,24 @@ def test_put_threads_deleted_undeleted():
     
     undeleted = mc.put_threads_undeleted('test', [5,6,7])    
     assert undeleted == read_thread_content_dict, undeleted
-     
-@patch('urllib2.urlopen', patched_urlopen_read_thread_content)       
-def test_post_message():                                                
+
+
+@patch('urllib2.urlopen', patched_urlopen_read_thread_content)
+def test_post_message():
     mc = get_client().mc
     
     message = mc.post_message('username', 'recepient1,recepient2', 'subject', 
                               'body')
     assert message == read_thread_content_dict, message
 
+    message = mc.post_message('username', ('recepient1@sss', 'recepient`іваівsss'), 'subject', 
+                              'body')
+    assert message == read_thread_content_dict, message
+
+    message = mc.post_message('username', 'recepient1@sss,1%&&|-!@#recepient`іваівsss', 'subject', 
+                              'body')
+    assert message == read_thread_content_dict, message
+    
     reply = mc.post_message('username', 'recepient1,recepient2', 'subject', 
                               'body', 123)
     assert reply == read_thread_content_dict, reply
@@ -1215,3 +1335,67 @@ def test_gds_namespace():
         
     
                                            
+oconomy_dict = {u'table':
+                {u'rows': 
+                  [{u'c': [{u'v': u'Administrative Support'}, {u'v': u'2787297.31'}]},
+                   {u'c': [{u'v': u'Business Services'}, {u'v': u'1146857.51'}]}, 
+                   {u'c': [{u'v': u'Customer Service'}, {u'v': u'1072926.55'}]}, 
+                   {u'c': [{u'v': u'Design & Multimedia'}, {u'v': u'1730094.73'}]}, 
+                   {u'c': [{u'v': u'Networking & Information Systems'}, {u'v': u'690526.57'}]},
+                   {u'c': [{u'v': u'Sales & Marketing'}, {u'v': u'3232511.54'}]}, 
+                   {u'c': [{u'v': u'Software Development'}, {u'v': u'6826354.60'}]}, 
+                   {u'c': [{u'v': u'Web Development'}, {u'v': u'15228679.46'}]},
+                   {u'c': [{u'v': u'Writing & Translation'}, {u'v': u'2257654.76'}]}                  ], 
+                 u'cols': 
+                  [{u'type': u'string', u'label': u'category'}, 
+                   {u'type': u'number', u'label': u'amount'}]}}
+
+def return_read_oconomy_json(*args, **kwargs):
+    return json.dumps(oconomy_dict)
+
+def patched_urlopen_oconomy_content(request, *args, **kwargs):
+    request.read = return_read_oconomy_json
+    return request  
+
+@patch('urllib2.urlopen', patched_urlopen_oconomy_content)      
+def test_get_monthly_summary():
+    oconomy = get_client().oconomy
+        
+    read = oconomy.get_monthly_summary('201011')
+    assert read == oconomy_dict, read
+
+@patch('urllib2.urlopen', patched_urlopen_oconomy_content)      
+def test_get_hours_worked_by_locations():
+    oconomy = get_client().oconomy
+        
+    read = oconomy.get_hours_worked_by_locations()
+    assert read == oconomy_dict, read
+
+@patch('urllib2.urlopen', patched_urlopen_oconomy_content)      
+def test_get_hours_worked_by_weeks():
+    oconomy = get_client().oconomy
+        
+    read = oconomy.get_hours_worked_by_weeks()
+    assert read == oconomy_dict, read
+
+@patch('urllib2.urlopen', patched_urlopen_oconomy_content)      
+def test_get_top_countries_by_hours():
+    oconomy = get_client().oconomy
+        
+    read = oconomy.get_top_countries_by_hours()
+    assert read == oconomy_dict, read
+
+@patch('urllib2.urlopen', patched_urlopen_oconomy_content)      
+def test_get_earnings_by_categories():
+    oconomy = get_client().oconomy
+        
+    read = oconomy.get_earnings_by_categories()
+    assert read == oconomy_dict, read
+
+@patch('urllib2.urlopen', patched_urlopen_oconomy_content)      
+def test_get_most_requested_skills():
+    oconomy = get_client().oconomy
+        
+    read = oconomy.get_most_requested_skills()
+    assert read == oconomy_dict, read
+

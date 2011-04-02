@@ -7,6 +7,15 @@ Changelog
 
 .. 
 
+.. _0.2:
+
+Version 0.2
+-----------------
+*October 2010*
+
+* All helpers classes moved to the utils.py, added Table helper class
+* *Incompatibility with previous release* Changed names of the methods' params to reflect real oDesk params - e.g. company_reference vs company name
+
 .. _0.1.2:
 
 Version 0.1.2
