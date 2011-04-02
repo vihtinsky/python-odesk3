@@ -1,9 +1,9 @@
 """
 Python bindings to odesk API
 python-odesk version 0.1
-(C) 2010 oDesk
+(C) 2010-2011 oDesk
 """
-VERSION = (0, 1, 2, 'final', 1)
+VERSION = (0, 4, 0, 'alpha', 1)
 
 from datetime import date
 
@@ -197,6 +197,18 @@ class Client(BaseClient):
         return self.read(url, data, method='DELETE', format=self.format)
 
 
+
+class OAuthClient(Client):
+
+    """
+    Client using oAuth method to authenticate
+    """
+
+    
+    pass
+
+
+    
 class Namespace(object):
     """
     A special 'proxy' class to keep API methods organized
