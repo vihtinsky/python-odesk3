@@ -52,6 +52,10 @@ from odesk.url import *
 from odesk.utils import *
 
 
+def _utf8_str(obj):
+    return unicode(obj).encode("utf-8")
+
+
 def signed_urlencode(secret, query={}):
     """
     Converts a mapping object to signed url query
@@ -63,10 +67,13 @@ def signed_urlencode(secret, query={}):
     """
     message = secret
     for key in sorted(query.keys()):
-        message += str(key) + str(query[key])
-    query = query.copy()
-    query['api_sig'] = hashlib.md5(message).hexdigest()
-    return urllib.urlencode(query)
+        message += _utf8_str(key) + _utf8_str(query[key])
+    #query = query.copy()
+    _query = {}
+    _query['api_sig'] = hashlib.md5(message).hexdigest()
+    for k, v in query.iteritems():
+        _query[_utf8_str(k)] = _utf8_str(v)
+    return urllib.urlencode(_query)
 
 
 
