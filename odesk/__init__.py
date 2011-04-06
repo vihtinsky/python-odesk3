@@ -133,7 +133,8 @@ class Client(BaseClient):
 
     def __init__(self, public_key, secret_key, api_token=None,
                 format='json',
-                auth='simple', team=True, hr=True, provider=True,
+                auth='simple', team=True, team2=True,
+                hr=True, provider=True,
                 mc=True, time_reports=True, finreports=True,
                 otask=True, oconomy=True, finance=True, ticket=True,
                 url=True):
@@ -151,6 +152,9 @@ class Client(BaseClient):
         
         if team:
             self.team = Team(self)
+
+        if team2:
+            self.team2 = Team2(self)
         
         if hr:
             self.hr = HR2(self)
