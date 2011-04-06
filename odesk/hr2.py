@@ -192,9 +192,11 @@ class HR2(Namespace):
 
     '''job api'''
 
-    def get_jobs(self, buyer_team_reference=None, include_sub_teams=False,
+    def get_jobs(self, buyer_team_reference=None,
+                 include_sub_teams=False,
                  status=None, created_by=None, created_time_from=None,
-                 created_time_to=None, page_offset=0, page_size=20, order_by=None):
+                 created_time_to=None, page_offset=0, page_size=20,
+                 order_by=None):
         """
         Retrieves all jobs that a user has manage_recruiting accesss to.
         This API call can be used to find the reference ID of a specific jobi
@@ -243,7 +245,8 @@ class HR2(Namespace):
     def get_job(self, job_reference):
         """
         Retrieve the complete job object for the referenced job.
-        This is only available to users with manage_recruiting permissions 
+        This is only available to users with manage_recruiting
+        permissions 
         within the team that the job is posted in.
 
         Parameters
@@ -288,7 +291,8 @@ class HR2(Namespace):
 
     '''offer api'''
 
-    def get_offers(self, buyer_team_reference=None, status=None, job_ref=None, 
+    def get_offers(self, buyer_team_reference=None, status=None,
+                   job_ref=None, 
                    buyer_ref=None, provider_ref=None, agency_ref=None, 
                    created_time_from=None, created_time_to=None,
                    page_offset=0, page_size=20, order_by=None):
