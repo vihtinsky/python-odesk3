@@ -22,9 +22,10 @@ from odesk.namespace import *
 from odesk.utils import *
 
 
-class OConomy(Namespace):
+class OConomy(GdsNamespace):
     api_url = 'oconomy/'
     version = 1
+
     
     def get_summary(self, year=None, month=None):
         if month and year:
@@ -65,10 +66,6 @@ class OConomy(Namespace):
         return result['home']['most_requested_skills']
 
 
-class GdsOConomy(GdsNamespace):
-    api_url = 'oconomy/'
-    version = 1
-    
     def get_summary(self, year=None, month=None):
         if month and year:
             url = 'summary/%s%s' % (str(year), str(month))
@@ -87,12 +84,13 @@ class NonauthGdsNamespace(GdsNamespace):
     '''
     def urlopen(self, url, data={}, method='GET'):
         if method == 'GET':
-            request = HttpRequest(url=url, data=data.copy(), method=method)
+            request = HttpRequest(url=url, data=data.copy(),
+                    method=method)
             return urllib2.urlopen(request)
         return None
 
 
-class OConomy2(NonauthGdsNamespace):
+class NonauthOConomy(NonauthGdsNamespace):
     '''
     oConomy Reports API
     '''

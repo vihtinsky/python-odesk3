@@ -57,6 +57,11 @@ You will need to use your public and private oDesk API keys::
 	
 To get oDesk API keys, please visit the http://www.odesk.com/services/api/keys	
 
+If you'd like to use experimental oAuth support, you will need to apply to be included into the oAuth beta program in oDesk.
+In this case you will need to supply your oAuth key and secret:
+
+	client = odesk.Client(auth='oauth', 'your public key', 'your secret key')
+
 .. _simple_example:
     
 Simple example

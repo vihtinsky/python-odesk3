@@ -6,6 +6,31 @@ Full list of classes and methods
 ********************************
 
 .. 
+.. _package:
+
+Package structure
+--------------------
+
+* __init__.py
+* auth.py
+* exceptions.py
+* finance.py
+* finreport.py
+* hr.py
+* http.py
+* message.py
+* namespace.py
+* oauth.py
+* oconomy.py
+* provider.py
+* task.py
+* team.py
+* ticket.py
+* timereport.py
+* url.py
+* utils.py
+
+.. 
 .. _exceptions:
 
 Exceptions
@@ -47,7 +72,13 @@ Client
 
 * class Client(BaseClient)
 
- * def __init__(self, public_key, secret_key, api_token=None, format='json')
+ * def __init__(self, public_key, secret_key, api_token=None,
+                format='json',
+                auth='simple', team=True, team2=True,
+                hr=True, provider=True,
+                mc=True, time_reports=True, finreports=True,
+                otask=True, oconomy=True, finance=True, ticket=True,
+                url=True)
   
  * Variables available inside Client:
  
@@ -55,42 +86,28 @@ Client
   * secret_key
   * api_token
   * format
+
+ * Routers inside Client:
+ 
   * auth
   * team
+  * team2
   * hr
   * provider
   * mc
   * time_reports
   * finreports
-  * otask
+  * task
+  * oconomy
+  * gds_oconomy
+  * finance
+  * ticket
+  * url
 
-.. _session_client:
-    
-SessionClient
----------------------
+You can disable any of router except auth, by specifing router_name=False during Client initialization, e.g:
 
-* class SessionClient(Client)
+   odesk_client = odesk.Client(public_key, secret_key, ticket=False)
 
- * def __init__(self, odesk_username=None, odesk_password=None, session_id=None, cookies=None, format='json')
- * def urlencode(self, data={})
- * def urlopen(self, url, data={}, method='GET')
- * def login(self)
- * def logout(self)
-  
- * Variables available inside Client:
- 
-  * odesk_username
-  * odesk_password
-  * session_id
-  * cookies
-  * format
-  * team
-  * hr
-  * provider
-  * mc
-  * time_reports
-  * finreports
-  * otask
   
 .. _classes:
     
