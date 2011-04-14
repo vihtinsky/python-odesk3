@@ -8,33 +8,38 @@ import logging
 import urllib2
 
 
-class HTTP400BadRequestError(urllib2.HTTPError):
+class BaseException(Exception):
+    def __init__(self, *args, **kwargs):
+        logging.debug("[python-odesk]:" + unicode(s) for s in args)
+        super(BaseException, self).__init__()
+
+class HTTP400BadRequestError(urllib2.HTTPError, BaseException):
     pass
 
 
-class HTTP401UnauthorizedError(urllib2.HTTPError):
+class HTTP401UnauthorizedError(urllib2.HTTPError, BaseException):
     pass
 
 
-class HTTP403ForbiddenError(urllib2.HTTPError):
+class HTTP403ForbiddenError(urllib2.HTTPError, BaseException):
     pass
 
 
-class HTTP404NotFoundError(urllib2.HTTPError):
+class HTTP404NotFoundError(urllib2.HTTPError, BaseException):
     pass
 
 
-class InvalidConfiguredException(Exception):
+class InvalidConfiguredException(BaseException):
     pass
 
 
-class APINotImplementedException(Exception):
+class APINotImplementedException(BaseException):
     pass
 
 
-class AuthenticationError(Exception):
+class AuthenticationError(BaseException):
     pass
 
 
-class NotAuthenticatedError(Exception):
+class NotAuthenticatedError(BaseException):
     pass

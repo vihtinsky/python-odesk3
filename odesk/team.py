@@ -150,27 +150,20 @@ class Team(Namespace):
         result = self.get(url, data)
         return result['streams']['snapshot']
 
-
-class Team2(Namespace):
-    """
-    Team v2 API
-    """
-
-    api_url = 'team/'
-    version = 2
-
-    def get_teamrooms(self):
+    def get_teamrooms_2(self):
         """
         Retrieve all teamrooms accessible to the authenticated user
         """
         url = 'teamrooms'
+        self.version = 2
         result = self.get(url)
         teamrooms = result['teamrooms']['teamroom']
         if not isinstance(teamrooms, list):
             teamrooms = [teamrooms]
+        self.version = 1
         return teamrooms
 
-    def get_snapshots(self, team_id, online='now'):
+    def get_snapshots_2(self, team_id, online='now'):
         """
         Retrieve team member snapshots
 
@@ -181,9 +174,11 @@ class Team2(Namespace):
                     last 24 hours / all users
         """
         url = 'teamrooms/%s' % team_id
+        self.version = 2
         result = self.get(url, {'online': online})
         snapshots = result['teamroom']['snapshot']
         if not isinstance(snapshots, list):
             snapshots = [snapshots]
+        self.version = 1
         return snapshots
 

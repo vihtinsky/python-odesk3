@@ -21,7 +21,7 @@ from odesk.exceptions import *
 from odesk.namespaces import *
 
 
-class OTask(Namespace):
+class Task(Namespace):
     api_url = 'otask/'
     version = 1
 

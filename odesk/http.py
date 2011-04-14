@@ -58,5 +58,3 @@ class HttpRequest(urllib2.Request):
         #End of hack
 
         return self.method
-
-

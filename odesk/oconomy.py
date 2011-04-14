@@ -27,43 +27,34 @@ class OConomy(GdsNamespace):
     version = 1
 
 
-    def get_summary(self, year=None, month=None):
-        if month and year:
-            url = 'home/summary/%s%s' % (str(year), str(month))
-        else:
-            url = 'home/summary'
-        result = self.get(url)
-
-        return result['home']['summary']
-
     def get_hours_worked_by_locations(self):
-        url = 'home/hours_worked_by_locations'
+        url = 'hours_worked_by_locations'
         result = self.get(url)
-        return result['home']['hours_worked_by_locations']
+        return result
 
 
     def get_hours_worked_by_weeks(self):
-        url = 'home/hours_worked_by_weeks'
+        url = 'hours_worked_by_weeks'
         result = self.get(url)
-        return result['home']['hours_worked_by_weeks']
+        return result
 
 
     def get_top_countries_by_hours(self):
-        url = 'home/top_countries_by_hours'
+        url = 'top_countries_by_hours'
         result = self.get(url)
-        return result['home']['top_countries_by_hours']
+        return result
 
 
     def get_charges_by_categories(self):
-        url = 'home/charges_by_categories'
+        url = 'charges_by_categories'
         result = self.get(url)
-        return result['home']['charges_by_categories']
+        return result
 
 
     def get_most_requested_skills(self):
-        url = 'home/most_requested_skills'
+        url = 'most_requested_skills'
         result = self.get(url)
-        return result['home']['most_requested_skills']
+        return result
 
 
     def get_summary(self, year=None, month=None):

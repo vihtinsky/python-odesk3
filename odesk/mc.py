@@ -21,7 +21,7 @@ from odesk.exceptions import *
 from odesk.namespaces import *
 
 
-class Messages(Namespace):
+class MC(Namespace):
     api_url = 'mc/'
     version = 1
 

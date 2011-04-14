@@ -23,9 +23,9 @@ from odesk.utils import *
 
 
 
-class HR2(Namespace):
+class HR(Namespace):
     """
-    HRv2 API
+    HR API
     """
     api_url = 'hr/'
     version = 2

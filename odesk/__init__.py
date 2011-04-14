@@ -35,21 +35,13 @@ except ImportError:
 
 from odesk.auth import *
 from odesk.exceptions import *
-from odesk.finance import *
-from odesk.finreport import *
-from odesk.hr2 import *
 from odesk.http import *
-from odesk.messages import *
 from odesk.namespaces import *
-from odesk.oauth import *
-from odesk.oconomy import *
-from odesk.provider import *
-from odesk.task import *
-from odesk.team import *
-from odesk.ticket import *
-from odesk.timereport import *
-from odesk.url import *
+#from odesk.oauth import *
 from odesk.utils import *
+
+
+__all__ = ["get_version", "Client", "utils"]
 
 
 def _utf8_str(obj):
@@ -67,7 +59,11 @@ def signed_urlencode(secret, query={}):
     """
     message = secret
     for key in sorted(query.keys()):
-        message += _utf8_str(key) + _utf8_str(query[key])
+        try:
+            message += _utf8_str(key) + _utf8_str(query[_utf8_str(key)])
+        except Exception, e:
+            logging.debug("[python-odesk] Error while trying to sign key: %s and query %s" % (key, query[key]))
+            raise e
     #query = query.copy()
     _query = {}
     _query['api_sig'] = hashlib.md5(message).hexdigest()
@@ -139,59 +135,64 @@ class Client(BaseClient):
     """
 
     def __init__(self, public_key, secret_key, api_token=None,
-                format='json',
-                auth='simple', team=True, team2=True,
-                hr=True, provider=True,
-                mc=True, time_reports=True, finreports=True,
-                otask=True, oconomy=True, finance=True, ticket=True,
-                url=True):
+                format='json', auth='simple', finance=True, finreports=True,
+                hr=True, mc=True, oconomy=True, provider=True,
+                task=True, team=True, ticket=True, time_reports=True, url=True):
 
         self.public_key = public_key
         self.secret_key = secret_key
         self.api_token = api_token
         self.format = format
 
-        #Namespaces
         if auth=='simple':
             self.auth = Auth(self)
-        elif auth=='oauth':
-            self.auth = OAuth(self)
+        #elif auth=='oauth':
+        #    self.auth = OAuth(self)
 
-        if team:
-            self.team = Team(self)
-
-        if team2:
-            self.team2 = Team2(self)
-
-        if hr:
-            self.hr = HR2(self)
-
-        if provider:
-            self.provider = Provider(self)
-
-        if mc:
-            self.mc = Messages(self)
-
-        if time_reports:
-            self.time_reports = TimeReports(self)
-
-        if finreports:
-            self.finreports = Finreports(self)
-
-        if otask:
-            self.otask = OTask(self)
-
-        if oconomy:
-            self.oconomy = OConomy(self)
-            self.gds_oconomy = GdsOConomy(self)
-
+        #Namespaces
         if finance:
+            from odesk.finance import Finance
             self.finance = Finance(self)
 
+        if finreports:
+            from odesk.finreport import Finreports
+            self.finreports = Finreports(self)
+
+        if hr:
+            from odesk.hr import HR
+            self.hr = HR(self)
+
+        if mc:
+            from odesk.mc import *
+            self.mc = MC(self)
+
+        if oconomy:
+            from odesk.oconomy import OConomy, NonauthOConomy
+            self.oconomy = OConomy(self)
+            self.nonauth_oconomy = NonauthOConomy(self)
+
+        if provider:
+            from odesk.provider import Provider
+            self.provider = Provider(self)
+
+        if task:
+            from odesk.task import Task
+            self.task = Task(self)
+
+        if team:
+            from odesk.team import Team
+            self.team = Team(self)
+
         if ticket:
+            from odesk.ticket import *
             self.ticket = Ticket(self)
 
+        if time_reports:
+            from odesk.timereport import TimeReport
+            self.time_report = TimeReport(self)
+
         if url:
+            from odesk.url import Url
             self.url = Url(self)
 
     #Shortcuts for HTTP methods
