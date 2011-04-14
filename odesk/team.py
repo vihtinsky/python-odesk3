@@ -18,7 +18,7 @@ except ImportError:
     import simplejson as json
 
 from odesk.exceptions import *
-from odesk.namespace import *
+from odesk.namespaces import *
 
 
 class Team(Namespace):
@@ -62,7 +62,7 @@ class Team(Namespace):
           company_id    The Company ID
           user_id       The User ID
           datetime      (default 'now') Timestamp either a datetime
-                        object 
+                        object
                         or a string in ISO 8601 format (in UTC)
                         yyyymmddTHHMMSSZ
                         or a string with UNIX timestamp (number of
@@ -74,7 +74,7 @@ class Team(Namespace):
         result = self.get(url)
         snapshot = result['snapshot']
         return snapshot
-    
+
     def update_snapshot(self, company_id, user_id, datetime=None,
                         memo=''):
         """
@@ -84,7 +84,7 @@ class Team(Namespace):
           company_id    The Company ID
           user_id       The User ID
           datetime      (default 'now') Timestamp either a datetime
-                        object 
+                        object
                         or a string in ISO 8601 format (in UTC)
                         yyyymmddTHHMMSSZ
                         or a string with UNIX timestamp (number of
@@ -104,7 +104,7 @@ class Team(Namespace):
           company_id    The Company ID
           user_id       The User ID
           datetime      (default 'now') Timestamp either a datetime
-                        object 
+                        object
                         or a string in ISO 8601 format (in UTC)
                         yyyymmddTHHMMSSZ
                         or a string with UNIX timestamp (number of
@@ -186,4 +186,4 @@ class Team2(Namespace):
         if not isinstance(snapshots, list):
             snapshots = [snapshots]
         return snapshots
-        
+

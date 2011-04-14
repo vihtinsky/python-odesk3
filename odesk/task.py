@@ -18,7 +18,7 @@ except ImportError:
     import simplejson as json
 
 from odesk.exceptions import *
-from odesk.namespace import *
+from odesk.namespaces import *
 
 
 class OTask(Namespace):
@@ -28,7 +28,7 @@ class OTask(Namespace):
     def get_company_tasks(self, company_id):
         """
         Retrieve a list of all tasks assigned within a company
-        The user authenticated must have been granted the appropriate 
+        The user authenticated must have been granted the appropriate
         hiring manager permissions
 
         Parameters
@@ -41,7 +41,7 @@ class OTask(Namespace):
     def get_team_tasks(self, company_id, team_id):
         """
         Retrieve a list of all tasks assigned to a team
-        The user authenticated must have been granted the appropriate 
+        The user authenticated must have been granted the appropriate
         hiring manager permissions
 
         Parameters
@@ -56,7 +56,7 @@ class OTask(Namespace):
     def get_user_tasks(self, company_id, team_id, user_id):
         """
         Retrieve a list of all tasks assigned to a team member
-        The user authenticated must have been granted the appropriate 
+        The user authenticated must have been granted the appropriate
         hiring manager permissions
 
         Parameters
@@ -71,9 +71,9 @@ class OTask(Namespace):
 
     def get_company_tasks_full(self, company_id):
         """
-        Retrieve full list of all tasks assigned within a company (with detail 
+        Retrieve full list of all tasks assigned within a company (with detail
         of level at which the task is assigned)
-        The user authenticated must have been granted the appropriate 
+        The user authenticated must have been granted the appropriate
         hiring manager permissions
 
         Parameters
@@ -85,9 +85,9 @@ class OTask(Namespace):
 
     def get_team_tasks_full(self, company_id, team_id):
         """
-        Retrieve a list of all tasks assigned to a team (with detail of level 
+        Retrieve a list of all tasks assigned to a team (with detail of level
         at which the task is assigned)
-        The user authenticated must have been granted the appropriate 
+        The user authenticated must have been granted the appropriate
         hiring manager permissions
 
         Parameters
@@ -101,9 +101,9 @@ class OTask(Namespace):
 
     def get_user_tasks_full(self, company_id, team_id, user_id):
         """
-        Retrieve a list of all tasks assigned to a team member (with detail of 
+        Retrieve a list of all tasks assigned to a team member (with detail of
         level at which the task is assigned)
-        The user authenticated must have been granted the appropriate 
+        The user authenticated must have been granted the appropriate
         hiring manager permissions
 
         Parameters
@@ -363,7 +363,7 @@ class OTask(Namespace):
     def update_batch_tasks(self, company_id, csv_data):
         """
         Batch update tasks using csv file contents.
-        This process actually deletes the corresponding tasks and replaces 
+        This process actually deletes the corresponding tasks and replaces
         them with the newly specified details
 
         Parameters

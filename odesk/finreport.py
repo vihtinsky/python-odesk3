@@ -18,7 +18,7 @@ except ImportError:
     import simplejson as json
 
 from odesk.exceptions import *
-from odesk.namespace import *
+from odesk.namespaces import *
 from odesk.utils import *
 
 
@@ -172,7 +172,7 @@ class Finreports(GdsNamespace):
         tq = str(query)
         result = self.get(url, data={'tq': tq})
         return result
-    
+
     def get_financial_entities_provider(self, provider_id, query):
         """
         Generate Financial Reports for an owned Account

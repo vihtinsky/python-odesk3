@@ -21,7 +21,7 @@ except ImportError:
 
 
 from odesk.exceptions import *
-from odesk.namespace import *
+from odesk.namespaces import *
 
 
 class OAuth(Namespace):
@@ -29,11 +29,11 @@ class OAuth(Namespace):
     oauth_request_url = 'https://www.odesk.com/api/auth/v1/oauth/token/request'
     oauth_auth_user_url ='https://www.odesk.com/services/api/auth'
     oauth_access_url = 'https://www.odesk.com/api/auth/v1/oauth/token/access'
-    
+
     key = ''
     secret = ''
-    
-    
+
+
 
     def sign_request(self, url, key, secret, method='GET', params=None):
         oauth_params = {
@@ -41,11 +41,11 @@ class OAuth(Namespace):
             'oauth_nonce': oauth.generate_nonce(),
             'oauth_timestamp': int(time.time())
         }
-        
+
         if params:
             for param in params.keys():
                 oauth_params[param] = params[param]
-            
+
         token = oauth.Token(key, secret)
         consumer = oauth.Consumer(key, secret)
 
@@ -57,7 +57,7 @@ class OAuth(Namespace):
 
         signature_method = oauth.SignatureMethod_HMAC_SHA1()
         req.sign_request(signature_method, consumer, token)
-        
+
         return req
 
 

@@ -40,7 +40,7 @@ from odesk.finreport import *
 from odesk.hr2 import *
 from odesk.http import *
 from odesk.messages import *
-from odesk.namespace import *
+from odesk.namespaces import *
 from odesk.oauth import *
 from odesk.oconomy import *
 from odesk.provider import *
@@ -150,47 +150,47 @@ class Client(BaseClient):
         self.secret_key = secret_key
         self.api_token = api_token
         self.format = format
-        
+
         #Namespaces
         if auth=='simple':
             self.auth = Auth(self)
         elif auth=='oauth':
             self.auth = OAuth(self)
-        
+
         if team:
             self.team = Team(self)
 
         if team2:
             self.team2 = Team2(self)
-        
+
         if hr:
             self.hr = HR2(self)
-        
+
         if provider:
             self.provider = Provider(self)
-            
+
         if mc:
             self.mc = Messages(self)
-            
+
         if time_reports:
             self.time_reports = TimeReports(self)
-            
+
         if finreports:
             self.finreports = Finreports(self)
-            
+
         if otask:
             self.otask = OTask(self)
-            
+
         if oconomy:
             self.oconomy = OConomy(self)
             self.gds_oconomy = GdsOConomy(self)
-        
+
         if finance:
             self.finance = Finance(self)
-            
+
         if ticket:
             self.ticket = Ticket(self)
-        
+
         if url:
             self.url = Url(self)
 

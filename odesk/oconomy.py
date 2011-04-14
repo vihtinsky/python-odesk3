@@ -18,7 +18,7 @@ except ImportError:
     import simplejson as json
 
 from odesk.exceptions import *
-from odesk.namespace import *
+from odesk.namespaces import *
 from odesk.utils import *
 
 
@@ -26,7 +26,7 @@ class OConomy(GdsNamespace):
     api_url = 'oconomy/'
     version = 1
 
-    
+
     def get_summary(self, year=None, month=None):
         if month and year:
             url = 'home/summary/%s%s' % (str(year), str(month))
@@ -74,20 +74,6 @@ class OConomy(GdsNamespace):
         result = self.get(url)
 
         return result
-
-
-class NonauthGdsNamespace(GdsNamespace):
-    '''
-    This class does not add authentication parameters
-    to request urls (api_sig, api_key & api_token)
-    Some APIs return error if called with authentication parameters
-    '''
-    def urlopen(self, url, data={}, method='GET'):
-        if method == 'GET':
-            request = HttpRequest(url=url, data=data.copy(),
-                    method=method)
-            return urllib2.urlopen(request)
-        return None
 
 
 class NonauthOConomy(NonauthGdsNamespace):

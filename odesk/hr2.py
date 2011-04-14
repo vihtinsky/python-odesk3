@@ -18,7 +18,7 @@ except ImportError:
     import simplejson as json
 
 from odesk.exceptions import *
-from odesk.namespace import *
+from odesk.namespaces import *
 from odesk.utils import *
 
 
@@ -67,7 +67,7 @@ class HR2(Namespace):
     def get_company_teams(self, company_referece):
         """
         Retrieve a list of teams within the company being referenced
-        (as long as the user has access to the referenced company) 
+        (as long as the user has access to the referenced company)
 
         Parameters
           company_reference     The company reference (can be found using get_companies method)
@@ -84,7 +84,7 @@ class HR2(Namespace):
 
     def get_company_users(self, company_referece, active=True):
         """
-        Retrieve a list of all users within the referenced company. 
+        Retrieve a list of all users within the referenced company.
         (only available for users with hiring privileges for the company)
 
         Parameters
@@ -169,10 +169,10 @@ class HR2(Namespace):
 
     '''userrole api'''
 
-    def get_user_role(self, user_reference=None, team_reference=None, 
+    def get_user_role(self, user_reference=None, team_reference=None,
                       sub_teams=False):
         '''
-        Retrieve a complete list of all roles the reference user 
+        Retrieve a complete list of all roles the reference user
         has within the referenced team/sub teams.
 
         Parameters
@@ -200,7 +200,7 @@ class HR2(Namespace):
         """
         Retrieves all jobs that a user has manage_recruiting accesss to.
         This API call can be used to find the reference ID of a specific jobi
-        
+
         Parameters
           buyer_team_reference  (optional)
           include_sub_teams     (optional: defaults to False)
@@ -213,27 +213,27 @@ class HR2(Namespace):
           order_by              (optional)
         """
         url = 'jobs'
-        
+
         data = {}
         if buyer_team_reference:
             data['buyer_team__reference'] = buyer_team_reference
-        
+
         data['include_sub_teams'] = False
         if include_sub_teams:
-            data['include_sub_teams'] = include_sub_teams            
-        
+            data['include_sub_teams'] = include_sub_teams
+
         if status:
-            data['status'] = status            
+            data['status'] = status
 
         if created_by:
-            data['created_by'] = created_by            
+            data['created_by'] = created_by
 
         if created_time_from:
-            data['created_time_from'] = created_time_from            
-            
+            data['created_time_from'] = created_time_from
+
         if created_time_to:
-            data['created_time_to'] = created_time_to            
-                                                        
+            data['created_time_to'] = created_time_to
+
         data['page'] = '%d;%d' % (page_offset, page_size)
 
         if order_by is not None:
@@ -246,7 +246,7 @@ class HR2(Namespace):
         """
         Retrieve the complete job object for the referenced job.
         This is only available to users with manage_recruiting
-        permissions 
+        permissions
         within the team that the job is posted in.
 
         Parameters
@@ -266,7 +266,7 @@ class HR2(Namespace):
         url = 'jobs'
         result = self.post(url, {'job_data': job_data})
         return result
-        
+
     def update_job(self, job_id, job_data):
         """
         Update a job
@@ -292,8 +292,8 @@ class HR2(Namespace):
     '''offer api'''
 
     def get_offers(self, buyer_team_reference=None, status=None,
-                   job_ref=None, 
-                   buyer_ref=None, provider_ref=None, agency_ref=None, 
+                   job_ref=None,
+                   buyer_ref=None, provider_ref=None, agency_ref=None,
                    created_time_from=None, created_time_to=None,
                    page_offset=0, page_size=20, order_by=None):
         """
@@ -316,28 +316,28 @@ class HR2(Namespace):
         data = {}
         if buyer_team_reference:
             data['buyer_team__reference'] = buyer_team_reference
-        
+
         if status:
-            data['status'] = status            
+            data['status'] = status
 
         if job_ref:
-            data['job_ref'] = job_ref     
+            data['job_ref'] = job_ref
 
         if buyer_ref:
-            data['buyer_ref'] = buyer_ref 
-            
+            data['buyer_ref'] = buyer_ref
+
         if provider_ref:
-            data['provider_ref'] = provider_ref    
-            
+            data['provider_ref'] = provider_ref
+
         if agency_ref:
-            data['agency_ref'] = agency_ref                                                 
+            data['agency_ref'] = agency_ref
 
         if created_time_from:
-            data['created_time_from'] = created_time_from            
-            
+            data['created_time_from'] = created_time_from
+
         if created_time_to:
-            data['created_time_to'] = created_time_to        
-                    
+            data['created_time_to'] = created_time_to
+
         data['page'] = '%d;%d' % (page_offset, page_size)
 
         if order_by is not None:
@@ -360,7 +360,7 @@ class HR2(Namespace):
     '''engagement api'''
 
     def get_engagements(self, buyer_team_reference=None, include_sub_teams=False,
-                 status=None, provider_ref=None, agency_ref=None, 
+                 status=None, provider_ref=None, agency_ref=None,
                  created_time_from=None, created_time_to=None,
                  page_offset=0, page_size=20, order_by=None):
         """
@@ -379,30 +379,30 @@ class HR2(Namespace):
           order_by              (optional)
         """
         url = 'engagements'
-        
+
         data = {}
         if buyer_team_reference:
             data['buyer_team__reference'] = buyer_team_reference
-        
+
         data['include_sub_teams'] = False
         if include_sub_teams:
-            data['include_sub_teams'] = include_sub_teams            
-        
+            data['include_sub_teams'] = include_sub_teams
+
         if status:
-            data['status'] = status            
+            data['status'] = status
 
         if provider_ref:
-            data['provider_ref'] = provider_ref 
+            data['provider_ref'] = provider_ref
 
         if agency_ref:
-            data['agency_ref'] = agency_ref           
+            data['agency_ref'] = agency_ref
 
         if created_time_from:
-            data['created_time_from'] = created_time_from            
-            
+            data['created_time_from'] = created_time_from
+
         if created_time_to:
-            data['created_time_to'] = created_time_to           
-        
+            data['created_time_to'] = created_time_to
+
         data['page'] = '%d;%d' % (page_offset, page_size)
 
         if order_by is not None:

@@ -18,21 +18,21 @@ except ImportError:
     import simplejson as json
 
 from odesk.exceptions import *
-from odesk.namespace import *
+from odesk.namespaces import *
 
 
 class Url(Namespace):
     api_url = 'shorturl/'
-    version = 1   
-    
+    version = 1
+
     def get_shorten(self, long_url):
         url = 'shorten'
-        data = {'url': long_url}    
+        data = {'url': long_url}
         result = self.get(url, data=data)
-        return result['short_url']             
+        return result['short_url']
 
     def get_expand(self, short_url):
         url = 'expand'
-        data = {'url': short_url}    
+        data = {'url': short_url}
         result = self.get(url, data=data)
         return result['long_url']

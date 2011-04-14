@@ -52,9 +52,9 @@ class Namespace(object):
 
     def delete(self, url, data={}):
         return self.client.delete(self.full_url(url), data)
-        
-        
-        
+
+
+
 class GdsNamespace(Namespace):
     base_url = 'https://www.odesk.com/gds/'
 
@@ -83,3 +83,15 @@ class GdsNamespace(Namespace):
         return self.read(self.full_url(url), data, method='GET')
 
 
+class NonauthGdsNamespace(GdsNamespace):
+    '''
+    This class does not add authentication parameters
+    to request urls (api_sig, api_key & api_token)
+    Some APIs return error if called with authentication parameters
+    '''
+    def urlopen(self, url, data={}, method='GET'):
+        if method == 'GET':
+            request = HttpRequest(url=url, data=data.copy(),
+                    method=method)
+            return urllib2.urlopen(request)
+        return None

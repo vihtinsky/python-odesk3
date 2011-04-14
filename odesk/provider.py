@@ -18,7 +18,7 @@ except ImportError:
     import simplejson as json
 
 from odesk.exceptions import *
-from odesk.namespace import *
+from odesk.namespaces import *
 from odesk.utils import *
 
 
@@ -63,9 +63,9 @@ class Provider(Namespace):
         Search oDesk providers
 
         Parameters
-          data          A dict (q:query, c1:Job Category, c2:Secondary Category, 
+          data          A dict (q:query, c1:Job Category, c2:Secondary Category,
                         fb:Feedback, hrs:Hours, ir:Is Recent, min:Min Hourly Rate,
-                        max:Max Hourly Rate, loc:Location, pt:Provider Type, 
+                        max:Max Hourly Rate, loc:Location, pt:Provider Type,
                         last:Last Activity, test:Test, port:Total Portfolio Items,
                         rdy:Is oDesk Ready, ui:English Skills, ag:Agency,
                         to:Titles Only, g:Group Member)
@@ -87,7 +87,7 @@ class Provider(Namespace):
         Search oDesk jobs
 
         Parameters
-          data          A dict (q:query, c1:Job Category, c2:Secondary Category, 
+          data          A dict (q:query, c1:Job Category, c2:Secondary Category,
                         fb:Feedback, min:Min Budget, max:Max Budget, t:Job Type,
                         wl:Hours/Week, dur:Duration of Engagement, dp:Date Posted,
                         st:Status for Search, tba:Total Billed Assignments,
@@ -107,7 +107,7 @@ class Provider(Namespace):
 
     def _get_resume_info(self, provider_ciphertext, info_type):
         '''
-        info_type can be one of 
+        info_type can be one of
         (otherexp|skills|tests|certificates|employments|\
         educations|projects)
         '''
@@ -122,7 +122,7 @@ class Provider(Namespace):
     def _add_resume_info_item(self, provider_ciphertext, info_type,\
         item_data):
         '''
-        info_type can be one of 
+        info_type can be one of
         (otherexp|skills|tests|certificates|employments|\
         educations|projects
         '''
@@ -197,7 +197,7 @@ class Provider(Namespace):
           provider_ciphertext   Provider cipher text (key)
           skill_id              Resource id of the referenced skill
           data                  dict containing details of skill to delete
-          """        
+          """
         return self._update_resume_info_item(provider_ciphertext,\
             skill_id, 'skills', data)
 
@@ -211,7 +211,7 @@ class Provider(Namespace):
           """
         return self._delete_resume_info_item(provider_ciphertext,\
             skill_id, 'skills')
-    
+
     def get_quickinfo(self, provider_ciphertext):
         """
         Retrieve provider 'quick info'

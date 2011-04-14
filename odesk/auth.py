@@ -18,7 +18,28 @@ except ImportError:
     import simplejson as json
 
 from odesk.exceptions import *
-from odesk.namespace import *
+from odesk.namespaces import *
+
+
+def signed_urlencode(secret, query={}):
+    """
+    Converts a mapping object to signed url query
+
+    >>> signed_urlencode('some$ecret', {})
+    'api_sig=5da1f8922171fbeffff953b773bcdc7f'
+    >>> signed_urlencode('some$ecret', {'spam':42,'foo':'bar'})
+    'api_sig=11b1fc2e6555297bdc144aed0a5e641c&foo=bar&spam=42'
+    """
+    message = secret
+    for key in sorted(query.keys()):
+        message += _utf8_str(key) + _utf8_str(query[key])
+    #query = query.copy()
+    _query = {}
+    _query['api_sig'] = hashlib.md5(message).hexdigest()
+    for k, v in query.iteritems():
+        _query[_utf8_str(k)] = _utf8_str(v)
+    return urllib.urlencode(_query)
+
 
 
 class Auth(Namespace):
