@@ -5,7 +5,7 @@
 Full list of classes and methods
 ********************************
 
-.. 
+..
 .. _package:
 
 Package structure
@@ -14,23 +14,28 @@ Package structure
 * __init__.py
 * auth.py
 * exceptions.py
-* finance.py
-* finreport.py
-* hr.py
 * http.py
-* message.py
 * namespace.py
 * oauth.py
-* oconomy.py
-* provider.py
-* task.py
-* team.py
-* ticket.py
-* timereport.py
-* url.py
 * utils.py
+* routers
+* tests.py
+|__
+   * __init__.py
+   * finance.py
+   * finreport.py
+   * hr.py
+   * mc.py
+   * oconomy.py
+   * provider.py
+   * task.py
+   * team.py
+   * ticket.py
+   * timereport.py
+   * url.py
 
-.. 
+
+..
 .. _exceptions:
 
 Exceptions
@@ -64,53 +69,50 @@ A basic HTTP client which supports signing of requests as well as de-serializing
 
 * class GdsNamespace
 
+* class NonAuthGdsNamespace
+
 
 .. _client:
-    
+
 Client
 ---------------------
 
 * class Client(BaseClient)
 
  * def __init__(self, public_key, secret_key, api_token=None,
-                format='json',
-                auth='simple', team=True, team2=True,
-                hr=True, provider=True,
-                mc=True, time_reports=True, finreports=True,
-                otask=True, oconomy=True, finance=True, ticket=True,
-                url=True)
-  
+                format='json', auth='simple', finance=True, finreport=True,
+                hr=True, mc=True, oconomy=True, provider=True,
+                task=True, team=True, ticket=True, timereport=True, url=True)
+
  * Variables available inside Client:
- 
+
   * public_key
   * secret_key
   * api_token
   * format
 
  * Routers inside Client:
- 
+
   * auth
-  * team
-  * team2
-  * hr
-  * provider
-  * mc
-  * time_reports
-  * finreports
-  * task
-  * oconomy
-  * gds_oconomy
   * finance
+  * finreport
+  * hr
+  * mc
+  * oconomy
+  * provider
+  * task
+  * team
   * ticket
+  * timereport
   * url
 
 You can disable any of router except auth, by specifing router_name=False during Client initialization, e.g:
 
    odesk_client = odesk.Client(public_key, secret_key, ticket=False)
 
-  
+
 .. _classes:
-    
+
 Other classes
 ---------------------
 
@@ -199,9 +201,9 @@ Other classes
  * get_company_report(self, company_id, query, hours=False)
  * get_agency_report(self, company_id, agency_id, query, hours=False)
  * query is the odesk.Query object
- 
+
 * FinReports(GdsNamespace)
- 
+
  * get_provider_billings(self, provider_id, query)
  * get_provider_teams_billings(self, provider_team_id, query)
  * get_provider_companies_billings(self, provider_company_id, query)
@@ -217,24 +219,24 @@ Other classes
 
 * utils.py
 
-	* Q(object)
-	 
-	 * Simple query constructor
-	 * Example of usage::
-	  
-		odesk.Q('worked_on') <= date.today()
-	  
-	         
-	* Query(object)
-	 
-	 * Simple query
-	 * DEFAULT_TIMEREPORT_FIELDS = ['worked_on', 'team_id', 'team_name', 'task', 'memo','hours',]
-	 * DEFAULT_FINREPORT_FIELDS = ['reference', 'date', 'buyer_company__id', 'buyer_company_name', 'buyer_team__id', 'buyer_team_name', 'provider_company__id', 'provider_company_name', 'provider_team__id', 'provider_team_name', 'provider__id', 'provider_name', 'type', 'subtype', 'amount']
-	 * __init__(self, select, where=None, order_by=None)
-	 * __str__(self)
-	 * Examples of usage::
-	 
-	 	odesk.Query(select=odesk.Query.DEFAULT_TIMEREPORT_FIELDS, where=(odesk.Q('worked_on') <= date.today()) & (odesk.Q('worked_on') > '2010-05-01'))
-		odesk.Query(select=['date', 'type', 'amount'], where=(odesk.Q('date') <= date.today()))
-		
-	* Table(object) 
+    * Q(object)
+
+     * Simple query constructor
+     * Example of usage::
+
+        odesk.Q('worked_on') <= date.today()
+
+
+    * Query(object)
+
+     * Simple query
+     * DEFAULT_TIMEREPORT_FIELDS = ['worked_on', 'team_id', 'team_name', 'task', 'memo','hours',]
+     * DEFAULT_FINREPORT_FIELDS = ['reference', 'date', 'buyer_company__id', 'buyer_company_name', 'buyer_team__id', 'buyer_team_name', 'provider_company__id', 'provider_company_name', 'provider_team__id', 'provider_team_name', 'provider__id', 'provider_name', 'type', 'subtype', 'amount']
+     * __init__(self, select, where=None, order_by=None)
+     * __str__(self)
+     * Examples of usage::
+
+        odesk.Query(select=odesk.Query.DEFAULT_TIMEREPORT_FIELDS, where=(odesk.Q('worked_on') <= date.today()) & (odesk.Q('worked_on') > '2010-05-01'))
+        odesk.Query(select=['date', 'type', 'amount'], where=(odesk.Q('date') <= date.today()))
+
+    * Table(object)

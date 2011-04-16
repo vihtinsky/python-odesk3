@@ -5,11 +5,11 @@
 Roadmap
 ***************
 
-.. 
+..
 
-.. _0.2:
+.. _0.5:
 
-Version 0.2
+Version 0.5
 -----------------
-*October 2010*
-
+*May 2010*
+** oAuth support

@@ -135,9 +135,9 @@ class Client(BaseClient):
     """
 
     def __init__(self, public_key, secret_key, api_token=None,
-                format='json', auth='simple', finance=True, finreports=True,
+                format='json', auth='simple', finance=True, finreport=True,
                 hr=True, mc=True, oconomy=True, provider=True,
-                task=True, team=True, ticket=True, time_reports=True, url=True):
+                task=True, team=True, ticket=True, timereport=True, url=True):
 
         self.public_key = public_key
         self.secret_key = secret_key
@@ -154,9 +154,9 @@ class Client(BaseClient):
             from odesk.routers.finance import Finance
             self.finance = Finance(self)
 
-        if finreports:
+        if finreport:
             from odesk.routers.finreport import Finreports
-            self.finreports = Finreports(self)
+            self.finreport = Finreports(self)
 
         if hr:
             from odesk.routers.hr import HR
@@ -187,9 +187,9 @@ class Client(BaseClient):
             from odesk.routers.ticket import Ticket
             self.ticket = Ticket(self)
 
-        if time_reports:
+        if timereport:
             from odesk.routers.timereport import TimeReport
-            self.time_report = TimeReport(self)
+            self.timereport = TimeReport(self)
 
         if url:
             from odesk.routers.url import Url
