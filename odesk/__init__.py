@@ -151,48 +151,48 @@ class Client(BaseClient):
 
         #Namespaces
         if finance:
-            from odesk.finance import Finance
+            from odesk.routers.finance import Finance
             self.finance = Finance(self)
 
         if finreports:
-            from odesk.finreport import Finreports
+            from odesk.routers.finreport import Finreports
             self.finreports = Finreports(self)
 
         if hr:
-            from odesk.hr import HR
+            from odesk.routers.hr import HR
             self.hr = HR(self)
 
         if mc:
-            from odesk.mc import *
+            from odesk.routers.mc import *
             self.mc = MC(self)
 
         if oconomy:
-            from odesk.oconomy import OConomy, NonauthOConomy
+            from odesk.routers.oconomy import OConomy, NonauthOConomy
             self.oconomy = OConomy(self)
             self.nonauth_oconomy = NonauthOConomy(self)
 
         if provider:
-            from odesk.provider import Provider
+            from odesk.routers.provider import Provider
             self.provider = Provider(self)
 
         if task:
-            from odesk.task import Task
+            from odesk.routers.task import Task
             self.task = Task(self)
 
         if team:
-            from odesk.team import Team
+            from odesk.routers.team import Team
             self.team = Team(self)
 
         if ticket:
-            from odesk.ticket import *
+            from odesk.routers.ticket import Ticket
             self.ticket = Ticket(self)
 
         if time_reports:
-            from odesk.timereport import TimeReport
+            from odesk.routers.timereport import TimeReport
             self.time_report = TimeReport(self)
 
         if url:
-            from odesk.url import Url
+            from odesk.routers.url import Url
             self.url = Url(self)
 
     #Shortcuts for HTTP methods

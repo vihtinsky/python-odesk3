@@ -8,7 +8,7 @@ from odesk import Client, BaseClient, utils, get_version, signed_urlencode
 from odesk.exceptions import *
 from odesk.namespaces import *
 from odesk.auth import Auth
-from odesk.team import Team
+from odesk.routers.team import Team
 
 from mock import Mock, patch
 import urllib2
