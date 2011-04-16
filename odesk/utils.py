@@ -111,9 +111,10 @@ class Table(object):
         self._rows = data['rows']
         self.cols = [col['label'] for col in data['cols']]
         self.rows = []
-        if data['rows'][0] != '': #Empty response
-            for row in [row['c'] for row in data['rows']]:
-                self.rows.append([cell['v'] for cell in row])
+        if data['rows']:
+            if data['rows'][0] != '': #Empty response
+                for row in [row['c'] for row in data['rows']]:
+                    self.rows.append([cell['v'] for cell in row])
 
     def __getitem__(self, key):
         if not isinstance(key, (slice, int)):
