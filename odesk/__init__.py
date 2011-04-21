@@ -45,7 +45,12 @@ __all__ = ["get_version", "Client", "utils"]
 
 
 def _utf8_str(obj):
-    return unicode(obj).encode("utf-8")
+    try:
+        return unicode(obj).encode("utf8")
+    except UnicodeDecodeError, e:
+        # input could be an utf8 encoded
+        obj.decode("utf8")  # check if it is a valid utf8 string
+        return obj
 
 
 def signed_urlencode(secret, query={}):
