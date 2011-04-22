@@ -37,7 +37,7 @@ from odesk.auth import *
 from odesk.exceptions import *
 from odesk.http import *
 from odesk.namespaces import *
-#from odesk.oauth import *
+from odesk.oauth import OAuth
 from odesk.utils import *
 
 
@@ -104,7 +104,10 @@ class BaseClient(object):
         self.last_url = url
         self.last_data = data
 
-        query = self.urlencode(data)
+        if isinstance(self.auth, OAuth):
+            query = self.auth.urlencode(url, self.oauth_access_token, self.oauth_access_token_secret, data)
+        else:
+            query = self.urlencode(data)
 
         if method == 'GET':
             url += '?' + query
@@ -135,6 +138,7 @@ class Client(BaseClient):
     """
 
     def __init__(self, public_key, secret_key, api_token=None,
+                oauth_access_token=None, oauth_access_token_secret=None,
                 format='json', auth='simple', finance=True, finreport=True,
                 hr=True, mc=True, oconomy=True, provider=True,
                 task=True, team=True, ticket=True, timereport=True, url=True):
@@ -146,8 +150,10 @@ class Client(BaseClient):
 
         if auth=='simple':
             self.auth = Auth(self)
-        #elif auth=='oauth':
-        #    self.auth = OAuth(self)
+        elif auth=='oauth':
+            self.auth = OAuth(self)
+            self.oauth_access_token = oauth_access_token
+            self.oauth_access_token_secret = oauth_access_token_secret
 
         #Namespaces
         if finance:
