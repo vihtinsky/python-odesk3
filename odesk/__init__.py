@@ -88,6 +88,7 @@ class BaseClient(object):
         self.public_key = public_key
         self.secret_key = secret_key
         self.api_token = api_token
+        self.auth = None
 
     def urlencode(self, data={}):
         data = data.copy()
@@ -110,7 +111,8 @@ class BaseClient(object):
         self.last_data = data
 
         if isinstance(self.auth, OAuth):
-            query = self.auth.urlencode(url, self.oauth_access_token, self.oauth_access_token_secret, data)
+            query = self.auth.urlencode(url, self.oauth_access_token,\
+                self.oauth_access_token_secret, data)
         else:
             query = self.urlencode(data)
 
