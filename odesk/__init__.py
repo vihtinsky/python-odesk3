@@ -5,6 +5,7 @@ python-odesk version 0.4
 """
 VERSION = (0, 4, 0, 'alpha', 1)
 
+
 def get_version():
     version = '%s.%s' % (VERSION[0], VERSION[1])
     if VERSION[2]:
@@ -75,7 +76,6 @@ def signed_urlencode(secret, query={}):
     for k, v in query.iteritems():
         _query[_utf8_str(k)] = _utf8_str(v)
     return urllib.urlencode(_query)
-
 
 
 class BaseClient(object):
@@ -155,9 +155,9 @@ class Client(BaseClient):
         self.api_token = api_token
         self.format = format
 
-        if auth=='simple':
+        if auth == 'simple':
             self.auth = Auth(self)
-        elif auth=='oauth':
+        elif auth == 'oauth':
             self.auth = OAuth(self)
             self.oauth_access_token = oauth_access_token
             self.oauth_access_token_secret = oauth_access_token_secret

@@ -18,7 +18,6 @@ class OAuth(Namespace):
     authorize_url = 'https://www.odesk.com/services/api/auth'
     access_token_url = 'https://www.odesk.com/api/auth/v1/oauth/token/access'
 
-
     def urlencode(self, url, key, secret, data={}, method='GET'):
         """
         Converts a mapping object to signed url query
@@ -37,13 +36,11 @@ class OAuth(Namespace):
         request.sign_request(signature_method, consumer, token)
         return request.to_postdata()
 
-
     def get_oauth_consumer(self):
         """
         Returns OAuth consumer object
         """
         return oauth.Consumer(self.client.public_key, self.client.secret_key)
-
 
     def get_request_token(self):
         """
@@ -58,7 +55,6 @@ class OAuth(Namespace):
         self.request_token_secret = request_token['oauth_token_secret']
         return self.request_token, self.request_token_secret
 
-
     def get_authorize_url(self, callback_url=None):
         """
         Returns authentication URL to be used in a browser
@@ -69,7 +65,6 @@ class OAuth(Namespace):
         else:
             params = urllib.urlencode({'oauth_token': oauth_token})
         return '%s?%s' % (self.authorize_url, params)
-
 
     def get_access_token(self, verifier):
         """
