@@ -107,12 +107,12 @@ class Table(object):
     """
 
     def __init__(self, data):
-        self._cols = data['cols'] #Original data
+        self._cols = data['cols']   # Original data
         self._rows = data['rows']
         self.cols = [col['label'] for col in data['cols']]
         self.rows = []
         if data['rows']:
-            if data['rows'][0] != '': #Empty response
+            if data['rows'][0] != '':   # Empty response
                 for row in [row['c'] for row in data['rows']]:
                     self.rows.append([cell['v'] for cell in row])
 

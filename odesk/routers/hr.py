@@ -22,7 +22,6 @@ from odesk.namespaces import *
 from odesk.utils import *
 
 
-
 class HR(Namespace):
     """
     HR API

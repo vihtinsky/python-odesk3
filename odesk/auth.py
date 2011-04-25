@@ -71,4 +71,3 @@ class Auth(Namespace):
         data = {'api_token': self.client.api_token,
                 'api_key': self.client.public_key}
         return self.delete(url, data)
-

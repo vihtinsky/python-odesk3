@@ -13,6 +13,7 @@ class BaseException(Exception):
         logging.debug("[python-odesk]:" + unicode(s) for s in args)
         super(BaseException, self).__init__()
 
+
 class HTTP400BadRequestError(urllib2.HTTPError, BaseException):
     pass
 

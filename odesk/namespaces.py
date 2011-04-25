@@ -54,7 +54,6 @@ class Namespace(object):
         return self.client.delete(self.full_url(url), data)
 
 
-
 class GdsNamespace(Namespace):
     base_url = 'https://www.odesk.com/gds/'
 

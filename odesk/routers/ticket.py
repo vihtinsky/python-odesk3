@@ -63,7 +63,7 @@ class Ticket(Namespace):
                 'email': email,
                 }
         result = self.post(url, data)
-        return result#TBD
+        return result  # TBD
 
     def post_reply_ticket(self, ticket_key, message):
         """
@@ -74,6 +74,6 @@ class Ticket(Namespace):
           message
         """
         url = 'tickets/%s' % str(ticket_key)
-        data = {'message': message,}
+        data = {'message': message}
         result = self.post(url, data)
-        return result#TBD
+        return result  # TBD

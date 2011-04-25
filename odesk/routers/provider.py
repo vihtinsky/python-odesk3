@@ -26,15 +26,15 @@ class Provider(Namespace):
     api_url = 'profiles/'
     version = 1
 
-    resume_info_result_keys={'otherexp':'experiences',
-                             'skills':'skills',
-                             'tests':'tests',
-                             'certificates':'certificates',
-                             'employments':'employments',
-                             'educations':'educations',
-                             'projects':'projects',
-                             'quickinfo':'quick_info'
-                             }
+    resume_info_result_keys = {'otherexp': 'experiences',
+                               'skills': 'skills',
+                               'tests': 'tests',
+                               'certificates': 'certificates',
+                               'employments': 'employments',
+                               'educations': 'educations',
+                               'projects': 'projects',
+                               'quickinfo': 'quick_info'
+                               }
 
     def get_provider(self, provider_ciphertext):
         """
