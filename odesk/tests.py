@@ -8,6 +8,7 @@ from odesk import Client, BaseClient, utils, get_version, signed_urlencode
 from odesk.exceptions import *
 from odesk.namespaces import *
 from odesk.auth import Auth
+from odesk.oauth import OAuth
 from odesk.routers.team import Team
 
 from mock import Mock, patch
@@ -1408,3 +1409,42 @@ def test_get_most_requested_skills():
     read = oconomy.get_most_requested_skills()
     assert read == oconomy_dict, read
 
+
+def get_oauth_client():
+    key = '56adf4b66aaf61444a77796c17c0da53'
+    secret = 'e5864a0bcbed2085'
+    return Client(key, secret, auth='oauth')
+
+def setup_oauth():
+    return OAuth(get_oauth_client())
+
+def test_oauth_full_url():
+    oa = setup_oauth()
+    request_token_url = oa.full_url('oauth/token/request')
+    access_token_url = oa.full_url('oauth/token/access')
+    assert request_token_url == oa.request_token_url, request_token_url
+    assert access_token_url == oa.access_token_url, access_token_url
+
+def patched_httplib2_request(*args, **kwargs):
+    return {'status': '200'}, 'oauth_callback_confirmed=1&oauth_token=709d434e6b37a25c50e95b0e57d24c46&oauth_token_secret=193ef27f57ab4e37'
+
+@patch('httplib2.Http.request', patched_httplib2_request)
+def test_oauth_get_request_token():
+    oa = setup_oauth()
+    assert oa.get_request_token() == ('709d434e6b37a25c50e95b0e57d24c46', '193ef27f57ab4e37')
+
+@patch('httplib2.Http.request', patched_httplib2_request)
+def test_oauth_get_authorize_url():
+    oa = setup_oauth()
+    assert oa.get_authorize_url() == 'https://www.odesk.com/services/api/auth?oauth_token=709d434e6b37a25c50e95b0e57d24c46'
+    assert oa.get_authorize_url('http://example.com/oauth/complete') == 'https://www.odesk.com/services/api/auth?oauth_token=709d434e6b37a25c50e95b0e57d24c46&oauth_callback=http%3A%2F%2Fexample.com%2Foauth%2Fcomplete'
+
+def patched_httplib2_access(*args, **kwargs):
+    return {'status': '200'}, 'oauth_token=aedec833d41732a584d1a5b4959f9cd6&oauth_token_secret=9d9cccb363d2b13e'
+
+@patch('httplib2.Http.request', patched_httplib2_access)
+def test_oauth_get_access_token():
+    oa = setup_oauth()
+    oa.request_token = '709d434e6b37a25c50e95b0e57d24c46'
+    oa.request_token_secret = '193ef27f57ab4e37'
+    assert oa.get_access_token('9cbcbc19f8acc2d85a013e377ddd4118') == ('aedec833d41732a584d1a5b4959f9cd6', '9d9cccb363d2b13e')
