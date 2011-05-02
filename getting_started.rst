@@ -10,7 +10,7 @@ Getting started
 
 Requirements
 -----------------
-No external dependencies for using python-odesk, but there are some to run the tests:
+You need to install oauth2 to run the python-odesk, and mock and nosetests if you plan to develop python-odesk and/or run library's tests.
 
 Mock::
 

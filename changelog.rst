@@ -11,7 +11,7 @@ Changelog
 
 Version 0.4
 -----------------
-*April 2011*
+*May 2011*
 
 * *Incompatibility with previous release* Changed name of the otask router to the task
 * *Incompatibility with previous release* Chaged name of the oticket router to the ticket ??
@@ -23,7 +23,7 @@ Version 0.4
 * Added logging inside exceptions
 * Added possiblity to switch off unused routers inside client class
 * Added oconomy, finance routers
-* Added initial template for planned oDesk oAuth support (not working yet)
+* Added oDesk oAuth support
 
 .. _0.2:
 
