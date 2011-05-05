@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -5,21 +7,22 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Getting started &mdash; python-odesk v0.1.2 documentation</title>
+    <title>Getting started &mdash; python-odesk v0.4 documentation</title>
     <link rel="stylesheet" href="static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.1.2',
-        COLLAPSE_MODINDEX: false,
+        VERSION:     '0.4',
+        COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="static/jquery.js"></script>
+    <script type="text/javascript" src="static/underscore.js"></script>
     <script type="text/javascript" src="static/doctools.js"></script>
-    <link rel="top" title="python-odesk v0.1.2 documentation" href="index.html" />
+    <link rel="top" title="python-odesk v0.4 documentation" href="index.html" />
     <link rel="next" title="Full list of classes and methods" href="full_list.html" />
     <link rel="prev" title="Python bindings to oDesk API" href="index.html" /> 
   </head>
@@ -36,46 +39,46 @@
         <li class="right" >
           <a href="index.html" title="Python bindings to oDesk API"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">python-odesk v0.1.2 documentation</a> &raquo;</li> 
+        <li><a href="index.html">python-odesk v0.4 documentation</a> &raquo;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
-            <h3><a href="index.html">Table Of Contents</a></h3>
-            <ul>
-<li><a class="reference external" href="">Getting started</a><ul>
-<li><a class="reference external" href="#requirements">Requirements</a></li>
-<li><a class="reference external" href="#install">Install</a></li>
-<li><a class="reference external" href="#settings">Settings</a></li>
-<li><a class="reference external" href="#simple-example">Simple example</a></li>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Getting started</a><ul>
+<li><a class="reference internal" href="#requirements">Requirements</a></li>
+<li><a class="reference internal" href="#install">Install</a></li>
+<li><a class="reference internal" href="#settings">Settings</a></li>
+<li><a class="reference internal" href="#simple-example">Simple example</a></li>
 </ul>
 </li>
 </ul>
 
-            <h4>Previous topic</h4>
-            <p class="topless"><a href="index.html"
-                                  title="previous chapter">Python bindings to oDesk API</a></p>
-            <h4>Next topic</h4>
-            <p class="topless"><a href="full_list.html"
-                                  title="next chapter">Full list of classes and methods</a></p>
-            <h3>This Page</h3>
-            <ul class="this-page-menu">
-              <li><a href="sources/getting_started.txt"
-                     rel="nofollow">Show Source</a></li>
-            </ul>
-          <div id="searchbox" style="display: none">
-            <h3>Quick search</h3>
-              <form class="search" action="search.html" method="get">
-                <input type="text" name="q" size="18" />
-                <input type="submit" value="Go" />
-                <input type="hidden" name="check_keywords" value="yes" />
-                <input type="hidden" name="area" value="default" />
-              </form>
-              <p class="searchtip" style="font-size: 90%">
-              Enter search terms or a module, class or function name.
-              </p>
-          </div>
-          <script type="text/javascript">$('#searchbox').show(0);</script>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Python bindings to oDesk API</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="full_list.html"
+                        title="next chapter">Full list of classes and methods</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="sources/getting_started.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
 
@@ -88,7 +91,7 @@
 <span id="id1"></span><h1>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="requirements">
 <span id="id2"></span><h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
-<p>No external dependencies for using python-odesk, but there are some to run the tests:</p>
+<p>You need to install oauth2 to run the python-odesk, and mock and nosetests if you plan to develop python-odesk and/or run library&#8217;s tests.</p>
 <p>Mock:</p>
 <div class="highlight-python"><pre>pip install mock
 #or
@@ -177,12 +180,12 @@ Here is the simple example.</p>
         <li class="right" >
           <a href="index.html" title="Python bindings to oDesk API"
              >previous</a> |</li>
-        <li><a href="index.html">python-odesk v0.1.2 documentation</a> &raquo;</li> 
+        <li><a href="index.html">python-odesk v0.4 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2010, odesk.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.3.
+        &copy; Copyright 2010-2011, odesk.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
     </div>
   </body>
 </html>

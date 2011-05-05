@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -5,21 +7,22 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Full list of classes and methods &mdash; python-odesk v0.1.2 documentation</title>
+    <title>Full list of classes and methods &mdash; python-odesk v0.4 documentation</title>
     <link rel="stylesheet" href="static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.1.2',
-        COLLAPSE_MODINDEX: false,
+        VERSION:     '0.4',
+        COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="static/jquery.js"></script>
+    <script type="text/javascript" src="static/underscore.js"></script>
     <script type="text/javascript" src="static/doctools.js"></script>
-    <link rel="top" title="python-odesk v0.1.2 documentation" href="index.html" />
+    <link rel="top" title="python-odesk v0.4 documentation" href="index.html" />
     <link rel="next" title="How to" href="how_to.html" />
     <link rel="prev" title="Getting started" href="getting_started.html" /> 
   </head>
@@ -36,46 +39,51 @@
         <li class="right" >
           <a href="getting_started.html" title="Getting started"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">python-odesk v0.1.2 documentation</a> &raquo;</li> 
+        <li><a href="index.html">python-odesk v0.4 documentation</a> &raquo;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
-            <h3><a href="index.html">Table Of Contents</a></h3>
-            <ul>
-<li><a class="reference external" href="">Full list of classes and methods</a><ul>
-<li><a class="reference external" href="#exceptions">Exceptions</a></li>
-<li><a class="reference external" href="#base-and-support-classes-and-methods">Base and support classes and methods</a></li>
-<li><a class="reference external" href="#client">Client</a></li>
-<li><a class="reference external" href="#other-classes">Other classes</a></li>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Full list of classes and methods</a><ul>
+<li><a class="reference internal" href="#package-structure">Package structure</a></li>
+<li><a class="reference internal" href="#init-py">__init__.py</a></li>
+<li><a class="reference internal" href="#auth-py">auth.py</a></li>
+<li><a class="reference internal" href="#exceptions-py">exceptions.py</a></li>
+<li><a class="reference internal" href="#http-py">http.py</a></li>
+<li><a class="reference internal" href="#namespaces-py">namespaces.py</a></li>
+<li><a class="reference internal" href="#oauth-py">oauth.py</a></li>
+<li><a class="reference internal" href="#routers">routers/</a></li>
+<li><a class="reference internal" href="#utils-py">utils.py</a></li>
 </ul>
 </li>
 </ul>
 
-            <h4>Previous topic</h4>
-            <p class="topless"><a href="getting_started.html"
-                                  title="previous chapter">Getting started</a></p>
-            <h4>Next topic</h4>
-            <p class="topless"><a href="how_to.html"
-                                  title="next chapter">How to</a></p>
-            <h3>This Page</h3>
-            <ul class="this-page-menu">
-              <li><a href="sources/full_list.txt"
-                     rel="nofollow">Show Source</a></li>
-            </ul>
-          <div id="searchbox" style="display: none">
-            <h3>Quick search</h3>
-              <form class="search" action="search.html" method="get">
-                <input type="text" name="q" size="18" />
-                <input type="submit" value="Go" />
-                <input type="hidden" name="check_keywords" value="yes" />
-                <input type="hidden" name="area" value="default" />
-              </form>
-              <p class="searchtip" style="font-size: 90%">
-              Enter search terms or a module, class or function name.
-              </p>
-          </div>
-          <script type="text/javascript">$('#searchbox').show(0);</script>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="getting_started.html"
+                        title="previous chapter">Getting started</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="how_to.html"
+                        title="next chapter">How to</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="sources/full_list.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
 
@@ -86,19 +94,129 @@
             
   <div class="section" id="full-list-of-classes-and-methods">
 <span id="full-list"></span><h1>Full list of classes and methods<a class="headerlink" href="#full-list-of-classes-and-methods" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="exceptions">
-<span id="id1"></span><h2>Exceptions<a class="headerlink" href="#exceptions" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li>HTTP400BadRequestError(urllib2.HTTPError)</li>
-<li>HTTP401UnauthorizedError(urllib2.HTTPError)</li>
-<li>HTTP403ForbiddenError(urllib2.HTTPError)</li>
-<li>HTTP404NotFoundError(urllib2.HTTPError)</li>
-<li>InvalidConfiguredException(Exception)</li>
-<li>APINotImplementedException(Exception)</li>
+<div class="section" id="package-structure">
+<span id="package"></span><h2>Package structure<a class="headerlink" href="#package-structure" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li><p class="first">__init__.py</p>
+</li>
+<li><p class="first">auth.py</p>
+</li>
+<li><p class="first">exceptions.py</p>
+</li>
+<li><p class="first">http.py</p>
+</li>
+<li><p class="first">namespace.py</p>
+</li>
+<li><p class="first">oauth.py</p>
+</li>
+<li><p class="first">utils.py</p>
+</li>
+<li><p class="first">routers</p>
+<blockquote>
+<div><ul class="simple">
+<li>__init__.py</li>
+<li>finance.py</li>
+<li>finreport.py</li>
+<li>hr.py</li>
+<li>mc.py</li>
+<li>oconomy.py</li>
+<li>provider.py</li>
+<li>task.py</li>
+<li>team.py</li>
+<li>ticket.py</li>
+<li>timereport.py</li>
+<li>url.py</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first">tests.py</p>
+</li>
 </ul>
 </div>
-<div class="section" id="base-and-support-classes-and-methods">
-<span id="base"></span><h2>Base and support classes and methods<a class="headerlink" href="#base-and-support-classes-and-methods" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="init-py">
+<h2>__init__.py<a class="headerlink" href="#init-py" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>class BaseClient(object)</li>
+</ul>
+<p>A basic HTTP client which supports signing of requests as well as de-serializing of responses.</p>
+<ul class="simple">
+<li>class Client(BaseClient)</li>
+</ul>
+<blockquote>
+<div><ul>
+<li><dl class="first docutils">
+<dt>def __init__(self, public_key, secret_key, api_token=None,</dt>
+<dd><p class="first last">format=&#8217;json&#8217;, auth=&#8217;simple&#8217;, finance=True, finreport=True,
+hr=True, mc=True, oconomy=True, provider=True,
+task=True, team=True, ticket=True, timereport=True, url=True)</p>
+</dd>
+</dl>
+</li>
+<li><p class="first">Variables available inside Client:</p>
+</li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li>public_key</li>
+<li>secret_key</li>
+<li>api_token</li>
+<li>format</li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li>Routers inside Client:</li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li>auth</li>
+<li>finance</li>
+<li>finreport</li>
+<li>hr</li>
+<li>mc</li>
+<li>oconomy</li>
+<li>provider</li>
+<li>task</li>
+<li>team</li>
+<li>ticket</li>
+<li>timereport</li>
+<li>url</li>
+</ul>
+</div></blockquote>
+</div></blockquote>
+<p>You can disable any of router except auth, by specifing router_name=False during Client initialization, e.g:</p>
+<blockquote>
+<div>odesk_client = odesk.Client(public_key, secret_key, ticket=False)</div></blockquote>
+</div>
+<div class="section" id="auth-py">
+<span id="auth"></span><h2>auth.py<a class="headerlink" href="#auth-py" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Auth(Namespace)</li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li>auth_url</li>
+<li>get_frob</li>
+<li>get_token</li>
+<li>check_token</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="exceptions-py">
+<span id="exceptions"></span><h2>exceptions.py<a class="headerlink" href="#exceptions-py" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>class BaseException(Exception)</li>
+<li>class HTTP400BadRequestError(urllib2.HTTPError, BaseException)</li>
+<li>class HTTP401UnauthorizedError(urllib2.HTTPError, BaseException)</li>
+<li>class HTTP403ForbiddenError(urllib2.HTTPError, BaseException)</li>
+<li>class HTTP404NotFoundError(urllib2.HTTPError, BaseException)</li>
+<li>class InvalidConfiguredException(BaseException)</li>
+<li>class APINotImplementedException(BaseException)</li>
+<li>class AuthenticationError(BaseException)</li>
+<li>class NotAuthenticatedError(BaseException)</li>
+</ul>
+</div>
+<div class="section" id="http-py">
+<span id="http"></span><h2>http.py<a class="headerlink" href="#http-py" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li>def raise_http_error(e)</li>
 </ul>
@@ -107,70 +225,135 @@
 <li>class HttpRequest(urllib2.Request)</li>
 </ul>
 <p>A hack around Request class that allows to specify HTTP method explicitly</p>
-<ul class="simple">
-<li>class BaseClient(object)</li>
-</ul>
-<p>A basic HTTP client which supports signing of requests as well as de-serializing of responses.</p>
+</div>
+<div class="section" id="namespaces-py">
+<span id="namespaces"></span><h2>namespaces.py<a class="headerlink" href="#namespaces-py" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li>class Namespace</li>
-<li>class GdsNamespace</li>
 </ul>
+<blockquote>
+<div><ul class="simple">
+<li>base_url = &#8216;<a class="reference external" href="https://www.odesk.com/api/">https://www.odesk.com/api/</a>&#8216;</li>
+<li>api_url = None</li>
+<li>version = 1</li>
+<li>#Proxied client&#8217;s methods</li>
+<li>get(self, url, data={})</li>
+<li>post(self, url, data={}):</li>
+<li>put(self, url, data={}):</li>
+<li>delete(self, url, data={}):</li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li>class GdsNamespace(Namespace)</li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li>base_url = &#8216;<a class="reference external" href="https://www.odesk.com/gds/">https://www.odesk.com/gds/</a>&#8216;</li>
+<li>#methods</li>
+<li>urlopen(self, url, data={}, method=&#8217;GET&#8217;)</li>
+<li>read(self, url, data={}, method=&#8217;GET&#8217;)</li>
+<li>get(self, url, data={})</li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li>class NonAuthGdsNamespace(GdsNamespace)</li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li>#methods</li>
+<li>urlopen(self, url, data={}, method=&#8217;GET&#8217;)</li>
+</ul>
+</div></blockquote>
 </div>
-<div class="section" id="client">
-<span id="id2"></span><h2>Client<a class="headerlink" href="#client" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="oauth-py">
+<span id="oauth"></span><h2>oauth.py<a class="headerlink" href="#oauth-py" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>class Client(BaseClient)</li>
+<li>class OAuth(Namespace)</li>
 </ul>
 <blockquote>
-<ul class="simple">
-<li>def __init__(self, public_key, secret_key, api_token=None, format=&#8217;json&#8217;)</li>
-<li>Variables available inside Client:</li>
+<div><ul>
+<li><p class="first">api_url = &#8216;auth/&#8217;</p>
+</li>
+<li><p class="first">version = 1</p>
+</li>
+<li><p class="first">request_token_url = &#8216;<a class="reference external" href="https://www.odesk.com/api/auth/v1/oauth/token/request">https://www.odesk.com/api/auth/v1/oauth/token/request</a>&#8216;</p>
+</li>
+<li><p class="first">authorize_url = &#8216;<a class="reference external" href="https://www.odesk.com/services/api/auth">https://www.odesk.com/services/api/auth</a>&#8216;</p>
+</li>
+<li><p class="first">access_token_url = &#8216;<a class="reference external" href="https://www.odesk.com/api/auth/v1/oauth/token/access">https://www.odesk.com/api/auth/v1/oauth/token/access</a>&#8216;</p>
+</li>
+<li><p class="first">#methods</p>
+</li>
+<li><dl class="first docutils">
+<dt>urlencode(self, url, key, secret, data={}, method=&#8217;GET&#8217;)</dt>
+<dd><p class="first last">&#8220;&#8221;&#8221;
+Converts a mapping object to signed url query
+&#8220;&#8221;&#8220;</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>get_oauth_consumer(self)</dt>
+<dd><p class="first last">&#8220;&#8221;&#8221;
+Returns OAuth consumer object
+&#8220;&#8221;&#8220;</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>get_request_token(self)</dt>
+<dd><p class="first last">&#8220;&#8221;&#8221;
+Returns request token and request token secret
+&#8220;&#8221;&#8220;</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>get_authorize_url(self, callback_url=None):</dt>
+<dd><p class="first last">&#8220;&#8221;&#8221;
+Returns authentication URL to be used in a browser
+&#8220;&#8221;&#8220;</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>get_access_token(self, verifier):</dt>
+<dd><p class="first last">&#8220;&#8221;&#8221;
+Returns access token and access token secret
+&#8220;&#8221;&#8220;</p>
+</dd>
+</dl>
+</li>
 </ul>
-<blockquote>
-<ul class="simple">
-<li>public_key</li>
-<li>secret_key</li>
-<li>api_token</li>
-<li>format</li>
-<li>auth</li>
-<li>team</li>
-<li>hr</li>
-<li>provider</li>
-<li>mc</li>
-<li>time_reports</li>
-<li>otask</li>
-</ul>
-</blockquote>
-</blockquote>
+</div></blockquote>
 </div>
-<div class="section" id="other-classes">
-<span id="classes"></span><h2>Other classes<a class="headerlink" href="#other-classes" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="routers">
+<span id="id1"></span><h2>routers/<a class="headerlink" href="#routers" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>Auth(Namespace)</li>
+<li>Finances(Namespace) - routers/finance.py</li>
+<li>Finreports(GdsNamespace) - routers/finreport.py</li>
 </ul>
 <blockquote>
-<ul class="simple">
-<li>auth_url</li>
-<li>get_frob</li>
-<li>get_token</li>
-<li>check_token</li>
+<div><ul class="simple">
+<li>get_provider_billings(self, provider_id, query)</li>
+<li>get_provider_teams_billings(self, provider_team_id, query)</li>
+<li>get_provider_companies_billings(self, provider_company_id, query)</li>
+<li>get_provider_earnings(self, provider_id, query)</li>
+<li>get_provider_teams_earnings(self, provider_team_id, query)</li>
+<li>get_provider_companies_earnings(self, provider_company_id, query)</li>
+<li>get_buyer_teams_billings(self, buyer_team_id, query)</li>
+<li>get_buyer_companies_billings(self, buyer_company_id, query)</li>
+<li>get_buyer_teams_earnings(self, buyer_team_id, query)</li>
+<li>get_buyer_companies_earnings(self, buyer_company_id, query)</li>
+<li>get_financial_entities(self, accounting_id, query)</li>
+<li>get_financial_entities_provider(self, provider_id, query)</li>
 </ul>
-</blockquote>
+</div></blockquote>
 <ul class="simple">
-<li>Team(Namespace)</li>
-</ul>
-<blockquote>
-<ul class="simple">
-<li>get_teamrooms(self)</li>
-<li>get_snapshots(self, team_id, online=&#8217;now&#8217;)</li>
-<li>get_workdiaries(self, team_id, username, date=None)</li>
-</ul>
-</blockquote>
-<ul class="simple">
-<li>HR2(Namespace)</li>
+<li>HR(Namespace) - routers/hr.py</li>
 </ul>
 <blockquote>
-<ul class="simple">
+<div><ul class="simple">
 <li>get_user(self, user_id)</li>
 <li>get_companies(self)</li>
 <li>get_company(self, company_id)</li>
@@ -191,22 +374,12 @@
 <li>get_engagements(self)</li>
 <li>get_engagement(self, engagement_id)</li>
 </ul>
-</blockquote>
+</div></blockquote>
 <ul class="simple">
-<li>Provider(Namespace)</li>
+<li>MC(Namespace) - routers/mc.py</li>
 </ul>
 <blockquote>
-<ul class="simple">
-<li>get_provider(self, provider_ciphertext)</li>
-<li>get_provider_brief(self, provider_ciphertext)</li>
-<li>get_providers (q=&#8217;&#8216;)</li>
-</ul>
-</blockquote>
-<ul class="simple">
-<li>Messages(Namespace)</li>
-</ul>
-<blockquote>
-<ul class="simple">
+<div><ul class="simple">
 <li>get_trays(self, username=None, paging_offset=0, paging_count=20)</li>
 <li>get_tray_content(self, username, tray, paging_offset=0, paging_count=20)</li>
 <li>get_thread_content(self, username, thread_id, paging_offset=0, paging_count=20)</li>
@@ -218,12 +391,24 @@
 <li>put_threads_undeleted(self, username, thread_ids)</li>
 <li>post_message(self, username, recipients, subject, body, thread_id=None)</li>
 </ul>
-</blockquote>
+</div></blockquote>
 <ul class="simple">
-<li>OTask(Namespace)</li>
+<li>Oconomy(GdsNamespace) - routers/oconomy.py</li>
+<li>NonauthOConomy(NonauthGdsNamespace) - routers/oconomy.py</li>
+<li>Provider (Namespace) - routers/provider.py</li>
 </ul>
 <blockquote>
+<div><ul class="simple">
+<li>get_provider(self, provider_ciphertext)</li>
+<li>get_provider_brief(self, provider_ciphertext)</li>
+<li>get_providers (q=&#8217;&#8216;)</li>
+</ul>
+</div></blockquote>
 <ul class="simple">
+<li>Task(Namespace) - routers/task.py</li>
+</ul>
+<blockquote>
+<div><ul class="simple">
 <li>get_company_tasks(self, company_id)</li>
 <li>get_team_tasks(self, company_id, team_id)</li>
 <li>get_user_tasks(self, company_id, team_id, user_id)</li>
@@ -247,42 +432,40 @@
 <li>delete_all_user_tasks(self, company_id, team_id, user_id)</li>
 <li>update_batch_tasks(self, company_id, csv_data)</li>
 </ul>
-</blockquote>
+</div></blockquote>
 <ul class="simple">
-<li>TimeReports(GdsNamespace)</li>
+<li>Team(Namespace) - routers/team.py</li>
 </ul>
 <blockquote>
+<div><ul class="simple">
+<li>get_teamrooms(self)</li>
+<li>get_snapshots(self, team_id, online=&#8217;now&#8217;)</li>
+<li>get_workdiaries(self, team_id, username, date=None)</li>
+</ul>
+</div></blockquote>
 <ul class="simple">
+<li>Ticket(Namespace) - routers/ticket.py</li>
+<li>Timereport(GdsNamespace) - routers/timereport.py</li>
+</ul>
+<blockquote>
+<div><ul class="simple">
 <li>get_provider_report(self, provider_id, query, hours=False)</li>
 <li>get_company_report(self, company_id, query, hours=False)</li>
 <li>get_agency_report(self, company_id, agency_id, query, hours=False)</li>
 <li>query is the odesk.Query object</li>
 </ul>
-</blockquote>
+</div></blockquote>
 <ul class="simple">
-<li>FinReports(GdsNamespace)</li>
+<li>Url(Namespace) - routers/url.py</li>
 </ul>
-<blockquote>
-<ul class="simple">
-<li>get_provider_billings(self, provider_id, query)</li>
-<li>get_provider_teams_billings(self, provider_team_id, query)</li>
-<li>get_provider_companies_billings(self, provider_company_id, query)</li>
-<li>get_provider_earnings(self, provider_id, query)</li>
-<li>get_provider_teams_earnings(self, provider_team_id, query)</li>
-<li>get_provider_companies_earnings(self, provider_company_id, query)</li>
-<li>get_buyer_teams_billings(self, buyer_team_id, query)</li>
-<li>get_buyer_companies_billings(self, buyer_company_id, query)</li>
-<li>get_buyer_teams_earnings(self, buyer_team_id, query)</li>
-<li>get_buyer_companies_earnings(self, buyer_company_id, query)</li>
-<li>get_financial_entities(self, accounting_id, query)</li>
-<li>get_financial_entities_provider(self, provider_id, query)</li>
-</ul>
-</blockquote>
+</div>
+<div class="section" id="utils-py">
+<span id="utils"></span><h2>utils.py<a class="headerlink" href="#utils-py" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li>Q(object)</li>
 </ul>
 <blockquote>
-<ul>
+<div><ul>
 <li><p class="first">Simple query constructor</p>
 </li>
 <li><p class="first">Example of usage:</p>
@@ -291,12 +474,12 @@
 </div>
 </li>
 </ul>
-</blockquote>
+</div></blockquote>
 <ul class="simple">
 <li>Query(object)</li>
 </ul>
 <blockquote>
-<ul>
+<div><ul>
 <li><p class="first">Simple query</p>
 </li>
 <li><p class="first">DEFAULT_TIMEREPORT_FIELDS = [&#8216;worked_on&#8217;, &#8216;team_id&#8217;, &#8216;team_name&#8217;, &#8216;task&#8217;, &#8216;memo&#8217;,&#8217;hours&#8217;,]</p>
@@ -314,7 +497,10 @@
 </div>
 </li>
 </ul>
-</blockquote>
+</div></blockquote>
+<ul class="simple">
+<li>Table(object)</li>
+</ul>
 </div>
 </div>
 
@@ -336,12 +522,12 @@
         <li class="right" >
           <a href="getting_started.html" title="Getting started"
              >previous</a> |</li>
-        <li><a href="index.html">python-odesk v0.1.2 documentation</a> &raquo;</li> 
+        <li><a href="index.html">python-odesk v0.4 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2010, odesk.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.3.
+        &copy; Copyright 2010-2011, odesk.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
     </div>
   </body>
 </html>
