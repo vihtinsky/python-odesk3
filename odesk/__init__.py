@@ -38,7 +38,6 @@ from odesk.auth import *
 from odesk.exceptions import *
 from odesk.http import *
 from odesk.namespaces import *
-from odesk.oauth import OAuth
 from odesk.utils import *
 
 
@@ -98,6 +97,7 @@ class BaseClient(object):
         return signed_urlencode(self.secret_key, data)
 
     def urlopen(self, url, data={}, method='GET'):
+        from odesk.oauth import OAuth
         data = data.copy()
 
         #FIXME: Http method hack. Should be removed once oDesk supports true
@@ -158,6 +158,7 @@ class Client(BaseClient):
         if auth == 'simple':
             self.auth = Auth(self)
         elif auth == 'oauth':
+            from odesk.oauth import OAuth
             self.auth = OAuth(self)
             self.oauth_access_token = oauth_access_token
             self.oauth_access_token_secret = oauth_access_token_secret

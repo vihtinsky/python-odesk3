@@ -1,5 +1,5 @@
 import os
-from distutils.core import setup
+from setuptools import setup, find_packages
 
 readme = open(os.path.join(os.path.dirname(__file__), 'README'))
 README = readme.read()
@@ -16,8 +16,8 @@ setup(name='python-odesk',
       author_email='python@odesk.com',
       maintainer='Volodymyr Hotsyk',
       maintainer_email='gotsyk@gmail.com',
-      install_requires = 'oauth2',
-      packages = ['odesk',],
+      install_requires=['oauth2',],
+      packages=find_packages(),
       license = 'BSD',
       download_url ='http://github.com/odesk/python-odesk',
       url='http://odesk.github.com/python-odesk',
