@@ -18,7 +18,7 @@ except ImportError:
     import simplejson as json
 
 from odesk.exceptions import *
-from odesk.namespaces import *
+from odesk.namespaces import Namespace
 
 
 class MC(Namespace):

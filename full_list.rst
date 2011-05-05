@@ -19,7 +19,7 @@ Package structure
 * oauth.py
 * utils.py
 * routers
-|__
+
    * __init__.py
    * finance.py
    * finreport.py
@@ -32,20 +32,17 @@ Package structure
    * ticket.py
    * timereport.py
    * url.py
+
 * tests.py
 
 .. __init__:
 
-__init__.py: Classes and methods
+__init__.py
 ------------------------------------
 
 * class BaseClient(object)
 
 A basic HTTP client which supports signing of requests as well as de-serializing of responses.
-
-
-__init__.py: Client
-----------------------
 
 * class Client(BaseClient)
 
@@ -83,7 +80,7 @@ You can disable any of router except auth, by specifing router_name=False during
 ..
 .. _auth:
 
-auth.py: Auth
+auth.py
 -----------------
 * Auth(Namespace)
 
@@ -95,7 +92,7 @@ auth.py: Auth
 ..
 .. _exceptions:
 
-exceptions.py: Exceptions
+exceptions.py
 ---------------------------
 
 * class BaseException(Exception)
@@ -124,27 +121,74 @@ A hack around Request class that allows to specify HTTP method explicitly
 
 .. _namespaces:
 
-namespaces.py: Namespaces
+namespaces.py
 --------------------------
 
 * class Namespace
 
-* class GdsNamespace
+ * base_url = 'https://www.odesk.com/api/'
+ * api_url = None
+ * version = 1
+ * #Proxied client's methods
+ * get(self, url, data={})
+ * post(self, url, data={}):
+ * put(self, url, data={}):
+ * delete(self, url, data={}):
 
-* class NonAuthGdsNamespace
+* class GdsNamespace(Namespace)
+
+ * base_url = 'https://www.odesk.com/gds/'
+ * #methods
+ * urlopen(self, url, data={}, method='GET')
+ * read(self, url, data={}, method='GET')
+ * get(self, url, data={})
+
+* class NonAuthGdsNamespace(GdsNamespace)
+
+ * #methods
+ * urlopen(self, url, data={}, method='GET')
 
 
 ..
 .. _oauth:
 
-oauth.py: OAuth
+oauth.py
 -----------------
+
+* class OAuth(Namespace)
+
+ * api_url = 'auth/'
+ * version = 1
+ * request_token_url = 'https://www.odesk.com/api/auth/v1/oauth/token/request'
+ * authorize_url = 'https://www.odesk.com/services/api/auth'
+ * access_token_url = 'https://www.odesk.com/api/auth/v1/oauth/token/access'
+ * #methods
+ * urlencode(self, url, key, secret, data={}, method='GET')
+        """
+        Converts a mapping object to signed url query
+        """
+ * get_oauth_consumer(self)
+        """
+        Returns OAuth consumer object
+        """
+ * get_request_token(self)
+        """
+        Returns request token and request token secret
+        """
+ * get_authorize_url(self, callback_url=None):
+        """
+        Returns authentication URL to be used in a browser
+        """
+ * get_access_token(self, verifier):
+        """
+        Returns access token and access token secret
+        """
 
 
 
 .. _routers:
 
-Routers
+routers/
 ---------------------
 
 * Finances(Namespace) - routers/finance.py
@@ -164,7 +208,7 @@ Routers
  * get_financial_entities(self, accounting_id, query)
  * get_financial_entities_provider(self, provider_id, query)
 
-* Hr(Namespace) - routers/hr.py
+* HR(Namespace) - routers/hr.py
 
  * get_user(self, user_id)
  * get_companies(self)
@@ -186,7 +230,7 @@ Routers
  * get_engagements(self)
  * get_engagement(self, engagement_id)
 
-* Messages(Namespace) - routers/mc.py
+* MC(Namespace) - routers/mc.py
 
  * get_trays(self, username=None, paging_offset=0, paging_count=20)
  * get_tray_content(self, username, tray, paging_offset=0, paging_count=20)
@@ -199,15 +243,17 @@ Routers
  * put_threads_undeleted(self, username, thread_ids)
  * post_message(self, username, recipients, subject, body, thread_id=None)
 
-* Oconomy
+* Oconomy(GdsNamespace) - routers/oconomy.py
 
-* Provider
+* NonauthOConomy(NonauthGdsNamespace) - routers/oconomy.py
+
+* Provider (Namespace) - routers/provider.py
 
  * get_provider(self, provider_ciphertext)
  * get_provider_brief(self, provider_ciphertext)
  * get_providers (q='')
 
-* Task
+* Task(Namespace) - routers/task.py
 
  * get_company_tasks(self, company_id)
  * get_team_tasks(self, company_id, team_id)
@@ -238,7 +284,7 @@ Routers
  * get_snapshots(self, team_id, online='now')
  * get_workdiaries(self, team_id, username, date=None)
 
-* Ticket
+* Ticket(Namespace) - routers/ticket.py
 
 * Timereport(GdsNamespace) - routers/timereport.py
 
@@ -247,12 +293,12 @@ Routers
  * get_agency_report(self, company_id, agency_id, query, hours=False)
  * query is the odesk.Query object
 
-* Url
+* Url(Namespace) - routers/url.py
 
 
 .. _utils:
 
-utils.py: Utils
+utils.py
 ---------------------
 * Q(object)
 

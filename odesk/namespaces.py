@@ -17,7 +17,7 @@ try:
 except ImportError:
     import simplejson as json
 
-from odesk.exceptions import *
+
 from odesk.http import *
 from odesk.utils import *
 

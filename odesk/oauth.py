@@ -8,6 +8,8 @@ import time
 import urlparse
 import urllib
 import oauth2 as oauth
+
+
 from odesk.namespaces import Namespace
 from odesk.http import HttpRequest
 
@@ -62,9 +64,11 @@ class OAuth(Namespace):
         """
         Returns authentication URL to be used in a browser
         """
-        oauth_token = getattr(self, 'request_token', None) or self.get_request_token()[0]
+        oauth_token = getattr(self, 'request_token', None) or\
+            self.get_request_token()[0]
         if callback_url:
-            params = urllib.urlencode({'oauth_token': oauth_token, 'oauth_callback': callback_url})
+            params = urllib.urlencode({'oauth_token': oauth_token,\
+                'oauth_callback': callback_url})
         else:
             params = urllib.urlencode({'oauth_token': oauth_token})
         return '%s?%s' % (self.authorize_url, params)

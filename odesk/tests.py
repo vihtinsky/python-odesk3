@@ -1032,11 +1032,13 @@ def test_post_message():
                               'body')
     assert message == read_thread_content_dict, message
 
-    message = mc.post_message('username', ('recepient1@sss', 'recepient`іваівsss'), 'subject',
+    message = mc.post_message('username', ('recepient1@sss',\
+        'recepient`іваівsss'), 'subject',
                               'body')
     assert message == read_thread_content_dict, message
 
-    message = mc.post_message('username', 'recepient1@sss,1%&&|-!@#recepient`іваівsss', 'subject',
+    message = mc.post_message('username',\
+        'recepient1@sss,1%&&|-!@#recepient`іваівsss', 'subject',
                               'body')
     assert message == read_thread_content_dict, message
 
@@ -1078,10 +1080,12 @@ def patched_urlopen_timereport_content(request, *args, **kwargs):
 def test_get_provider_timereport():
     tc = get_client().timereport
 
-    read = tc.get_provider_report('test', utils.Query(select=['1', '2', '3'], where=(utils.Q('2') > 1)))
+    read = tc.get_provider_report('test',\
+        utils.Query(select=['1', '2', '3'], where=(utils.Q('2') > 1)))
     assert read == timereport_dict, read
 
-    read = tc.get_provider_report('test', utils.Query(select=['1', '2', '3'], where=(utils.Q('2') > 1)),
+    read = tc.get_provider_report('test',\
+        utils.Query(select=['1', '2', '3'], where=(utils.Q('2') > 1)),
                                                 hours=True)
     assert read == timereport_dict, read
 
@@ -1090,10 +1094,12 @@ def test_get_provider_timereport():
 def test_get_company_timereport():
     tc = get_client().timereport
 
-    read = tc.get_company_report('test', utils.Query(select=['1', '2', '3'], where=(utils.Q('2') > 1)))
+    read = tc.get_company_report('test',\
+        utils.Query(select=['1', '2', '3'], where=(utils.Q('2') > 1)))
     assert read == timereport_dict, read
 
-    read = tc.get_company_report('test', utils.Query(select=['1', '2', '3'], where=(utils.Q('2') > 1)),
+    read = tc.get_company_report('test',\
+        utils.Query(select=['1', '2', '3'], where=(utils.Q('2') > 1)),
                                   hours=True)
     assert read == timereport_dict, read
 
@@ -1102,10 +1108,12 @@ def test_get_company_timereport():
 def test_get_agency_timereport():
     tc = get_client().timereport
 
-    read = tc.get_agency_report('test', 'test', utils.Query(select=['1', '2', '3'], where=(utils.Q('2') > 1)))
+    read = tc.get_agency_report('test', 'test',\
+        utils.Query(select=['1', '2', '3'], where=(utils.Q('2') > 1)))
     assert read == timereport_dict, read
 
-    read = tc.get_agency_report('test', 'test', utils.Query(select=['1', '2', '3'], where=(utils.Q('2') > 1)),
+    read = tc.get_agency_report('test', 'test',\
+        utils.Query(select=['1', '2', '3'], where=(utils.Q('2') > 1)),
                                   hours=True)
     assert read == timereport_dict, read
 
@@ -1443,15 +1451,24 @@ def test_gds_namespace():
 
 oconomy_dict = {u'table':
                 {u'rows':
-                  [{u'c': [{u'v': u'Administrative Support'}, {u'v': u'2787297.31'}]},
-                   {u'c': [{u'v': u'Business Services'}, {u'v': u'1146857.51'}]},
-                   {u'c': [{u'v': u'Customer Service'}, {u'v': u'1072926.55'}]},
-                   {u'c': [{u'v': u'Design & Multimedia'}, {u'v': u'1730094.73'}]},
-                   {u'c': [{u'v': u'Networking & Information Systems'}, {u'v': u'690526.57'}]},
-                   {u'c': [{u'v': u'Sales & Marketing'}, {u'v': u'3232511.54'}]},
-                   {u'c': [{u'v': u'Software Development'}, {u'v': u'6826354.60'}]},
-                   {u'c': [{u'v': u'Web Development'}, {u'v': u'15228679.46'}]},
-                   {u'c': [{u'v': u'Writing & Translation'}, {u'v': u'2257654.76'}]}],
+                  [{u'c': [{u'v': u'Administrative Support'},
+                        {u'v': u'2787297.31'}]},
+                   {u'c': [{u'v': u'Business Services'},
+                        {u'v': u'1146857.51'}]},
+                   {u'c': [{u'v': u'Customer Service'},
+                        {u'v': u'1072926.55'}]},
+                   {u'c': [{u'v': u'Design & Multimedia'},
+                        {u'v': u'1730094.73'}]},
+                   {u'c': [{u'v': u'Networking & Information Systems'},
+                        {u'v': u'690526.57'}]},
+                   {u'c': [{u'v': u'Sales & Marketing'},
+                        {u'v': u'3232511.54'}]},
+                   {u'c': [{u'v': u'Software Development'},
+                        {u'v': u'6826354.60'}]},
+                   {u'c': [{u'v': u'Web Development'},
+                        {u'v': u'15228679.46'}]},
+                   {u'c': [{u'v': u'Writing & Translation'},
+                        {u'v': u'2257654.76'}]}],
                  u'cols':
                   [{u'type': u'string', u'label': u'category'},
                    {u'type': u'number', u'label': u'amount'}]}}
@@ -1530,25 +1547,31 @@ def test_oauth_full_url():
     assert access_token_url == oa.access_token_url, access_token_url
 
 def patched_httplib2_request(*args, **kwargs):
-    return {'status': '200'}, 'oauth_callback_confirmed=1&oauth_token=709d434e6b37a25c50e95b0e57d24c46&oauth_token_secret=193ef27f57ab4e37'
+    return {'status': '200'},\
+        'oauth_callback_confirmed=1&oauth_token=709d434e6b37a25c50e95b0e57d24c46&oauth_token_secret=193ef27f57ab4e37'
 
 @patch('httplib2.Http.request', patched_httplib2_request)
 def test_oauth_get_request_token():
     oa = setup_oauth()
-    assert oa.get_request_token() == ('709d434e6b37a25c50e95b0e57d24c46', '193ef27f57ab4e37')
+    assert oa.get_request_token() == ('709d434e6b37a25c50e95b0e57d24c46',\
+                                    '193ef27f57ab4e37')
 
 @patch('httplib2.Http.request', patched_httplib2_request)
 def test_oauth_get_authorize_url():
     oa = setup_oauth()
-    assert oa.get_authorize_url() == 'https://www.odesk.com/services/api/auth?oauth_token=709d434e6b37a25c50e95b0e57d24c46'
-    assert oa.get_authorize_url('http://example.com/oauth/complete') == 'https://www.odesk.com/services/api/auth?oauth_token=709d434e6b37a25c50e95b0e57d24c46&oauth_callback=http%3A%2F%2Fexample.com%2Foauth%2Fcomplete'
+    assert oa.get_authorize_url() ==\
+        'https://www.odesk.com/services/api/auth?oauth_token=709d434e6b37a25c50e95b0e57d24c46'
+    assert oa.get_authorize_url('http://example.com/oauth/complete') ==\
+        'https://www.odesk.com/services/api/auth?oauth_token=709d434e6b37a25c50e95b0e57d24c46&oauth_callback=http%3A%2F%2Fexample.com%2Foauth%2Fcomplete'
 
 def patched_httplib2_access(*args, **kwargs):
-    return {'status': '200'}, 'oauth_token=aedec833d41732a584d1a5b4959f9cd6&oauth_token_secret=9d9cccb363d2b13e'
+    return {'status': '200'},\
+        'oauth_token=aedec833d41732a584d1a5b4959f9cd6&oauth_token_secret=9d9cccb363d2b13e'
 
 @patch('httplib2.Http.request', patched_httplib2_access)
 def test_oauth_get_access_token():
     oa = setup_oauth()
     oa.request_token = '709d434e6b37a25c50e95b0e57d24c46'
     oa.request_token_secret = '193ef27f57ab4e37'
-    assert oa.get_access_token('9cbcbc19f8acc2d85a013e377ddd4118') == ('aedec833d41732a584d1a5b4959f9cd6', '9d9cccb363d2b13e')
+    assert oa.get_access_token('9cbcbc19f8acc2d85a013e377ddd4118') ==\
+     ('aedec833d41732a584d1a5b4959f9cd6', '9d9cccb363d2b13e')

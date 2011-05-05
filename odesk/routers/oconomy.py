@@ -18,7 +18,7 @@ except ImportError:
     import simplejson as json
 
 from odesk.exceptions import *
-from odesk.namespaces import *
+from odesk.namespaces import GdsNamespace, NonauthGdsNamespace
 from odesk.utils import *
 
 
@@ -57,7 +57,7 @@ class OConomy(GdsNamespace):
         else:
             url = 'summary'
         result = self.get(url)
-
+        print url
         return result
 
 
