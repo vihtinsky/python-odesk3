@@ -7,6 +7,15 @@ Changelog
 
 ..
 
+.. _0.4.1:
+
+Version 0.4.1
+-----------------
+*May 2011*
+
+* Cleaned release from not implemented yet or not accessable API methods
+
+
 .. _0.4:
 
 Version 0.4
@@ -14,7 +23,6 @@ Version 0.4
 *May 2011*
 
 * *Incompatibility with previous release* Changed name of the otask router to the task
-* *Incompatibility with previous release* Chaged name of the oticket router to the ticket ??
 * *Incompatibility with previous release* Changed name of the time_report router to the timereport
 * *Incompatibility with previous release* Changed name of the finreports router to the finreport
 * *Incompatibility with previous release* "from odesk import *" now import only: "get_version", "Client", "utils"
@@ -22,7 +30,7 @@ Version 0.4
 * All helper classes moved to own modules
 * Added logging inside exceptions
 * Added possiblity to switch off unused routers inside client class
-* Added oconomy, finance routers
+* Added oconomy routers
 * Added oDesk oAuth support
 
 .. _0.2:

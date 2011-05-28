@@ -7,13 +7,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Full list of classes and methods &mdash; python-odesk v0.4 documentation</title>
+    <title>Full list of classes and methods &mdash; python-odesk v0.4.1 documentation</title>
     <link rel="stylesheet" href="static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.4',
+        VERSION:     '0.4.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -22,7 +22,7 @@
     <script type="text/javascript" src="static/jquery.js"></script>
     <script type="text/javascript" src="static/underscore.js"></script>
     <script type="text/javascript" src="static/doctools.js"></script>
-    <link rel="top" title="python-odesk v0.4 documentation" href="index.html" />
+    <link rel="top" title="python-odesk v0.4.1 documentation" href="index.html" />
     <link rel="next" title="How to" href="how_to.html" />
     <link rel="prev" title="Getting started" href="getting_started.html" /> 
   </head>
@@ -39,7 +39,7 @@
         <li class="right" >
           <a href="getting_started.html" title="Getting started"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">python-odesk v0.4 documentation</a> &raquo;</li> 
+        <li><a href="index.html">python-odesk v0.4.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar">
@@ -115,7 +115,6 @@
 <blockquote>
 <div><ul class="simple">
 <li>__init__.py</li>
-<li>finance.py</li>
 <li>finreport.py</li>
 <li>hr.py</li>
 <li>mc.py</li>
@@ -123,9 +122,7 @@
 <li>provider.py</li>
 <li>task.py</li>
 <li>team.py</li>
-<li>ticket.py</li>
 <li>timereport.py</li>
-<li>url.py</li>
 </ul>
 </div></blockquote>
 </li>
@@ -330,7 +327,6 @@ Returns access token and access token secret
 <div class="section" id="routers">
 <span id="id1"></span><h2>routers/<a class="headerlink" href="#routers" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>Finances(Namespace) - routers/finance.py</li>
 <li>Finreports(GdsNamespace) - routers/finreport.py</li>
 </ul>
 <blockquote>
@@ -358,14 +354,11 @@ Returns access token and access token secret
 <li>get_companies(self)</li>
 <li>get_company(self, company_id)</li>
 <li>get_company_teams(self, company_id)</li>
-<li>get_company_tasks(self, company_id) - Not implemented in API</li>
 <li>get_company_users(self, company_id,  active=True)</li>
 <li>get_teams(self)</li>
 <li>get_team(self, team_id, include_users=False)</li>
-<li>get_team_tasks(self, team_id) - Not implemented in API</li>
 <li>get_team_users(self, team_id, active=True)</li>
 <li>post_team_adjustment(self, team_id, engagement_id, amount, comments, notes)</li>
-<li>get_tasks(self) - Not implemented in API</li>
 <li>get_user_role(self, user_id=None, team_id=None, sub_teams=False)</li>
 <li>get_jobs(self)</li>
 <li>get_job(self, job_id)</li>
@@ -444,7 +437,6 @@ Returns access token and access token secret
 </ul>
 </div></blockquote>
 <ul class="simple">
-<li>Ticket(Namespace) - routers/ticket.py</li>
 <li>Timereport(GdsNamespace) - routers/timereport.py</li>
 </ul>
 <blockquote>
@@ -455,9 +447,6 @@ Returns access token and access token secret
 <li>query is the odesk.Query object</li>
 </ul>
 </div></blockquote>
-<ul class="simple">
-<li>Url(Namespace) - routers/url.py</li>
-</ul>
 </div>
 <div class="section" id="utils-py">
 <span id="utils"></span><h2>utils.py<a class="headerlink" href="#utils-py" title="Permalink to this headline">¶</a></h2>
@@ -522,7 +511,7 @@ Returns access token and access token secret
         <li class="right" >
           <a href="getting_started.html" title="Getting started"
              >previous</a> |</li>
-        <li><a href="index.html">python-odesk v0.4 documentation</a> &raquo;</li> 
+        <li><a href="index.html">python-odesk v0.4.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
