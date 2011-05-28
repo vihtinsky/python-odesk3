@@ -1,6 +1,6 @@
 """
 Python bindings to odesk API
-python-odesk version 0.4
+python-odesk version 0.4.1
 (C) 2010-2011 oDesk
 """
 
@@ -134,21 +134,6 @@ class Team(Namespace):
             snapshots = [snapshots]
         #not sure we need to return user
         return result['snapshots']['user'], snapshots
-
-    def get_stream(self, team_id, user_id=None,\
-                   from_ts=None):
-        """
-        get_stream(team_id, user_id=None, from_ts=None)
-        """
-        url = 'streams/%s' % (team_id)
-        if user_id:
-            url += '/%s' % (user_id)
-        if from_ts:
-            data = {'from_ts': from_ts}
-        else:
-            data = {}
-        result = self.get(url, data)
-        return result['streams']['snapshot']
 
     def get_teamrooms_2(self):
         """

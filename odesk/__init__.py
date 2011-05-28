@@ -1,9 +1,9 @@
 """
 Python bindings to odesk API
-python-odesk version 0.4
+python-odesk version 0.4.1
 (C) 2010-2011 oDesk
 """
-VERSION = (0, 4, 0, 'final', 5)
+VERSION = (0, 4, 1, 'final', 5)
 
 
 def get_version():
@@ -146,9 +146,9 @@ class Client(BaseClient):
 
     def __init__(self, public_key, secret_key, api_token=None,
                 oauth_access_token=None, oauth_access_token_secret=None,
-                format='json', auth='simple', finance=True, finreport=True,
+                format='json', auth='simple', finreport=True,
                 hr=True, mc=True, oconomy=True, provider=True,
-                task=True, team=True, ticket=True, timereport=True, url=True):
+                task=True, team=True, timereport=True):
 
         self.public_key = public_key
         self.secret_key = secret_key
@@ -164,10 +164,6 @@ class Client(BaseClient):
             self.oauth_access_token_secret = oauth_access_token_secret
 
         #Namespaces
-        if finance:
-            from odesk.routers.finance import Finance
-            self.finance = Finance(self)
-
         if finreport:
             from odesk.routers.finreport import Finreports
             self.finreport = Finreports(self)
@@ -197,17 +193,10 @@ class Client(BaseClient):
             from odesk.routers.team import Team
             self.team = Team(self)
 
-        if ticket:
-            from odesk.routers.ticket import Ticket
-            self.ticket = Ticket(self)
-
         if timereport:
             from odesk.routers.timereport import TimeReport
             self.timereport = TimeReport(self)
 
-        if url:
-            from odesk.routers.url import Url
-            self.url = Url(self)
 
     #Shortcuts for HTTP methods
     def get(self, url, data={}):

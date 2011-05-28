@@ -21,7 +21,6 @@ Package structure
 * routers
 
    * __init__.py
-   * finance.py
    * finreport.py
    * hr.py
    * mc.py
@@ -29,9 +28,7 @@ Package structure
    * provider.py
    * task.py
    * team.py
-   * ticket.py
    * timereport.py
-   * url.py
 
 * tests.py
 
@@ -191,8 +188,6 @@ oauth.py
 routers/
 ---------------------
 
-* Finances(Namespace) - routers/finance.py
-
 * Finreports(GdsNamespace) - routers/finreport.py
 
  * get_provider_billings(self, provider_id, query)
@@ -214,14 +209,11 @@ routers/
  * get_companies(self)
  * get_company(self, company_id)
  * get_company_teams(self, company_id)
- * get_company_tasks(self, company_id) - Not implemented in API
  * get_company_users(self, company_id,  active=True)
  * get_teams(self)
  * get_team(self, team_id, include_users=False)
- * get_team_tasks(self, team_id) - Not implemented in API
  * get_team_users(self, team_id, active=True)
  * post_team_adjustment(self, team_id, engagement_id, amount, comments, notes)
- * get_tasks(self) - Not implemented in API
  * get_user_role(self, user_id=None, team_id=None, sub_teams=False)
  * get_jobs(self)
  * get_job(self, job_id)
@@ -284,17 +276,12 @@ routers/
  * get_snapshots(self, team_id, online='now')
  * get_workdiaries(self, team_id, username, date=None)
 
-* Ticket(Namespace) - routers/ticket.py
-
 * Timereport(GdsNamespace) - routers/timereport.py
 
  * get_provider_report(self, provider_id, query, hours=False)
  * get_company_report(self, company_id, query, hours=False)
  * get_agency_report(self, company_id, agency_id, query, hours=False)
  * query is the odesk.Query object
-
-* Url(Namespace) - routers/url.py
-
 
 .. _utils:
 

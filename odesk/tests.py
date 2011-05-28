@@ -450,52 +450,6 @@ def test_team():
     assert te.get_workdiaries(1, 1, 1) == (teamrooms_dict['snapshots']['user'], \
         [teamrooms_dict['snapshots']['snapshot']]), te.get_workdiaries(1, 1, 1)
 
-
-stream_dict = {'streams': {'snapshot': [{u'uid': u'test',
- u'portrait_50_img': u'http://www.odesk.com/att/~~test',
- u'account_status': u'',
- u'billing_status': u'billed.active',
- u'screenshot_img_thmb': u'http://team.odesk.com/team/images.cache/test.jpg',
- u'screenshot_url': u'https://team.odesk.com/team/scripts/image.jpg',
- u'timezone': u'', u'digest': u'0', u'user_id': u'test',
- u'company_id': u'test:test', u'report_url': u'http://team.url',
- u'profile_url': u'http://www.odesk.com/users/~~test',
- u'status': u'NORMAL',
- u'report24_img': u'http://chart.apis.google.com/chart.png',
- u'screenshot_img': u'http://team.odesk.com/team/images/test:test/test/2010/01/01/test.jpg',
- u'memo': u'Bug 1: Test:Test',
- u'time': u'test', u'cellts': u'test',
- u'screenshot_img_med': u'http://team.odesk.com/team/scripts/image.jpg',
- u'user': {u'first_name': u'Test', u'last_name': u'Test',
-  u'uid': u'test', u'timezone_offset': u'10000', u'creation_time': u'',
-  u'mail': u'test@odesk.com', u'timezone': u'Europe/Athens',
-  u'messenger_id': u'', u'messenger_type': u''}, u'computer_name': u'laptop',
-  u'active_window_title': u'2010-01-01 - Google Chrome',
-  u'task': {u'code': u'484', u'id': u'{type=bugzilla,cny=test:test,code=1}',
-   u'description': u'Bug 1: Test: Test'},
- u'keyboard_events_count': u'1', u'mouse_events_count': u'1', u'activity': u'1',
- u'client_version': u'Linux/2.0.0', u'screenshot_img_lrg': u'http://test.com',
- u'portrait_img': u'http://www.test.com'}]}}
-
-
-def return_stream_json():
-    return json.dumps(stream_dict)
-
-
-def patched_urlopen_stream(request, *args, **kwargs):
-    request.read = return_stream_json
-    return request
-
-
-@patch('urllib2.urlopen', patched_urlopen_stream)
-def test_stream():
-    te = Team(get_client())
-
-    #test get_stream
-    assert te.get_stream('test', 'test') == stream_dict['streams']['snapshot'], \
-         te.get_stream('test', 'test')
-
-
 userroles = {u'userrole':
              [{u'parent_team__reference': u'1',
               u'user__id': u'testuser', u'team__id': u'test:t',
@@ -683,21 +637,6 @@ def test_get_hrv2_company_users():
     assert hr.get_company_users(1, False) == hr_dict['users'], \
          hr.get_company_users(1, False)
 
-
-@patch('urllib2.urlopen', patched_urlopen_hr)
-def test_get_hrv2_company_tasks():
-    hr = get_client().hr
-    #test get_company_tasks
-    try:
-        assert hr.get_company_tasks(1) == hr_dict['tasks'], \
-            hr.get_company_tasks(1)
-    except APINotImplementedException, e:
-        pass
-    except Exception, e:
-        print e
-        assert 0, "APINotImplementedException not raised"
-
-
 @patch('urllib2.urlopen', patched_urlopen_hr)
 def test_get_hrv2_teams():
     hr = get_client().hr
@@ -715,36 +654,6 @@ def test_get_hrv2_team_users():
     assert hr.get_team_users(1) == hr_dict[u'users'], hr.get_team_users(1)
     assert hr.get_team_users(1, False) == hr_dict[u'users'], \
          hr.get_team_users(1, False)
-
-
-@patch('urllib2.urlopen', patched_urlopen_hr)
-def test_get_hrv2_team_tasks():
-    hr = get_client().hr
-    #test get_team_tasks
-    try:
-        assert hr.get_team_tasks(1) == hr_dict['tasks'], hr.get_team_tasks(1)
-    except APINotImplementedException, e:
-        pass
-    except:
-        assert 0, "APINotImplementedException not raised"
-
-
-@patch('urllib2.urlopen', patched_urlopen_hr)
-def test_get_hrv2_userroles():
-    hr = get_client().hr
-    #test get_user_role
-    assert hr.get_user_role(user_reference=1) == hr_dict['userroles'], \
-                                                 hr.get_user_role(user_reference=1)
-    assert hr.get_user_role(team_reference=1) == hr_dict['userroles'], \
-                                                 hr.get_user_role(team_reference=1)
-    assert hr.get_user_role() == hr_dict['userroles'], hr.get_user_role()
-
-    try:
-        assert hr.get_tasks() == hr_dict['tasks'], hr.get_tasks()
-    except APINotImplementedException, e:
-        pass
-    except:
-        assert 0, "APINotImplementedException not raised"
 
 
 @patch('urllib2.urlopen', patched_urlopen_hr)
@@ -871,15 +780,6 @@ def test_provider():
 
     assert pr.get_skills(1) == provider_dict['skills'], \
         pr.get_skills(1)
-
-    assert pr.add_skill(1, {'skill': 'skill'}) == provider_dict, \
-        pr.add_skill(1, {'skill': 'skill'})
-
-    assert pr.update_skill(1, 1, {'skill': 'skill'}) == provider_dict, \
-        pr.update_skill(1, 1, {'skill': 'skill'})
-
-    assert pr.delete_skill(1, 1) == provider_dict, \
-        pr.delete_skill(1, 1)
 
     assert pr.get_quickinfo(1) == provider_dict['quick_info'], \
         pr.get_quickinfo(1)

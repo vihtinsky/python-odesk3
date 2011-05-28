@@ -1,6 +1,6 @@
 """
 Python bindings to odesk API
-python-odesk version 0.4
+python-odesk version 0.4.1
 (C) 2010-2011 oDesk
 """
 
@@ -106,11 +106,11 @@ class Provider(Namespace):
         return result['jobs']
 
     def _get_resume_info(self, provider_ciphertext, info_type):
-        '''
+        """
         info_type can be one of
         (otherexp|skills|tests|certificates|employments|\
         educations|projects)
-        '''
+        """
         strinfo = str(info_type)
         if strinfo not in self.resume_info_result_keys:
             raise ValueError('invalid info_type %s' % strinfo)
@@ -121,11 +121,11 @@ class Provider(Namespace):
 
     def _add_resume_info_item(self, provider_ciphertext, info_type,\
         item_data):
-        '''
+        """
         info_type can be one of
         (otherexp|skills|tests|certificates|employments|\
         educations|projects
-        '''
+        """
         strinfo = str(info_type)
         if strinfo not in self.resume_info_result_keys:
             raise ValueError('invalid info_type %s' % strinfo)
@@ -134,10 +134,10 @@ class Provider(Namespace):
 
     def _update_resume_info_item(self, provider_ciphertext,\
         resource_id, info_type, item_data):
-        '''
+        """
         info_type can be one of (otherexp|skills|tests|certificates|\
         employments|educations|projects
-        '''
+        """
         strinfo = str(info_type)
         if strinfo not in self.resume_info_result_keys:
             raise ValueError('invalid info_type %s' % strinfo)
@@ -152,10 +152,10 @@ class Provider(Namespace):
 
     def _delete_resume_info_item(self, provider_ciphertext,\
         resource_id, info_type):
-        '''
+        """
         info_type can be one of (otherexp|skills|tests|certificates|\
         employments|educations|projects
-        '''
+        """
         strinfo = str(info_type)
         if strinfo not in self.resume_info_result_keys:
             raise ValueError('invalid info_type %s' % strinfo)
@@ -177,40 +177,6 @@ class Provider(Namespace):
           provider_ciphertext   Provider cipher text (key)
         """
         return self._get_resume_info(provider_ciphertext, 'skills')
-
-    def add_skill(self, provider_ciphertext, data):
-        """
-        Add provider skills info
-
-        Parameters
-          provider_ciphertext   Provider cipher text (key)
-          data                  dict containing details of skill to add
-          """
-        return self._add_resume_info_item(provider_ciphertext,\
-            'skills', data)
-
-    def update_skill(self, provider_ciphertext, skill_id, data):
-        """
-        Update provider skills info
-
-        Parameters
-          provider_ciphertext   Provider cipher text (key)
-          skill_id              Resource id of the referenced skill
-          data                  dict containing details of skill to delete
-          """
-        return self._update_resume_info_item(provider_ciphertext,\
-            skill_id, 'skills', data)
-
-    def delete_skill(self, provider_ciphertext, skill_id):
-        """
-        Delete provider skills info
-
-        Parameters
-          provider_ciphertext   Provider cipher text (key)
-          skill_id              Resource id of the referenced skill
-          """
-        return self._delete_resume_info_item(provider_ciphertext,\
-            skill_id, 'skills')
 
     def get_quickinfo(self, provider_ciphertext):
         """

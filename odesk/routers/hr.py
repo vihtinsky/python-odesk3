@@ -1,6 +1,6 @@
 """
 Python bindings to odesk API
-python-odesk version 0.4
+python-odesk version 0.4.1
 (C) 2010-2011 oDesk
 """
 
@@ -75,12 +75,6 @@ class HR(Namespace):
         result = self.get(url)
         return result['teams']
 
-    def get_company_tasks(self, company_referece):
-        """
-        API doesn't support this call yet
-        """
-        raise APINotImplementedException("API doesn't support this call yet")
-
     def get_company_users(self, company_referece, active=True):
         """
         Retrieve a list of all users within the referenced company.
@@ -122,12 +116,6 @@ class HR(Namespace):
         #TODO: check how included users returned
         return result['team']
 
-    def get_team_tasks(self, team_reference):
-        """
-        API doesn't support this call yet
-        """
-        raise APINotImplementedException("API doesn't support this call yet")
-
     def get_team_users(self, team_reference, active=True):
         """
         get_team_users(team_reference, active=True)
@@ -159,12 +147,6 @@ class HR(Namespace):
                 'notes': notes}
         result = self.post(url, data)
         return result['adjustment']
-
-    '''task api'''
-
-    def get_tasks(self):
-        "API doesn't support this call yet"
-        raise APINotImplementedException("API doesn't support this call yet")
 
     '''userrole api'''
 

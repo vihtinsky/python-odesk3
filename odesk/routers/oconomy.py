@@ -1,6 +1,6 @@
 """
 Python bindings to odesk API
-python-odesk version 0.4
+python-odesk version 0.4.1
 (C) 2010-2011 oDesk
 """
 
@@ -57,7 +57,6 @@ class OConomy(GdsNamespace):
         else:
             url = 'summary'
         result = self.get(url)
-        print url
         return result
 
 
