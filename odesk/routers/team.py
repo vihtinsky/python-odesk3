@@ -26,33 +26,6 @@ class Team(Namespace):
     api_url = 'team/'
     version = 1
 
-    def get_teamrooms(self):
-        """
-        Retrieve all teamrooms accessible to the authenticated user
-        """
-        url = 'teamrooms'
-        result = self.get(url)
-        teamrooms = result['teamrooms']['teamroom']
-        if not isinstance(teamrooms, list):
-            teamrooms = [teamrooms]
-        return teamrooms
-
-    def get_snapshots(self, team_id, online='now'):
-        """
-        Retrieve team member snapshots
-
-        Parameters:
-          team_id   The Team ID
-          online    'now' / 'last_24h' / 'all' (default 'now')
-                    Filter for logged in users / users active in
-                    last 24 hours / all users
-        """
-        url = 'snapshots/%s' % team_id
-        result = self.get(url, {'online': online})
-        snapshots = result['teamroom']['snapshot']
-        if not isinstance(snapshots, list):
-            snapshots = [snapshots]
-        return snapshots
 
     def get_snapshot(self, company_id, user_id, datetime=None):
         """
@@ -150,34 +123,46 @@ class Team(Namespace):
         result = self.get(url, data)
         return result['streams']['snapshot']
 
-    def get_teamrooms_2(self):
+    def get_teamrooms(self, target_version = 1):
         """
         Retrieve all teamrooms accessible to the authenticated user
+
+        Parameters:
+            target_version      Version of future requested API
         """
         url = 'teamrooms'
-        self.version = 2
+
+        current_version = self.version
+        if target_version != current_version     
+            self.version = target_version
         result = self.get(url)
         teamrooms = result['teamrooms']['teamroom']
         if not isinstance(teamrooms, list):
             teamrooms = [teamrooms]
-        self.version = 1
+        if target_version != current_version:
+            self.version = current_version
         return teamrooms
 
-    def get_snapshots_2(self, team_id, online='now'):
+    def get_snapshots(self, team_id, online='now', target_version = 1, current_version = 1):
         """
         Retrieve team member snapshots
 
         Parameters:
-          team_id   The Team ID
-          online    'now' / 'last_24h' / 'all' (default 'now')
-                    Filter for logged in users / users active in
-                    last 24 hours / all users
+          team_id           The Team ID
+          online            'now' / 'last_24h' / 'all' (default 'now')
+                            Filter for logged in users / users active in
+                            last 24 hours / all users
+          target_version    Version of future requested API
+        
         """
         url = 'teamrooms/%s' % team_id
-        self.version = 2
+        current_version = self.version
+        if target_version != current_version:
+            self.version = target_version
         result = self.get(url, {'online': online})
         snapshots = result['teamroom']['snapshot']
         if not isinstance(snapshots, list):
             snapshots = [snapshots]
-        self.version = 1
+        if target_version != current_version:
+            self.version = current_version
         return snapshots
