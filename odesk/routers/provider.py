@@ -1,25 +1,10 @@
 """
 Python bindings to odesk API
-python-odesk version 0.4
+python-odesk version 0.5
 (C) 2010-2011 oDesk
 """
 
-import cookielib
-from datetime import date
-import hashlib
-import logging
-import urllib
-import urllib2
-
-
-try:
-    import json
-except ImportError:
-    import simplejson as json
-
-
 from odesk.namespaces import Namespace
-from odesk.utils import *
 
 
 class Provider(Namespace):
@@ -38,44 +23,56 @@ class Provider(Namespace):
 
     def get_provider(self, provider_ciphertext):
         """
-        Retrieve an exhastive list of atributes associated with the referenced provider
+        Retrieve an exhastive list of atributes associated with the referenced
+        provider
 
         Parameters
           provider_ciphertext   The provider's cipher text (key)
         """
+        if isinstance(provider_ciphertext, (list, tuple)):
+            provider_ciphertext = map(str, provider_ciphertext)
+            provider_ciphertext = ';'.join(provider_ciphertext[:20])
+
         url = 'providers/%s' % str(provider_ciphertext)
         result = self.get(url)
         return result['profile']
 
     def get_provider_brief(self, provider_ciphertext):
         """
-        Retrieve an brief list of atributes associated with the referenced provider
+        Retrieve an brief list of atributes associated with the referenced
+        provider
 
         Parameters
           provider_ciphertext   The provider's cipher text (key)
         """
+        if isinstance(provider_ciphertext, (list, tuple)):
+            provider_ciphertext = map(str, provider_ciphertext)
+            provider_ciphertext = ';'.join(provider_ciphertext[:20])
+
         url = 'providers/%s/brief' % str(provider_ciphertext)
         result = self.get(url)
         return result['profile']
 
-    def get_providers(self, data=None, page_offset=0, page_size=20, order_by=None):
+    def get_providers(self, data=None, page_offset=0, page_size=20, \
+                        order_by=None):
         """
         Search oDesk providers
 
         Parameters
-          data          A dict (q:query, c1:Job Category, c2:Secondary Category,
-                        fb:Feedback, hrs:Hours, ir:Is Recent, min:Min Hourly Rate,
-                        max:Max Hourly Rate, loc:Location, pt:Provider Type,
-                        last:Last Activity, test:Test, port:Total Portfolio Items,
-                        rdy:Is oDesk Ready, ui:English Skills, ag:Agency,
-                        to:Titles Only, g:Group Member)
-          page_offset   Start of page (number of results to skip) (optional)
-          page_size     Page size (number of results) (optional: default 20)
+          data       A dict (q:query, c1:Job Category, c2:Secondary Category,
+                     fb:Feedback, hrs:Hours, ir:Is Recent, min:Min Hourly Rate,
+                     max:Max Hourly Rate, loc:Location, pt:Provider Type,
+                     last:Last Activity, test:Test, port:Total Portfolio Items,
+                     rdy:Is oDesk Ready, ui:English Skills, ag:Agency,
+                     to:Titles Only, g:Group Member)
+          page_offset Start of page (number of results to skip) (optional)
+          page_size   Page size (number of results) (optional: default 20)
           order_by
         """
         url = 'search/providers'
         if data is None:
-            data = {}     # shouldn't use data={} as default arg value (mutations persist throughout calls)
+            data = {}
+
         data['page'] = '%d;%d' % (page_offset, page_size)
         if order_by is not None:
             data['order_by'] = order_by
@@ -87,18 +84,18 @@ class Provider(Namespace):
         Search oDesk jobs
 
         Parameters
-          data          A dict (q:query, c1:Job Category, c2:Secondary Category,
-                        fb:Feedback, min:Min Budget, max:Max Budget, t:Job Type,
-                        wl:Hours/Week, dur:Duration of Engagement, dp:Date Posted,
-                        st:Status for Search, tba:Total Billed Assignments,
-                        gr:Pref Group, to:Titles Only)
+          data       A dict (q:query, c1:Job Category, c2:Secondary Category,
+                     fb:Feedback, min:Min Budget, max:Max Budget, t:Job Type,
+                     wl:Hours/Week, dur:Duration of Engagement, dp:Date Posted,
+                     st:Status for Search, tba:Total Billed Assignments,
+                     gr:Pref Group, to:Titles Only)
           page_offset   Start of page (number of results to skip) (optional)
           page_size     Page size (number of results) (optional: default 20)
           order_by
         """
         url = 'search/jobs'
         if data is None:
-            data = {}     # shouldn't use data={} as default arg value (mutations persist throughout calls)
+            data = {}
         data['page'] = '%d;%d' % (page_offset, page_size)
         if order_by is not None:
             data['order_by'] = order_by

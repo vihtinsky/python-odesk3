@@ -1,9 +1,9 @@
 """
 Python bindings to odesk API
-python-odesk version 0.4
+python-odesk version 0.5
 (C) 2010-2011 oDesk
 """
-VERSION = (0, 4, 0, 'final', 5)
+VERSION = (0, 5, 0, 'alpha', 1)
 
 
 def get_version():
@@ -20,25 +20,15 @@ def get_version():
     return version
 
 
-import cookielib
-from datetime import date
+import json
 import hashlib
 import logging
 import urllib
 import urllib2
 
 
-try:
-    import json
-except ImportError:
-    import simplejson as json
-
-
-from odesk.auth import *
-from odesk.exceptions import *
-from odesk.http import *
-from odesk.namespaces import *
-from odesk.utils import *
+from odesk.auth import Auth
+from odesk.http import HttpRequest, raise_http_error
 
 
 __all__ = ["get_version", "Client", "utils"]
@@ -49,6 +39,7 @@ def _utf8_str(obj):
         return unicode(obj).encode("utf8")
     except UnicodeDecodeError, e:
         # input could be an utf8 encoded
+        logging.debug(e)
         obj.decode("utf8")  # check if it is a valid utf8 string
         return obj
 
@@ -69,7 +60,8 @@ def signed_urlencode(secret, query=None):
         try:
             message += _utf8_str(key) + _utf8_str(query[_utf8_str(key)])
         except Exception, e:
-            logging.debug("[python-odesk] Error while trying to sign key: %s and query %s" % (key, query[key]))
+            logging.debug("[python-odesk] Error while trying to sign key: %s'+\
+                ' and query %s" % (key, query[key]))
             raise e
     #query = query.copy()
     _query = {}
@@ -181,7 +173,7 @@ class Client(BaseClient):
             self.hr = HR(self)
 
         if mc:
-            from odesk.routers.mc import *
+            from odesk.routers.mc import MC
             self.mc = MC(self)
 
         if oconomy:

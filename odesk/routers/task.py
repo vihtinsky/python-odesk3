@@ -1,21 +1,9 @@
 """
 Python bindings to odesk API
-python-odesk version 0.4
+python-odesk version 0.5
 (C) 2010-2011 oDesk
 """
-
-import cookielib
-from datetime import date
-import hashlib
-import logging
 import urllib
-import urllib2
-
-
-try:
-    import json
-except ImportError:
-    import simplejson as json
 
 
 from odesk.namespaces import Namespace
@@ -127,8 +115,9 @@ class Task(Namespace):
           company_id    Company ID
           task_codes    Task codes (must be a list, even of 1 item)
         """
-        url = 'tasks/companies/%s/tasks/%s' % (str(company_id),
-                                    self._generate_many_tasks_url(task_codes))
+        if isinstance(task_codes, (list, tuple)):
+            task_codes = ';'.join(map(str, task_codes))
+        url = 'tasks/companies/%s/tasks/%s' % (company_id, task_codes)
         result = self.get(url)
         return result["tasks"]
 
@@ -141,9 +130,10 @@ class Task(Namespace):
           team_id       Team ID
           task_codes    Task codes (must be a list, even of 1 item)
         """
+        if isinstance(task_codes, (list, tuple)):
+            task_codes = ';'.join(map(str, task_codes))
         url = 'tasks/companies/%s/teams/%s/tasks/%s' %\
-                                             (str(company_id), str(team_id),
-                                    self._generate_many_tasks_url(task_codes))
+                                (company_id, team_id, task_codes)
         result = self.get(url)
         return result["tasks"] or []
 
@@ -158,9 +148,10 @@ class Task(Namespace):
           user_id       User ID
           task_codes    Task codes (must be a list, even of 1 item)
         """
+        if isinstance(task_codes, (list, tuple)):
+            task_codes = ';'.join(map(str, task_codes))
         url = 'tasks/companies/%s/teams/%s/users/%s/tasks/%s' %\
-                                (str(company_id), str(team_id), str(user_id),
-                                 self._generate_many_tasks_url(task_codes))
+                                (company_id, team_id, user_id, task_codes)
         result = self.get(url)
         return result["tasks"] or []
 
@@ -290,8 +281,9 @@ class Task(Namespace):
           company_id    Company ID
           task_codes    Task codes (must be a list, even of 1 item)
         """
-        url = 'tasks/companies/%s/tasks/%s' % (str(company_id),
-                                    self._generate_many_tasks_url(task_codes))
+        if isinstance(task_codes, (list, tuple)):
+            task_codes = ';'.join(map(str, task_codes))
+        url = 'tasks/companies/%s/tasks/%s' % (company_id, task_codes)
         return self.delete(url, {})
 
     def delete_team_task(self, company_id, team_id, task_codes):
@@ -303,8 +295,10 @@ class Task(Namespace):
           team_id       Team ID
           task_codes    Task codes (must be a list, even of 1 item)
         """
-        url = 'tasks/companies/%s/teams/%s/tasks/%s' % (str(company_id),
-                    str(team_id), self._generate_many_tasks_url(task_codes))
+        if isinstance(task_codes, (list, tuple)):
+            task_codes = ';'.join(map(str, task_codes))
+        url = 'tasks/companies/%s/teams/%s/tasks/%s' %\
+                                (company_id, team_id, task_codes)
         return self.delete(url, {})
 
     def delete_user_task(self, company_id, team_id, user_id, task_codes):
@@ -317,9 +311,10 @@ class Task(Namespace):
           user_id       User ID
           task_codes    Task codes (must be a list, even of 1 item)
         """
+        if isinstance(task_codes, (list, tuple)):
+            task_codes = ';'.join(map(str, task_codes))
         url = 'tasks/companies/%s/teams/%s/users/%s/tasks/%s' %\
-                                 (str(company_id), str(team_id), str(user_id),
-                                 self. _generate_many_tasks_url(task_codes))
+                                 (company_id, team_id, user_id, task_codes)
         return self.delete(url, {})
 
     def delete_all_company_tasks(self, company_id):

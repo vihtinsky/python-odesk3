@@ -1,23 +1,11 @@
 """
 Python bindings to odesk API
-python-odesk version 0.4
+python-odesk version 0.5
 (C) 2010-2011 oDesk
 """
 
-import cookielib
-from datetime import date
-import hashlib
-import logging
 import urllib
-import urllib2
 
-
-try:
-    import json
-except ImportError:
-    import simplejson as json
-
-from odesk.exceptions import *
 from odesk.namespaces import Namespace
 
 
@@ -98,14 +86,16 @@ class MC(Namespace):
           thread_ids        must be a list, even of 1 item
           read              True/False (optional: default True)
         """
-        url = 'threads/%s/' % str(username)
+        if isinstance(thread_ids, (list, tuple)):
+            thread_ids = ';'.join(map(str, thread_ids))
+        url = 'threads/%s/%s' % (username, thread_ids)
+
         if read:
             data = {'read': 'true'}
         else:
             data = {'read': 'false'}
-        result = self.put(self._generate_many_threads_url(url,\
-                            thread_ids), data=data)
-        return result
+
+        return self.put(url, data=data)
 
     def put_threads_read(self, username, thread_ids):
         """
@@ -137,16 +127,16 @@ class MC(Namespace):
           thread_ids        must be a list, even of 1 item
           starred           True/False (optional: default True)
         """
-        url = 'threads/%s/' % str(username)
+        if isinstance(thread_ids, (list, tuple)):
+            thread_ids = ';'.join(map(str, thread_ids))
+        url = 'threads/%s/%s' % (username, thread_ids)
 
         if starred:
             data = {'starred': 'true'}
         else:
             data = {'starred': 'false'}
 
-        result = self.put(self._generate_many_threads_url(url,\
-                            thread_ids), data=data)
-        return result
+        return self.put(url, data=data)
 
     def put_threads_starred(self, username, thread_ids):
         """
@@ -180,16 +170,16 @@ class MC(Namespace):
           thread_ids        must be a list, even of 1 item
           deleted           True/False (optional: default True)
         """
-        url = 'threads/%s/' % str(username)
+        if isinstance(thread_ids, (list, tuple)):
+            thread_ids = ';'.join(map(str, thread_ids))
+        url = 'threads/%s/%s' % (username, thread_ids)
 
         if deleted:
             data = {'deleted': 'true'}
         else:
             data = {'deleted': 'false'}
 
-        result = self.put(self._generate_many_threads_url(url, thread_ids),
-                          data=data)
-        return result
+        return self.put(url, data=data)
 
     def put_threads_deleted(self, username, thread_ids):
         """
@@ -216,14 +206,16 @@ class MC(Namespace):
     def post_message(self, username, recipients, subject, body,
                      thread_id=None):
         """
-        Send a new message (creating a new thread) or reply to an existing thread
+        Send a new message (creating a new thread) or reply to an existing
+        thread
 
         Parameters
           username      User name (of sender)
           recipients    Recipient(s)  (a single string or a list/tuple)
           subject       Message subject
           body          Message text
-          thread_id     The thread id if replying to an existing thread (optional)
+          thread_id     The thread id if replying to an existing thread
+                        (optional)
         """
         url = 'threads/%s' % str(username)
         if not isinstance(recipients, (list, tuple)):
@@ -231,7 +223,6 @@ class MC(Namespace):
         recipients = ','.join(map(str, recipients))
         if thread_id:
             url += '/%s' % str(thread_id)
-        result = self.post(url, data={'recipients': recipients,
+        return self.post(url, data={'recipients': recipients,
                                       'subject': subject,
                                       'body': body})
-        return result
