@@ -315,7 +315,7 @@ class HR(Namespace):
             data['status'] = status
 
         if job_ref:
-            data['job_ref'] = job_ref
+            data['job__reference'] = job_ref
 
         if buyer_ref:
             data['buyer_ref'] = buyer_ref
