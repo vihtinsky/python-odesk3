@@ -3,21 +3,6 @@ Python bindings to odesk API
 python-odesk version 0.4
 (C) 2010-2011 oDesk
 """
-
-import cookielib
-from datetime import date
-import hashlib
-import logging
-import urllib
-import urllib2
-
-
-try:
-    import json
-except ImportError:
-    import simplejson as json
-
-
 from odesk.namespaces import Namespace
 
 
@@ -25,7 +10,6 @@ class Team(Namespace):
 
     api_url = 'team/'
     version = 1
-
 
     def get_snapshot(self, company_id, user_id, datetime=None):
         """
@@ -123,7 +107,7 @@ class Team(Namespace):
         result = self.get(url, data)
         return result['streams']['snapshot']
 
-    def get_teamrooms(self, target_version = 1):
+    def get_teamrooms(self, target_version=1):
         """
         Retrieve all teamrooms accessible to the authenticated user
 
@@ -133,7 +117,7 @@ class Team(Namespace):
         url = 'teamrooms'
 
         current_version = self.version
-        if target_version != current_version     
+        if target_version != current_version:
             self.version = target_version
         result = self.get(url)
         teamrooms = result['teamrooms']['teamroom']
@@ -143,7 +127,7 @@ class Team(Namespace):
             self.version = current_version
         return teamrooms
 
-    def get_snapshots(self, team_id, online='now', target_version = 1, current_version = 1):
+    def get_snapshots(self, team_id, online='now', target_version=1):
         """
         Retrieve team member snapshots
 
@@ -153,7 +137,6 @@ class Team(Namespace):
                             Filter for logged in users / users active in
                             last 24 hours / all users
           target_version    Version of future requested API
-        
         """
         url = 'teamrooms/%s' % team_id
         current_version = self.version
