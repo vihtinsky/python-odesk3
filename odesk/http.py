@@ -5,6 +5,7 @@ python-odesk version 0.5
 """
 
 import urllib2
+import httplib
 
 from odesk.exceptions import HTTP400BadRequestError, HTTP401UnauthorizedError,\
     HTTP403ForbiddenError, HTTP404NotFoundError
@@ -12,16 +13,16 @@ from odesk.exceptions import HTTP400BadRequestError, HTTP401UnauthorizedError,\
 
 def raise_http_error(e):
     '''Raise custom exception'''
-    if e.code == 400:
+    if e.code == httplib.BAD_REQUEST:
         raise HTTP400BadRequestError(e.filename, e.code, e.msg,
                                      e.hdrs, None)
-    elif e.code == 401:
+    elif e.code == httplib.UNAUTHORIZED:
         raise HTTP401UnauthorizedError(e.filename, e.code, e.msg,
                                        e.hdrs, None)
-    elif e.code == 403:
+    elif e.code == httplib.FORBIDDEN:
         raise HTTP403ForbiddenError(e.filename, e.code, e.msg,
                                     e.hdrs, None)
-    elif e.code == 404:
+    elif e.code == httplib.NOT_FOUND:
         raise HTTP404NotFoundError(e.filename, e.code, e.msg,
                                    e.hdrs, None)
     else:
