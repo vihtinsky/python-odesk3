@@ -1,23 +1,8 @@
 """
 Python bindings to odesk API
-python-odesk version 0.4
+python-odesk version 0.5
 (C) 2010-2011 oDesk
 """
-
-import cookielib
-from datetime import date
-import hashlib
-import logging
-import urllib
-import urllib2
-
-
-try:
-    import json
-except ImportError:
-    import simplejson as json
-
-
 from odesk.namespaces import Namespace
 
 

@@ -1,25 +1,11 @@
 """
 Python bindings to odesk API
-python-odesk version 0.4
+python-odesk version 0.5
 (C) 2010-2011 oDesk
 """
-
-import cookielib
 from datetime import date
-import hashlib
-import logging
-import urllib
-import urllib2
 
-
-try:
-    import json
-except ImportError:
-    import simplejson as json
-
-from odesk.exceptions import *
 from odesk.namespaces import GdsNamespace, NonauthGdsNamespace
-from odesk.utils import *
 
 
 class OConomy(GdsNamespace):
@@ -82,7 +68,9 @@ class NonauthOConomy(NonauthGdsNamespace):
             month = str(month)
             _month_fmt = 'YYYYMM'
             if not len(month) == len(_month_fmt):
-                raise ValueError('Format of month parameter (%s) should be %s' % (month, _month_fmt))
+                raise ValueError(\
+                    'Format of month parameter (%s) should be %s' %\
+                     (month, _month_fmt))
         url = 'summary/%s' % month
         result = self.get(url)
         return result

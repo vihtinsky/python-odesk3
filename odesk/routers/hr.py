@@ -1,25 +1,10 @@
 """
 Python bindings to odesk API
-python-odesk version 0.4
+python-odesk version 0.5
 (C) 2010-2011 oDesk
 """
-
-import cookielib
-from datetime import date
-import hashlib
-import logging
-import urllib
-import urllib2
-
-
-try:
-    import json
-except ImportError:
-    import simplejson as json
-
 from odesk.exceptions import APINotImplementedException
 from odesk.namespaces import Namespace
-from odesk.utils import *
 
 
 class HR(Namespace):
@@ -46,7 +31,8 @@ class HR(Namespace):
 
     def get_companies(self):
         """
-        Retrieves the list of companies to which the current authorized user has access
+        Retrieves the list of companies to which the current authorized user
+        has access
         """
         url = 'companies'
         result = self.get(url)
@@ -57,7 +43,8 @@ class HR(Namespace):
         Retrieve the company object from the company reference
 
         Parameters:
-          company_reference     The company reference (can be found using get_companies method)
+          company_reference     The company reference (can be found using
+            get_companies method)
         """
         url = 'companies/%s' % str(company_referece)
         result = self.get(url)
@@ -69,7 +56,8 @@ class HR(Namespace):
         (as long as the user has access to the referenced company)
 
         Parameters
-          company_reference     The company reference (can be found using get_companies method)
+          company_reference     The company reference (can be found using
+            get_companies method)
         """
         url = 'companies/%s/teams' % str(company_referece)
         result = self.get(url)
@@ -87,7 +75,8 @@ class HR(Namespace):
         (only available for users with hiring privileges for the company)
 
         Parameters
-          company_reference     The company reference (can be found using get_companies method)
+          company_reference     The company reference (can be found using
+            get_companies method)
           active                True/False (default True)
         """
         url = 'companies/%s/users' % str(company_referece)
@@ -103,7 +92,8 @@ class HR(Namespace):
     def get_teams(self):
         """
         Retrieve a list of all the teams that a user has acccess to.
-        (this will return teams across all companies to which the current user has access)
+        (this will return teams across all companies to which the current
+            user has access)
         """
         url = 'teams'
         result = self.get(url)
@@ -115,7 +105,8 @@ class HR(Namespace):
 
         Parameters
           team_reference    The team reference
-          include_users     Whether to include details of users (default: False)
+          include_users     Whether to include details of users
+                            (default: False)
         """
         url = 'teams/%s' % str(team_reference)
         result = self.get(url, {'include_users': include_users})
@@ -177,7 +168,8 @@ class HR(Namespace):
         Parameters
           user_reference    The User reference (optional: defaults to API user)
           team_reference    The team reference (optional)
-          sub_teams         Whether to include sub team info (optional: defaults to False)
+          sub_teams         Whether to include sub team info (optional:
+                            defaults to False)
         '''
         data = {}
         if user_reference:
@@ -208,7 +200,8 @@ class HR(Namespace):
           created_time_from     timestamp (optional)
           created_time_to       timestamp (optional)
           page_offset           Number of entries to skip (optional)
-          page_size             Page size in number of entries (optional: default 20)
+          page_size             Page size in number of entries
+                                (optional: default 20)
           order_by              (optional)
         """
         url = 'jobs'
@@ -296,7 +289,8 @@ class HR(Namespace):
                    created_time_from=None, created_time_to=None,
                    page_offset=0, page_size=20, order_by=None):
         """
-        Retrieve a list of all the offers on a specific job or within a specific team
+        Retrieve a list of all the offers on a specific job or within
+                a specific team
 
         Parameters
           buyer_team_reference  The team reference (optional)
@@ -308,7 +302,8 @@ class HR(Namespace):
           created_time_from     timestamp e.g.'2008-09-09 00:00:01' (optional)
           created_time_to       timestamp e.g.'2008-09-09 00:00:01' (optional)
           page_offset           Number of entries to skip (optional)
-          page_size             Page size in number of entries (optional: default 20)
+          page_size             Page size in number of entries
+                                (optional: default 20)
           order_by              (optional)
         """
         url = 'offers'
@@ -358,10 +353,11 @@ class HR(Namespace):
 
     '''engagement api'''
 
-    def get_engagements(self, buyer_team_reference=None, include_sub_teams=False,
-                 status=None, provider_ref=None, agency_ref=None,
-                 created_time_from=None, created_time_to=None,
-                 page_offset=0, page_size=20, order_by=None):
+    def get_engagements(self, buyer_team_reference=None,
+                        include_sub_teams=False,
+                        status=None, provider_ref=None, agency_ref=None,
+                        created_time_from=None, created_time_to=None,
+                        page_offset=0, page_size=20, order_by=None):
         """
         Retrieve engagements
 
@@ -374,7 +370,8 @@ class HR(Namespace):
           created_time_from     timestamp e.g.'2008-09-09 00:00:01' (optional)
           created_time_to       timestamp e.g.'2008-09-09 00:00:01' (optional)
           page_offset           Number of entries to skip (optional)
-          page_size             Page size in number of entries (optional: default 20)
+          page_size             Page size in number of entries
+                                (optional: default 20)
           order_by              (optional)
         """
         url = 'engagements'
