@@ -256,7 +256,10 @@ class HR(Namespace):
           job_data      Details of the job
         """
         url = 'jobs'
-        result = self.post(url, {'job_data': job_data})
+        job_data_dict = {}
+        for k, v in job_data.items():
+            job_data_dict['job_data['+k+']']=v
+        result = self.post(url, job_data_dict)
         return result
 
     def update_job(self, job_id, job_data):
