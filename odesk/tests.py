@@ -496,6 +496,39 @@ def test_stream():
     assert te.get_stream('test', 'test') == stream_dict['streams']['snapshot'], \
          te.get_stream('test', 'test')
 
+teamrooms_dict_none = {'teamrooms': '',
+                       'teamroom': '',
+                       'snapshots': '',
+                       'snapshot': ''
+                       }
+
+
+def return_teamrooms_none_json():
+    return json.dumps(teamrooms_dict_none)
+
+
+def patched_urlopen_teamrooms_none(request, *args, **kwargs):
+    request.read = return_teamrooms_none_json
+    return request
+
+
+@patch('urllib2.urlopen', patched_urlopen_teamrooms_none)
+def test_teamrooms_none():
+    te = Team(get_client())
+
+    #test full_url
+    full_url = te.full_url('test')
+    assert full_url == 'https://www.odesk.com/api/team/v1/test', full_url
+
+    #test get_teamrooms
+    assert te.get_teamrooms() == [], te.get_teamrooms()
+
+    #test get_snapshots
+    assert te.get_snapshots(1) == [], te.get_snapshots(1)
+
+    #test get_snapshot
+    assert te.get_snapshot(1, 1) == teamrooms_dict_none['snapshot'], te.get_snapshot(1, 1)
+
 
 userroles = {u'userrole':
              [{u'parent_team__reference': u'1',
@@ -1468,13 +1501,13 @@ def test_gds_namespace_get():
 def test_non_auth_gds_namespace_post():
     from odesk.namespaces import NonauthGdsNamespace
     na_gds = NonauthGdsNamespace(get_client())
-    assert na_gds.urlopen('', method = 'POST') == None
+    assert na_gds.urlopen('', method='POST') == None
 
 @patch('urllib2.urlopen', patched_urlopen)
 def test_non_auth_gds_namespace_get():
     from odesk.namespaces import NonauthGdsNamespace
     na_gds = NonauthGdsNamespace(get_client())
-    result = na_gds.urlopen('http://test.url', method = 'GET')
+    result = na_gds.urlopen('http://test.url', method='GET')
     assert isinstance(result, HttpRequest), type(result)
     assert result.get_full_url() == 'http://test.url', result.get_full_url()
     assert result.get_method() == 'GET', result.get_method()

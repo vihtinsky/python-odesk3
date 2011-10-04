@@ -29,7 +29,10 @@ class Team(Namespace):
         if datetime:   # date could be a list or a range also
             url += '/%s' % datetime.isoformat()
         result = self.get(url)
-        snapshot = result['snapshot']
+        if 'snapshot' in result:
+            snapshot = result['snapshot']
+        else:
+            snapshot = []
         return snapshot
 
     def update_snapshot(self, company_id, user_id, datetime=None,
@@ -120,7 +123,10 @@ class Team(Namespace):
         if target_version != current_version:
             self.version = target_version
         result = self.get(url)
-        teamrooms = result['teamrooms']['teamroom']
+        if 'teamrooms' in result and 'teamroom' in result['teamrooms']:
+            teamrooms = result['teamrooms']['teamroom']
+        else:
+            teamrooms = []
         if not isinstance(teamrooms, list):
             teamrooms = [teamrooms]
         if target_version != current_version:
@@ -143,7 +149,10 @@ class Team(Namespace):
         if target_version != current_version:
             self.version = target_version
         result = self.get(url, {'online': online})
-        snapshots = result['teamroom']['snapshot']
+        if 'teamroom' in result and 'snapshot' in result['teamroom']:
+            snapshots = result['teamroom']['snapshot']
+        else:
+            snapshots = []
         if not isinstance(snapshots, list):
             snapshots = [snapshots]
         if target_version != current_version:
