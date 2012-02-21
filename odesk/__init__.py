@@ -144,7 +144,8 @@ class Client(BaseClient):
                 oauth_access_token=None, oauth_access_token_secret=None,
                 format='json', auth='simple', finance=True, finreport=True,
                 hr=True, mc=True, oconomy=True, provider=True,
-                task=True, team=True, ticket=True, timereport=True, url=True):
+                task=True, team=True, ticket=True, timereport=True, url=True,
+                job=True):
 
         self.public_key = public_key
         self.secret_key = secret_key
@@ -204,6 +205,10 @@ class Client(BaseClient):
         if url:
             from odesk.routers.url import Url
             self.url = Url(self)
+
+        if job:
+            from odesk.routers.job import Job
+            self.job = Job(self)
 
     #Shortcuts for HTTP methods
     def get(self, url, data=None):
