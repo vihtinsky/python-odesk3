@@ -208,4 +208,18 @@ Where csv_data - is the raw csv data for tasks to be updated. Example::
 
     "acmeinc","","","ABC","Project ABC","https://www.acmeinc.com/project/abc"<br>"acmeinc","acmeinc:dev","b42","123","Task 123","https://www.acmeinc.com/task/123"
 
+..
+.. _work_with_jobs:
 
+Work with jobs
+----------------------
+
+http://developers.odesk.com/w/page/49065901/Job%20Profile
+
+To work with jobs you should use client.job wrapper::
+
+    tasks = client.job.get_job_profile(job key)
+
+Where:
+
+* job_key - The job key or a list of keys, separated by ";", number of keys per request is limited by 20. You can access profile by job recno, in that case you can't specify a list of jobs, only one profile per request is available.
