@@ -835,7 +835,11 @@ provider_dict = {'profile':
                    'employments': 'employments',
                    'educations': 'employments',
                    'projects': 'projects',
-                   'quick_info': 'quick_info'}
+                   'quick_info': 'quick_info',
+                   'categories': 'category 1',
+                   'regions': 'region 1',
+                   'tests': 'test 1',
+                   }
 
 
 def return_provider_json():
@@ -890,6 +894,18 @@ def test_provider():
 
     result = pr.get_affiliates(1)
     assert result == provider_dict['profile']
+
+    result = pr.get_categories_metadata()
+    assert result == provider_dict['categories']
+
+    result = pr.get_skills_metadata()
+    assert result == provider_dict['skills']
+
+    result = pr.get_regions_metadata()
+    assert result == provider_dict['regions']
+
+    result = pr.get_tests_metadata()
+    assert result == provider_dict['tests']
 
 
 trays_dict = {'trays': [{u'unread': u'0',

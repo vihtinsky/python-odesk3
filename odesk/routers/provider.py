@@ -239,3 +239,38 @@ class Provider(Namespace):
         url = 'affiliates/%s' % affiliate_key
         result = self.get(url)
         return result['profile']
+
+    def get_categories_metadata(self):
+        """
+        Returns list of all categories available for
+        job/contractor profiles
+        """
+        url = 'metadata/categories'
+        result = self.get(url)
+        return result['categories']
+
+    def get_skills_metadata(self):
+        """
+        Returns list of all skills available for job/contractor
+        profiles
+        """
+        url = 'metadata/skills'
+        result = self.get(url)
+        return result['skills']
+
+    def get_regions_metadata(self):
+        """
+        Returns list of all region choices available for job/contractor
+        profiles
+        """
+        url = 'metadata/regions'
+        result = self.get(url)
+        return result['regions']
+
+    def get_tests_metadata(self):
+        """
+        Returns list of all available tests at oDesk
+        """
+        url = 'metadata/tests'
+        result = self.get(url)
+        return result['tests']

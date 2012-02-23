@@ -46,10 +46,18 @@ def provider(public_key, secret_key):
     # update a quickinfo by giving new data
     client.provider.update_quickinfo('~~someref', {'skill':'skill'})
     print client.provider.get_affiliates('someref')
+    print "Get categories metadata:"
+    print client.provider.get_categories_metadata()
+    print "Get skills metadata:"
+    print client.provider.get_skills_metadata()
+    print "Get regions metadata:"
+    print client.provider.get_regions_metadata()
+    print "Get tests metadata:"
+    print client.provider.get_tests_metadata()
     print "Revoke access"
-    print client.auth.revoke_token()    
+    print client.auth.revoke_token()
 
- 
+
 if __name__ == '__main__':
     public_key = PUBLIC_KEY or raw_input('Enter public key: ')
     secret_key = SECRET_KEY or raw_input('Enter secret key: ')
