@@ -108,7 +108,7 @@ class BaseClient(object):
 
         if isinstance(self.auth, OAuth):
             query = self.auth.urlencode(url, self.oauth_access_token,\
-                self.oauth_access_token_secret, data)
+                self.oauth_access_token_secret, data, method)
         else:
             query = self.urlencode(data)
 
