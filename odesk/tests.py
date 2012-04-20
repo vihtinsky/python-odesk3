@@ -12,6 +12,7 @@ from odesk.oauth import OAuth
 from odesk.routers.team import Team
 
 from mock import Mock, patch
+import urlparse
 import urllib2
 import httplib
 
@@ -825,6 +826,31 @@ def test_hrv2_post_adjustment():
 
     result = hr.post_team_adjustment(1, 2, 100000, 'test', 'test note')
     assert result == adjustments[u'adjustment'], result
+
+
+job_data = {
+                'buyer_team_reference': 111,
+                'title': 'Test job from API',
+                'job_type': 'hourly',
+                'description': 'this is test job, please do not apply to it',
+                'visibility': 'odesk',
+                'duration': 10,
+                'category': 'Web Development',
+                'subcategory': 'Other - Web Development',
+                }
+
+
+def patched_urlopen_job_data_parameters(request, *args, **kwargs):
+    post_dict = urlparse.parse_qs(request.data)
+    assert post_dict == {'api_key': ['public'], 'job_data[subcategory]': ['Other - Web Development'], 'job_data[description]': ['this is test job, please do not apply to it'], 'job_data[duration]': ['10'], 'job_data[buyer_team_reference]': ['111'], 'job_data[job_type]': ['hourly'], 'api_token': ['some_token'], 'api_sig': ['830fb250d089dabb2e74a301796c6e6b'], 'job_data[title]': ['Test job from API'], 'job_data[visibility]': ['odesk'], 'job_data[category]': ['Web Development']}, a
+    request.read = lambda: '{"some":"data"}'
+    return request
+
+
+@patch('urllib2.urlopen', patched_urlopen_job_data_parameters)
+def test_job_data_parameters():
+    hr = get_client().hr
+    result = hr.post_job(job_data)
 
 
 @patch('urllib2.urlopen', patched_urlopen_hr)
