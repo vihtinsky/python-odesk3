@@ -251,7 +251,19 @@ routers/
 
  * get_provider(self, provider_ciphertext)
  * get_provider_brief(self, provider_ciphertext)
- * get_providers (q='')
+ * get_providers(self, data=None, page_offset=0, page_size=20, order_by=None)
+ * get_jobs(self, data=None, page_offset=0, page_size=20, order_by=None)
+ * get_skills(self, provider_ciphertext)
+ * add_skill(self, provider_ciphertext, data)
+ * update_skill(self, provider_ciphertext, skill_id, data)
+ * delete_skill(self, provider_ciphertext, skill_id)
+ * get_quickinfo(self, provider_ciphertext)
+ * update_quickinfo(self, provider_ciphertext, data)
+ * get_affiliates(self, affiliate_key)
+ * get_categories_metadata(self)
+ * get_skills_metadata(self)
+ * get_regions_metadata(self)
+ * get_tests_metadata(self)
 
 * Task(Namespace) - routers/task.py
 
