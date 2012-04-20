@@ -20,6 +20,7 @@ def get_version():
     return version
 
 
+import os
 import json
 import hashlib
 import logging
@@ -33,13 +34,30 @@ from odesk.http import HttpRequest, raise_http_error
 
 __all__ = ["get_version", "Client", "utils"]
 
+logger = logging.getLogger('python-odesk')
+
+if getattr(os.environ, "PYTHON_ODESK_DEBUG", False):
+    if getattr(os.environ, "PYTHON_ODESK_DEBUG_FILE", False):
+        fh = logging.FileHandler(filename=os.environ["PYTHON_ODESK_DEBUG_FILE"]
+            )
+        fh.setLevel(logging.DEBUG)
+        logger.addHandler(fh)
+    else:
+        ch = logging.StreamHandler()
+        ch.setLevel(logging.DEBUG)
+        logger.addHandler(ch)
+else:
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.CRITICAL)
+    logger.addHandler(ch)
+
 
 def _utf8_str(obj):
     try:
         return unicode(obj).encode("utf8")
     except UnicodeDecodeError, e:
         # input could be an utf8 encoded
-        logging.debug(e)
+        logger.debug(e)
         obj.decode("utf8")  # check if it is a valid utf8 string
         return obj
 
@@ -60,7 +78,7 @@ def signed_urlencode(secret, query=None):
         try:
             message += _utf8_str(key) + _utf8_str(query[_utf8_str(key)])
         except Exception, e:
-            logging.debug("[python-odesk] Error while trying to sign key: %s'+\
+            logger.debug("Error while trying to sign key: %s'+\
                 ' and query %s" % (key, query[key]))
             raise e
     #query = query.copy()
@@ -125,13 +143,21 @@ class BaseClient(object):
         """
         assert format == 'json', "Only JSON format is supported at the moment"
         url += '.' + format
+        logger = logging.getLogger('python-odesk')
         try:
+            logger.debug('Prepairing to make oDesk call')
+            logger.debug('URL: ' + url)
+            logger.debug('Data: ' + json.dumps(data))
+            logger.debug('Method: ' + method)
             response = self.urlopen(url, data, method)
         except urllib2.HTTPError, e:
+            logger.debug(e)
             raise_http_error(e)
 
+        result = response.read()
+        logger.debug('Response: ' + result)
         if format == 'json':
-            result = json.loads(response.read())
+            result = json.loads(result)
         return result
 
 

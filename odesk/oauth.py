@@ -8,6 +8,7 @@ import time
 import urlparse
 import urllib
 import oauth2 as oauth
+import logging
 
 
 from odesk.namespaces import Namespace
@@ -82,7 +83,9 @@ class OAuth(Namespace):
         try:
             request_token = self.request_token
             request_token_secret = self.request_token_secret
-        except AttributeError:
+        except AttributeError, e:
+            logger = logging.getLogger('python-odesk')
+            logger.debug(e)
             raise Exception("At first you need to call get_authorize_url")
         token = oauth.Token(request_token, request_token_secret)
         token.set_verifier(verifier)

@@ -10,7 +10,8 @@ import urllib2
 
 class BaseException(Exception):
     def __init__(self, *args, **kwargs):
-        logging.debug("[python-odesk]:" + unicode(s) for s in args)
+        logger = logging.getLogger('python-odesk')
+        logger.debug("BaseException:" + unicode(s) for s in args)
         super(BaseException, self).__init__()
 
 

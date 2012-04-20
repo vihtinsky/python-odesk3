@@ -6,7 +6,7 @@ python-odesk version 0.5
 
 import json
 import urllib2
-
+import logging
 
 from odesk.http import HttpRequest, raise_http_error
 
@@ -61,6 +61,8 @@ class GdsNamespace(Namespace):
         try:
             response = self.urlopen(url, data, method)
         except urllib2.HTTPError, e:
+            logger = logging.getLogger('python-odesk')
+            logger.debug(e)
             raise_http_error(e)
 
         result = json.loads(response.read())

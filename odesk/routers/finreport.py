@@ -4,14 +4,6 @@ python-odesk version 0.4
 (C) 2010-2011 oDesk
 """
 
-import cookielib
-from datetime import date
-import hashlib
-import logging
-import urllib
-import urllib2
-
-
 try:
     import json
 except ImportError:
@@ -19,7 +11,6 @@ except ImportError:
 
 
 from odesk.namespaces import GdsNamespace
-from odesk.utils import *
 
 
 class Finreports(GdsNamespace):
