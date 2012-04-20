@@ -1680,3 +1680,145 @@ def test_oauth_get_access_token():
     oa.request_token_secret = '193ef27f57ab4e37'
     assert oa.get_access_token('9cbcbc19f8acc2d85a013e377ddd4118') ==\
      ('aedec833d41732a584d1a5b4959f9cd6', '9d9cccb363d2b13e')
+
+
+job_profiles_dict = {'profiles': {'profile': [
+    {
+        u'amount': u'',
+        u'as_hrs_per_week': u'0',
+        u'as_job_type': u'Hourly',
+        u'as_opening_access': u'private',
+        u'as_opening_recno': u'111',
+        u'as_opening_title': u'Review website and improve copy writing',
+        u'as_provider': u'111',
+        u'as_rate': u'$10.00',
+        u'as_reason': u'Job was cancelled or postponed',
+        u'as_reason_api_ref': u'',
+        u'as_reason_recno': u'72',
+        u'as_recno': u'1',
+        u'as_status': u'Closed',
+        u'as_to': u'11/2011',
+        u'as_total_charge': u'84',
+        u'as_total_hours': u'3.00',
+        u'op_desc_digest': u'Test job 1.',
+        u'op_description': u'Test job 1.',
+        u'ciphertext': u'~~111111111',
+        u'ui_job_profile_access': u'odesk',
+        u'ui_opening_status': u'Active',
+        u'version': u'1'
+    },
+    {
+        u'amount': u'',
+        u'as_hrs_per_week': u'0',
+        u'as_job_type': u'Hourly',
+        u'as_opening_access': u'private',
+        u'as_opening_recno': u'222',
+        u'as_opening_title': u'Review website and improve copy writing',
+        u'as_provider': u'222',
+        u'as_rate': u'$10.00',
+        u'as_reason': u'Job was cancelled or postponed',
+        u'as_reason_api_ref': u'',
+        u'as_reason_recno': u'72',
+        u'as_recno': u'2',
+        u'as_status': u'Closed',
+        u'as_to': u'11/2011',
+        u'as_total_charge': u'84',
+        u'as_total_hours': u'3.00',
+        u'ciphertext': u'~~222222222',
+        u'op_desc_digest': u'Test job 2.',
+        u'op_description': u'Test job 2.',
+        u'ui_job_profile_access': u'odesk',
+        u'ui_opening_status': u'Active',
+        u'version': u'1'
+    },
+]}}
+
+job_profile_dict = {'profile':
+    {
+        u'amount': u'',
+        u'as_hrs_per_week': u'0',
+        u'as_job_type': u'Hourly',
+        u'as_opening_access': u'private',
+        u'as_opening_recno': u'111',
+        u'as_opening_title': u'Review website and improve copy writing',
+        u'as_provider': u'111',
+        u'as_rate': u'$10.00',
+        u'as_reason': u'Job was cancelled or postponed',
+        u'as_reason_api_ref': u'',
+        u'as_reason_recno': u'72',
+        u'as_recno': u'1',
+        u'as_status': u'Closed',
+        u'as_to': u'11/2011',
+        u'as_total_charge': u'84',
+        u'as_total_hours': u'3.00',
+        u'op_desc_digest': u'Test job 1.',
+        u'op_description': u'Test job 1.',
+        u'ciphertext': u'~~111111111',
+        u'ui_job_profile_access': u'odesk',
+        u'ui_opening_status': u'Active',
+        u'version': u'1'
+    }
+}
+
+def return_single_job_json():
+    return json.dumps(job_profile_dict)
+
+
+def patched_urlopen_single_job(request, *args, **kwargs):
+    request.read = return_single_job_json
+    return request
+
+
+def return_multiple_jobs_json():
+    return json.dumps(job_profiles_dict)
+
+
+def patched_urlopen_multiple_jobs(request, *args, **kwargs):
+    request.read = return_multiple_jobs_json
+    return request
+
+
+@patch('urllib2.urlopen', patched_urlopen_single_job)
+def test_single_job_profile():
+    job = get_client().job
+
+    # Test full_url
+    full_url = job.full_url('jobs/111')
+    assert full_url == 'https://www.odesk.com/api/profiles/v1/jobs/111', \
+        full_url
+
+    # Test input parameters
+    try:
+        job.get_job_profile({})
+        raise Exception('Request should raise ValueError exception.')
+    except ValueError, e:
+        assert 'Invalid job key' in str(e)
+    try:
+        job.get_job_profile(['~~%s' % x for x in range(21)])
+        raise Exception('Request should raise ValueError exception.')
+    except ValueError, e:
+        assert 'Number of keys per request is limited' in str(e)
+    try:
+        job.get_job_profile(['~~111111', 123456])
+        raise Exception('Request should raise ValueError exception.')
+    except ValueError, e:
+        assert 'List should contain only job keys not recno' in str(e)
+
+    # Get single job profile test
+    assert job.get_job_profile('~~111111111') == job_profile_dict['profile'], \
+        job.get_job_profile('~~111111111')
+
+
+@patch('urllib2.urlopen', patched_urlopen_multiple_jobs)
+def test_multiple_job_profiles():
+    job = get_client().job
+
+    # Test full_url
+    full_url = job.full_url('jobs/~~111;~~222')
+    assert full_url == \
+        'https://www.odesk.com/api/profiles/v1/jobs/~~111;~~222', full_url
+
+    # Get multiple job profiles test
+    assert job.get_job_profile(['~~111111111', '~~222222222']) == \
+        job_profiles_dict['profiles']['profile'], \
+        job.get_job_profile(['~~111111111', '~~222222222'])

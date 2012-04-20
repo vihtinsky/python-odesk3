@@ -24,6 +24,7 @@ Package structure
    * finance.py
    * finreport.py
    * hr.py
+   * job.py
    * mc.py
    * oconomy.py
    * provider.py
@@ -207,6 +208,10 @@ routers/
  * get_buyer_companies_earnings(self, buyer_company_id, query)
  * get_financial_entities(self, accounting_id, query)
  * get_financial_entities_provider(self, provider_id, query)
+
+* Job(Namespace) - routers/job.py
+
+ * get_job_profile(self, job_key)
 
 * HR(Namespace) - routers/hr.py
 
