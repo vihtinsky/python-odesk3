@@ -285,7 +285,7 @@ class HR(Namespace):
 
     def get_offers(self, buyer_team_reference=None, status=None,
                    job_ref=None, include_sub_teams=None,
-                   buyer_ref=None, provider_ref=None, agency_ref=None,
+                   provider_ref=None, agency_ref=None,
                    created_time_from=None, created_time_to=None,
                    page_offset=0, page_size=20, order_by=None):
         """
@@ -297,7 +297,6 @@ class HR(Namespace):
           status                active/filled (optional: defaults to active)
           job_ref               The job reference (optional)
           include_sub_teams     Include sub teams (optional)
-          buyer_ref             (optional)
           provider_ref          (optional)
           agency_ref            (optional)
           created_time_from     timestamp e.g.'2008-09-09 00:00:01' (optional)
@@ -320,9 +319,6 @@ class HR(Namespace):
 
         if include_sub_teams:
             data['include_sub_teams'] = include_sub_teams
-
-        if buyer_ref:
-            data['buyer_ref'] = buyer_ref
 
         if provider_ref:
             data['provider__reference'] = provider_ref
