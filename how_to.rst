@@ -13,7 +13,7 @@ Authenticate
 
 http://developers.odesk.com/Authentication
 
-To authenticate your web application with the python-odesk, use next code::
+To authenticate your web application with the python-odesk3, use next code::
 
     client = odesk.Client('your public key', 'your secret key')
     #redirect your user to the client.auth.auth_url()

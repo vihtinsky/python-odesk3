@@ -1,9 +1,9 @@
 """
-Python bindings to odesk API
-python-odesk version 0.4.1
-(C) 2010-2011 oDesk
+Python3 bindings to odesk API
+python-odesk3 version 0.1
+(C) 2012 oDesk
 """
-VERSION = (0, 4, 1, 'final', 5)
+VERSION = (0, 1, 0, 'beta', 1)
 
 
 def get_version():
@@ -20,37 +20,18 @@ def get_version():
     return version
 
 
-import cookielib
-from datetime import date
+
 import hashlib
 import logging
-import urllib
-import urllib2
+import urllib.request, urllib.parse, urllib.error
+import json
 
-
-try:
-    import json
-except ImportError:
-    import simplejson as json
-
-
-from odesk.auth import *
-from odesk.exceptions import *
-from odesk.http import *
-from odesk.namespaces import *
-from odesk.utils import *
+from odesk.auth import Auth
+from odesk.oauth import OAuth
+from odesk.http import HttpRequest, raise_http_error
 
 
 __all__ = ["get_version", "Client", "utils"]
-
-
-def _utf8_str(obj):
-    try:
-        return unicode(obj).encode("utf8")
-    except UnicodeDecodeError, e:
-        # input could be an utf8 encoded
-        obj.decode("utf8")  # check if it is a valid utf8 string
-        return obj
 
 
 def signed_urlencode(secret, query={}):
@@ -65,16 +46,15 @@ def signed_urlencode(secret, query={}):
     message = secret
     for key in sorted(query.keys()):
         try:
-            message += _utf8_str(key) + _utf8_str(query[_utf8_str(key)])
-        except Exception, e:
+            message += str(key) + str(query[key])
+        except Exception as e:
             logging.debug("[python-odesk] Error while trying to sign key: %s and query %s" % (key, query[key]))
             raise e
-    #query = query.copy()
     _query = {}
-    _query['api_sig'] = hashlib.md5(message).hexdigest()
-    for k, v in query.iteritems():
-        _query[_utf8_str(k)] = _utf8_str(v)
-    return urllib.urlencode(_query)
+    _query['api_sig'] = hashlib.md5(message.encode('utf-8')).hexdigest()
+    for k, v in query.items():
+        _query[k] = str(v)
+    return urllib.parse.urlencode(_query)
 
 
 class BaseClient(object):
@@ -97,7 +77,6 @@ class BaseClient(object):
         return signed_urlencode(self.secret_key, data)
 
     def urlopen(self, url, data={}, method='GET'):
-        from odesk.oauth import OAuth
         data = data.copy()
 
         #FIXME: Http method hack. Should be removed once oDesk supports true
@@ -121,7 +100,7 @@ class BaseClient(object):
             request = HttpRequest(url=url, data=None, method=method)
         else:
             request = HttpRequest(url=url, data=query, method=method)
-        return urllib2.urlopen(request)
+        return urllib.request.urlopen(request)
 
     def read(self, url, data={}, method='GET', format='json'):
         """
@@ -131,7 +110,7 @@ class BaseClient(object):
         url += '.' + format
         try:
             response = self.urlopen(url, data, method)
-        except urllib2.HTTPError, e:
+        except urllib.error.HTTPError as e:
             raise_http_error(e)
 
         if format == 'json':
@@ -158,7 +137,6 @@ class Client(BaseClient):
         if auth == 'simple':
             self.auth = Auth(self)
         elif auth == 'oauth':
-            from odesk.oauth import OAuth
             self.auth = OAuth(self)
             self.oauth_access_token = oauth_access_token
             self.oauth_access_token_secret = oauth_access_token_secret
@@ -173,7 +151,7 @@ class Client(BaseClient):
             self.hr = HR(self)
 
         if mc:
-            from odesk.routers.mc import *
+            from odesk.routers.mc import MC
             self.mc = MC(self)
 
         if oconomy:

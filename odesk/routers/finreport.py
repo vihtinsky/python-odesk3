@@ -1,25 +1,10 @@
 """
-Python bindings to odesk API
-python-odesk version 0.4.1
-(C) 2010-2011 oDesk
+Python3 bindings to odesk API
+python-odesk3 version 0.1
+(C) 2012 oDesk
 """
 
-import cookielib
-from datetime import date
-import hashlib
-import logging
-import urllib
-import urllib2
-
-
-try:
-    import json
-except ImportError:
-    import simplejson as json
-
-
 from odesk.namespaces import GdsNamespace
-from odesk.utils import *
 
 
 class Finreports(GdsNamespace):

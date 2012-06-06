@@ -1,22 +1,10 @@
 """
-Python bindings to odesk API
-python-odesk version 0.4.1
-(C) 2010-2011 oDesk
+Python3 bindings to odesk API
+python-odesk3 version 0.1
+(C) 2012 oDesk
 """
 
-import cookielib
-from datetime import date
-import hashlib
-import logging
-import urllib
-import urllib2
-
-
-try:
-    import json
-except ImportError:
-    import simplejson as json
-
+import urllib.parse
 
 from odesk.namespaces import Namespace
 
@@ -94,7 +82,7 @@ class Task(Namespace):
           company_id    Company ID
           team_id       Team ID
         """
-        url = 'tasks/companies/%s/teams/%s/tasks/full_list' %\
+        url = 'tasks/companies/%s/teams/%s/tasks/full_list' % \
                                              (str(company_id), str(team_id))
         result = self.get(url)
         return result["tasks"] or []
@@ -111,13 +99,13 @@ class Task(Namespace):
           team_id       Team ID
           user_id       User ID
         """
-        url = 'tasks/companies/%s/teams/%s/users/%s/tasks/full_list' %\
+        url = 'tasks/companies/%s/teams/%s/users/%s/tasks/full_list' % \
                                 (str(company_id), str(team_id), str(user_id))
         result = self.get(url)
         return result["tasks"] or []
 
     def _generate_many_tasks_url(self, task_codes):
-        return ';'.join(urllib.quote(str(c)) for c in task_codes)
+        return ';'.join(urllib.parse.quote(str(c)) for c in task_codes)
 
     def get_company_specific_tasks(self, company_id, task_codes):
         """
@@ -141,7 +129,7 @@ class Task(Namespace):
           team_id       Team ID
           task_codes    Task codes (must be a list, even of 1 item)
         """
-        url = 'tasks/companies/%s/teams/%s/tasks/%s' %\
+        url = 'tasks/companies/%s/teams/%s/tasks/%s' % \
                                              (str(company_id), str(team_id),
                                     self._generate_many_tasks_url(task_codes))
         result = self.get(url)
@@ -158,7 +146,7 @@ class Task(Namespace):
           user_id       User ID
           task_codes    Task codes (must be a list, even of 1 item)
         """
-        url = 'tasks/companies/%s/teams/%s/users/%s/tasks/%s' %\
+        url = 'tasks/companies/%s/teams/%s/users/%s/tasks/%s' % \
                                 (str(company_id), str(team_id), str(user_id),
                                  self._generate_many_tasks_url(task_codes))
         result = self.get(url)
@@ -317,7 +305,7 @@ class Task(Namespace):
           user_id       User ID
           task_codes    Task codes (must be a list, even of 1 item)
         """
-        url = 'tasks/companies/%s/teams/%s/users/%s/tasks/%s' %\
+        url = 'tasks/companies/%s/teams/%s/users/%s/tasks/%s' % \
                                  (str(company_id), str(team_id), str(user_id),
                                  self. _generate_many_tasks_url(task_codes))
         return self.delete(url, {})

@@ -1,23 +1,11 @@
 """
-Python bindings to odesk API
-python-odesk version 0.4.1
-(C) 2010-2011 oDesk
+Python3 bindings to odesk API
+python-odesk3 version 0.1
+(C) 2012 oDesk
 """
 
-import cookielib
-from datetime import date
-import hashlib
-import logging
-import urllib
-import urllib2
+import urllib.parse
 
-
-try:
-    import json
-except ImportError:
-    import simplejson as json
-
-from odesk.exceptions import *
 from odesk.namespaces import Namespace
 
 
@@ -86,8 +74,8 @@ class MC(Namespace):
         result = self.get(url, data=data)
         return result["thread"]
 
-    def _generate_many_threads_url(self, url, threads_ids):
-        return ';'.join(urllib.quote(str(i)) for i in threads_ids)
+    def _generate_many_threads_url(self, threads_ids):
+        return ';'.join(urllib.parse.quote(str(i)) for i in threads_ids)
 
     def put_threads_read_unread(self, username, thread_ids, read=True):
         """
@@ -103,8 +91,7 @@ class MC(Namespace):
             data = {'read': 'true'}
         else:
             data = {'read': 'false'}
-        result = self.put(self._generate_many_threads_url(url,\
-                            thread_ids), data=data)
+        result = self.put(self._generate_many_threads_url(thread_ids), data=data)
         return result
 
     def put_threads_read(self, username, thread_ids):
@@ -144,8 +131,7 @@ class MC(Namespace):
         else:
             data = {'starred': 'false'}
 
-        result = self.put(self._generate_many_threads_url(url,\
-                            thread_ids), data=data)
+        result = self.put(self._generate_many_threads_url(thread_ids), data=data)
         return result
 
     def put_threads_starred(self, username, thread_ids):
@@ -187,8 +173,7 @@ class MC(Namespace):
         else:
             data = {'deleted': 'false'}
 
-        result = self.put(self._generate_many_threads_url(url, thread_ids),
-                          data=data)
+        result = self.put(self._generate_many_threads_url(thread_ids), data=data)
         return result
 
     def put_threads_deleted(self, username, thread_ids):

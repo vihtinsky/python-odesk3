@@ -12,7 +12,7 @@ from odesk.oauth import OAuth
 from odesk.routers.team import Team
 
 from mock import Mock, patch
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 
 try:
     import json
@@ -32,7 +32,7 @@ def test_signed_urlencode():
                    'result':
                    'api_sig=ac0e1b26f401dd4a5ccbaf7f4ea86b2f&foo=bar&spam=42'},
                }
-    for key in secret_data.keys():
+    for key in list(secret_data.keys()):
         result = signed_urlencode(key, secret_data[key]['query'])
         assert secret_data[key]['result'] == result, \
             " %s returned and should be %s" % (result, \
@@ -60,21 +60,21 @@ def test_base_client():
     encodedkey = 'api_sig=8a0da3cab1dbf7451f38fb5f5aec129c&api_key=public&foo=bar&spam=42'
     assert urlresult == encodedkey, urlresult
 
-sample_json_dict = {u'glossary':
-                    {u'GlossDiv':
-                     {u'GlossList':
-                      {u'GlossEntry':
-                       {u'GlossDef':
-                        {u'GlossSeeAlso': [u'GML', u'XML'],
-                         u'para': u'A meta-markup language'},
-                         u'GlossSee': u'markup',
-                         u'Acronym': u'SGML',
-                         u'GlossTerm': u'Standard Generalized Markup Language',
-                         u'Abbrev': u'ISO 8879:1986',
-                         u'SortAs': u'SGML',
-                         u'ID': u'SGML'}},
-                         u'title': u'S'},
-                         u'title': u'example glossary'}}
+sample_json_dict = {'glossary':
+                    {'GlossDiv':
+                     {'GlossList':
+                      {'GlossEntry':
+                       {'GlossDef':
+                        {'GlossSeeAlso': ['GML', 'XML'],
+                         'para': 'A meta-markup language'},
+                         'GlossSee': 'markup',
+                         'Acronym': 'SGML',
+                         'GlossTerm': 'Standard Generalized Markup Language',
+                         'Abbrev': 'ISO 8879:1986',
+                         'SortAs': 'SGML',
+                         'ID': 'SGML'}},
+                         'title': 'S'},
+                         'title': 'example glossary'}}
 
 
 def return_sample_json():
@@ -86,7 +86,7 @@ def patched_urlopen(request, *args, **kwargs):
     return request
 
 
-@patch('urllib2.urlopen', patched_urlopen)
+@patch('urllib.request.urlopen', patched_urlopen)
 def test_base_client_urlopen():
     public_key = 'public'
     secret_key = 'secret'
@@ -136,7 +136,7 @@ def test_base_client_urlopen():
 
 
 def patched_urlopen_error(request, code=400, *args, **kwargs):
-    raise urllib2.HTTPError(url=request.get_full_url(),
+    raise urllib.error.HTTPError(url=request.get_full_url(),
                             code=code, msg=str(code), hdrs='', fp=None)
 
 
@@ -160,32 +160,32 @@ def patched_urlopen_500(request, *args, **kwargs):
     return patched_urlopen_error(request, 500, *args, **kwargs)
 
 
-@patch('urllib2.urlopen', patched_urlopen_400)
+@patch('urllib.request.urlopen', patched_urlopen_400)
 def base_client_read_400(bc, url):
     return bc.read(url)
 
 
-@patch('urllib2.urlopen', patched_urlopen_401)
+@patch('urllib.request.urlopen', patched_urlopen_401)
 def base_client_read_401(bc, url):
     return bc.read(url)
 
 
-@patch('urllib2.urlopen', patched_urlopen_403)
+@patch('urllib.request.urlopen', patched_urlopen_403)
 def base_client_read_403(bc, url):
     return bc.read(url)
 
 
-@patch('urllib2.urlopen', patched_urlopen_404)
+@patch('urllib.request.urlopen', patched_urlopen_404)
 def base_client_read_404(bc, url):
     return bc.read(url)
 
 
-@patch('urllib2.urlopen', patched_urlopen_500)
+@patch('urllib.request.urlopen', patched_urlopen_500)
 def base_client_read_500(bc, url):
     return bc.read(url)
 
 
-@patch('urllib2.urlopen', patched_urlopen)
+@patch('urllib.request.urlopen', patched_urlopen)
 def test_base_client_read():
     """
     test cases:
@@ -206,7 +206,7 @@ def test_base_client_read():
     try:
         bc.read(url=test_url, format='yaml')
         raise NotJsonException()
-    except NotJsonException, e:
+    except NotJsonException as e:
         assert 0, "BaseClient.read() doesn't produce error on yaml format"
     except:
         pass
@@ -218,44 +218,44 @@ def test_base_client_read():
     #test get, 400 error
     try:
         result = base_client_read_400(bc=bc, url=test_url)
-    except HTTP400BadRequestError, e:
+    except HTTP400BadRequestError as e:
         pass
-    except Exception, e:
+    except Exception as e:
         assert 0, "Incorrect exception raised for 400 code: " + str(e)
 
     #test get, 401 error
     try:
         result = base_client_read_401(bc=bc, url=test_url)
-    except HTTP401UnauthorizedError, e:
+    except HTTP401UnauthorizedError as e:
         pass
-    except Exception, e:
+    except Exception as e:
         assert 0, "Incorrect exception raised for 401 code: " + str(e)
 
     #test get, 403 error
     try:
         result = base_client_read_403(bc=bc, url=test_url)
-    except HTTP403ForbiddenError, e:
+    except HTTP403ForbiddenError as e:
         pass
-    except Exception, e:
+    except Exception as e:
         assert 0, "Incorrect exception raised for 403 code: " + str(e)
 
     #test get, 404 error
     try:
         result = base_client_read_404(bc=bc, url=test_url)
-    except HTTP404NotFoundError, e:
+    except HTTP404NotFoundError as e:
         pass
-    except Exception, e:
+    except Exception as e:
         assert 0, "Incorrect exception raised for 404 code: " + str(e)
 
     #test get, 500 error
     try:
         result = base_client_read_500(bc=bc, url=test_url)
-    except urllib2.HTTPError, e:
+    except urllib.error.HTTPError as e:
         if e.code == 500:
             pass
         else:
             assert 0, "Incorrect exception raised for 500 code: " + str(e)
-    except Exception, e:
+    except Exception as e:
         assert 0, "Incorrect exception raised for 500 code: " + str(e)
 
 
@@ -266,7 +266,7 @@ def get_client():
     return Client(public_key, secret_key, api_token)
 
 
-@patch('urllib2.urlopen', patched_urlopen)
+@patch('urllib.request.urlopen', patched_urlopen)
 def test_client():
     c = get_client()
     test_url = "http://test.url"
@@ -284,7 +284,7 @@ def test_client():
     assert result == sample_json_dict, result
 
 
-@patch('urllib2.urlopen', patched_urlopen)
+@patch('urllib.request.urlopen', patched_urlopen)
 def test_namespace():
     ns = Namespace(get_client())
     test_url = "http://test.url"
@@ -337,7 +337,7 @@ def patched_urlopen_frob(request, *args, **kwargs):
     return request
 
 
-@patch('urllib2.urlopen', patched_urlopen_frob)
+@patch('urllib.request.urlopen', patched_urlopen_frob)
 def test_auth_get_frob():
     #test get_frob
     au = setup_auth()
@@ -356,7 +356,7 @@ def patched_urlopen_token(request, *args, **kwargs):
     return request
 
 
-@patch('urllib2.urlopen', patched_urlopen_token)
+@patch('urllib.request.urlopen', patched_urlopen_token)
 def test_auth_get_token():
     #test get_frob
     au = setup_auth()
@@ -365,7 +365,7 @@ def test_auth_get_token():
     assert auth_user == token_dict['auth_user'], auth_user
 
 
-@patch('urllib2.urlopen', patched_urlopen_token)
+@patch('urllib.request.urlopen', patched_urlopen_token)
 def test_check_token_true():
     #check if ok
     au = setup_auth()
@@ -377,14 +377,14 @@ def test_check_token_true():
         assert "Not Raised"
 
 
-@patch('urllib2.urlopen', patched_urlopen_token)
+@patch('urllib.request.urlopen', patched_urlopen_token)
 def test_revoke_token_true():
     #check if ok
     au = setup_auth()
     assert au.revoke_token(), au.revoke_token()
 
 
-@patch('urllib2.urlopen', patched_urlopen_403)
+@patch('urllib.request.urlopen', patched_urlopen_403)
 def test_check_token_false():
     #check if denied
     au = setup_auth()
@@ -398,14 +398,14 @@ def test_check_token_false():
 
 teamrooms_dict = {'teamrooms':
                   {'teamroom':
-                   {u'team_ref': u'1',
-                    u'name': u'oDesk',
-                    u'recno': u'1',
-                    u'parent_team_ref': u'1',
-                    u'company_name': u'oDesk',
-                    u'company_recno': u'1',
-                    u'teamroom_api': u'/api/team/v1/teamrooms/odesk:some.json',
-                    u'id': u'odesk:some'}},
+                   {'team_ref': '1',
+                    'name': 'oDesk',
+                    'recno': '1',
+                    'parent_team_ref': '1',
+                    'company_name': 'oDesk',
+                    'company_recno': '1',
+                    'teamroom_api': '/api/team/v1/teamrooms/odesk:some.json',
+                    'id': 'odesk:some'}},
                   'teamroom': {'snapshot': 'test snapshot'},
                   'snapshots': {'user': 'test', 'snapshot': 'test'},
                   'snapshot': {'status': 'private'}
@@ -421,7 +421,7 @@ def patched_urlopen_teamrooms(request, *args, **kwargs):
     return request
 
 
-@patch('urllib2.urlopen', patched_urlopen_teamrooms)
+@patch('urllib.request.urlopen', patched_urlopen_teamrooms)
 def test_team():
     te = Team(get_client())
 
@@ -450,149 +450,149 @@ def test_team():
     assert te.get_workdiaries(1, 1, 1) == (teamrooms_dict['snapshots']['user'], \
         [teamrooms_dict['snapshots']['snapshot']]), te.get_workdiaries(1, 1, 1)
 
-userroles = {u'userrole':
-             [{u'parent_team__reference': u'1',
-              u'user__id': u'testuser', u'team__id': u'test:t',
-              u'reference': u'1', u'team__name': u'te',
-              u'company__reference': u'1',
-              u'user__reference': u'1',
-              u'user__first_name': u'Test',
-              u'user__last_name': u'Development',
-              u'parent_team__id': u'testdev',
-              u'team__reference': u'1', u'role': u'manager',
-              u'affiliation_status': u'none', u'engagement__reference': u'',
-              u'parent_team__name': u'TestDev', u'has_team_room_access': u'1',
-              u'company__name': u'Test Dev',
-              u'permissions':
-                {u'permission': [u'manage_employment', u'manage_recruiting']}}]}
+userroles = {'userrole':
+             [{'parent_team__reference': '1',
+              'user__id': 'testuser', 'team__id': 'test:t',
+              'reference': '1', 'team__name': 'te',
+              'company__reference': '1',
+              'user__reference': '1',
+              'user__first_name': 'Test',
+              'user__last_name': 'Development',
+              'parent_team__id': 'testdev',
+              'team__reference': '1', 'role': 'manager',
+              'affiliation_status': 'none', 'engagement__reference': '',
+              'parent_team__name': 'TestDev', 'has_team_room_access': '1',
+              'company__name': 'Test Dev',
+              'permissions':
+                {'permission': ['manage_employment', 'manage_recruiting']}}]}
 
-engagement = {u'status': u'active',
-              u'buyer_team__reference': u'1', u'provider__reference': u'2',
-              u'job__title': u'development', u'roles': {u'role': u'buyer'},
-              u'reference': u'1', u'engagement_end_date': u'',
-              u'fixed_price_upfront_payment': u'0',
-              u'fixed_pay_amount_agreed': u'1.00',
-              u'provider__id': u'test_provider',
-              u'buyer_team__id': u'testteam:aa',
-              u'engagement_job_type': u'fixed-price',
-              u'job__reference': u'1', u'provider_team__reference': u'',
-              u'engagement_title': u'Developer',
-              u'fixed_charge_amount_agreed': u'0.01',
-              u'created_time': u'0000', u'provider_team__id': u'',
-              u'offer__reference': u'',
-              u'engagement_start_date': u'000', u'description': u''}
+engagement = {'status': 'active',
+              'buyer_team__reference': '1', 'provider__reference': '2',
+              'job__title': 'development', 'roles': {'role': 'buyer'},
+              'reference': '1', 'engagement_end_date': '',
+              'fixed_price_upfront_payment': '0',
+              'fixed_pay_amount_agreed': '1.00',
+              'provider__id': 'test_provider',
+              'buyer_team__id': 'testteam:aa',
+              'engagement_job_type': 'fixed-price',
+              'job__reference': '1', 'provider_team__reference': '',
+              'engagement_title': 'Developer',
+              'fixed_charge_amount_agreed': '0.01',
+              'created_time': '0000', 'provider_team__id': '',
+              'offer__reference': '',
+              'engagement_start_date': '000', 'description': ''}
 
-engagements = {u'lister':
-               {u'total_items': u'10', u'query': u'',
-                u'paging': {u'count': u'10', u'offset': u'0'}, u'sort': u''},
-               u'engagement': [engagement, engagement],
+engagements = {'lister':
+               {'total_items': '10', 'query': '',
+                'paging': {'count': '10', 'offset': '0'}, 'sort': ''},
+               'engagement': [engagement, engagement],
                }
 
-offer = {u'provider__reference': u'1',
-         u'signed_by_buyer_user': u'',
-         u'reference': u'1', u'job__description': u'python',
-         u'buyer_company__name': u'Python community',
-         u'engagement_title': u'developer', u'created_time': u'000',
-         u'buyer_company__reference': u'2', u'buyer_team__id': u'testteam:aa',
-         u'interview_status': u'in_process', u'buyer_team__reference': u'1',
-         u'signed_time_buyer': u'', u'has_buyer_signed': u'',
-         u'signed_time_provider': u'', u'created_by': u'testuser',
-         u'job__reference': u'2', u'engagement_start_date': u'00000',
-         u'fixed_charge_amount_agreed': u'0.01', u'provider_team__id': u'',
-         u'status': u'', u'signed_by_provider_user': u'',
-         u'engagement_job_type': u'fixed-price', u'description': u'',
-         u'provider_team__name': u'', u'fixed_pay_amount_agreed': u'0.01',
-         u'candidacy_status': u'active', u'has_provider_signed': u'',
-         u'message_from_provider': u'', u'my_role': u'buyer',
-         u'key': u'~~0001', u'message_from_buyer': u'',
-         u'buyer_team__name': u'Python community 2',
-         u'engagement_end_date': u'', u'fixed_price_upfront_payment': u'0',
-         u'created_type': u'buyer', u'provider_team__reference': u'',
-         u'job__title': u'translation', u'expiration_date': u'',
-         u'engagement__reference': u''}
+offer = {'provider__reference': '1',
+         'signed_by_buyer_user': '',
+         'reference': '1', 'job__description': 'python',
+         'buyer_company__name': 'Python community',
+         'engagement_title': 'developer', 'created_time': '000',
+         'buyer_company__reference': '2', 'buyer_team__id': 'testteam:aa',
+         'interview_status': 'in_process', 'buyer_team__reference': '1',
+         'signed_time_buyer': '', 'has_buyer_signed': '',
+         'signed_time_provider': '', 'created_by': 'testuser',
+         'job__reference': '2', 'engagement_start_date': '00000',
+         'fixed_charge_amount_agreed': '0.01', 'provider_team__id': '',
+         'status': '', 'signed_by_provider_user': '',
+         'engagement_job_type': 'fixed-price', 'description': '',
+         'provider_team__name': '', 'fixed_pay_amount_agreed': '0.01',
+         'candidacy_status': 'active', 'has_provider_signed': '',
+         'message_from_provider': '', 'my_role': 'buyer',
+         'key': '~~0001', 'message_from_buyer': '',
+         'buyer_team__name': 'Python community 2',
+         'engagement_end_date': '', 'fixed_price_upfront_payment': '0',
+         'created_type': 'buyer', 'provider_team__reference': '',
+         'job__title': 'translation', 'expiration_date': '',
+         'engagement__reference': ''}
 
-offers = {u'lister':
-          {u'total_items': u'10', u'query': u'', u'paging':
-           {u'count': u'10', u'offset': u'0'}, u'sort': u''},
-           u'offer': [offer, offer]}
+offers = {'lister':
+          {'total_items': '10', 'query': '', 'paging':
+           {'count': '10', 'offset': '0'}, 'sort': ''},
+           'offer': [offer, offer]}
 
-job = {u'subcategory': u'Development', u'reference': u'1',
-       u'buyer_company__name': u'Python community',
-       u'job_type': u'fixed-price', u'created_time': u'000',
-       u'created_by': u'test', u'duration': u'',
-       u'last_candidacy_access_time': u'',
-       u'category': u'Web',
-       u'buyer_team__reference': u'169108', u'title': u'translation',
-       u'buyer_company__reference': u'1', u'num_active_candidates': u'0',
-       u'buyer_team__name': u'Python community 2', u'start_date': u'000',
-       u'status': u'filled', u'num_new_candidates': u'0',
-       u'description': u'test', u'end_date': u'000',
-       u'public_url': u'http://www.odesk.com/jobs/~~0001',
-       u'visibility': u'invite-only', u'buyer_team__id': u'testteam:aa',
-       u'num_candidates': u'1', u'budget': u'1000', u'cancelled_date': u'',
-       u'filled_date': u'0000'}
+job = {'subcategory': 'Development', 'reference': '1',
+       'buyer_company__name': 'Python community',
+       'job_type': 'fixed-price', 'created_time': '000',
+       'created_by': 'test', 'duration': '',
+       'last_candidacy_access_time': '',
+       'category': 'Web',
+       'buyer_team__reference': '169108', 'title': 'translation',
+       'buyer_company__reference': '1', 'num_active_candidates': '0',
+       'buyer_team__name': 'Python community 2', 'start_date': '000',
+       'status': 'filled', 'num_new_candidates': '0',
+       'description': 'test', 'end_date': '000',
+       'public_url': 'http://www.odesk.com/jobs/~~0001',
+       'visibility': 'invite-only', 'buyer_team__id': 'testteam:aa',
+       'num_candidates': '1', 'budget': '1000', 'cancelled_date': '',
+       'filled_date': '0000'}
 
 jobs = [job, job]
 
-task = {u'reference': u'test', u'company_reference': u'1',
-          u'team__reference': u'1', u'user__reference': u'1',
-          u'code': u'1', u'description': u'test task',
-          u'url': u'http://url.odesk.com/task', u'level': u'1'}
+task = {'reference': 'test', 'company_reference': '1',
+          'team__reference': '1', 'user__reference': '1',
+          'code': '1', 'description': 'test task',
+          'url': 'http://url.odesk.com/task', 'level': '1'}
 
 tasks = [task, task]
 
-auth_user = {u'first_name': u'TestF', u'last_name': u'TestL',
-             u'uid': u'testuser', u'timezone_offset': u'0',
-             u'timezone': u'Europe/Athens', u'mail': u'test_user@odesk.com',
-             u'messenger_id': u'', u'messenger_type': u'yahoo'}
+auth_user = {'first_name': 'TestF', 'last_name': 'TestL',
+             'uid': 'testuser', 'timezone_offset': '0',
+             'timezone': 'Europe/Athens', 'mail': 'test_user@odesk.com',
+             'messenger_id': '', 'messenger_type': 'yahoo'}
 
-user = {u'status': u'active', u'first_name': u'TestF',
-        u'last_name': u'TestL', u'reference': u'0001',
-        u'timezone_offset': u'10800',
-        u'public_url': u'http://www.odesk.com/users/~~000',
-        u'is_provider': u'1',
-        u'timezone': u'GMT+02:00 Athens, Helsinki, Istanbul',
-        u'id': u'testuser'}
+user = {'status': 'active', 'first_name': 'TestF',
+        'last_name': 'TestL', 'reference': '0001',
+        'timezone_offset': '10800',
+        'public_url': 'http://www.odesk.com/users/~~000',
+        'is_provider': '1',
+        'timezone': 'GMT+02:00 Athens, Helsinki, Istanbul',
+        'id': 'testuser'}
 
-team = {u'status': u'active', u'parent_team__reference': u'0',
-         u'name': u'Test',
-         u'reference': u'1',
-         u'company__reference': u'1',
-         u'id': u'test',
-         u'parent_team__id': u'test_parent',
-         u'company_name': u'Test', u'is_hidden': u'',
-         u'parent_team__name': u'Test parent'}
+team = {'status': 'active', 'parent_team__reference': '0',
+         'name': 'Test',
+         'reference': '1',
+         'company__reference': '1',
+         'id': 'test',
+         'parent_team__id': 'test_parent',
+         'company_name': 'Test', 'is_hidden': '',
+         'parent_team__name': 'Test parent'}
 
-company = {u'status': u'active',
-             u'name': u'Test',
-             u'reference': u'1',
-             u'company_id': u'1',
-             u'owner_user_id': u'1', }
+company = {'status': 'active',
+             'name': 'Test',
+             'reference': '1',
+             'company_id': '1',
+             'owner_user_id': '1', }
 
-candidacy_stats = {u'job_application_quota': u'20',
-                   u'job_application_quota_remaining': u'20',
-                   u'number_of_applications': u'2',
-                   u'number_of_interviews': u'3',
-                   u'number_of_invites': u'0',
-                   u'number_of_offers': u'0'}
+candidacy_stats = {'job_application_quota': '20',
+                   'job_application_quota_remaining': '20',
+                   'number_of_applications': '2',
+                   'number_of_interviews': '3',
+                   'number_of_invites': '0',
+                   'number_of_offers': '0'}
 
-hr_dict = {u'auth_user': auth_user,
-           u'server_time': u'0000',
-           u'user': user,
-           u'team': team,
-           u'company': company,
-            u'teams': [team, team],
-            u'companies': [company, company],
-            u'users': [user, user],
-            u'tasks': task,
-            u'userroles': userroles,
-            u'engagements': engagements,
-            u'engagement': engagement,
-            u'offer': offer,
-            u'offers': offers,
-            u'job': job,
-            u'jobs': jobs,
-            u'candidacy_stats': candidacy_stats}
+hr_dict = {'auth_user': auth_user,
+           'server_time': '0000',
+           'user': user,
+           'team': team,
+           'company': company,
+            'teams': [team, team],
+            'companies': [company, company],
+            'users': [user, user],
+            'tasks': task,
+            'userroles': userroles,
+            'engagements': engagements,
+            'engagement': engagement,
+            'offer': offer,
+            'offers': offers,
+            'job': job,
+            'jobs': jobs,
+            'candidacy_stats': candidacy_stats}
 
 
 def return_hr_json():
@@ -604,32 +604,32 @@ def patched_urlopen_hr(request, *args, **kwargs):
     return request
 
 
-@patch('urllib2.urlopen', patched_urlopen_hr)
+@patch('urllib.request.urlopen', patched_urlopen_hr)
 def test_get_hrv2_user():
     hr = get_client().hr
 
     #test get_user
-    assert hr.get_user(1) == hr_dict[u'user'], hr.get_user(1)
+    assert hr.get_user(1) == hr_dict['user'], hr.get_user(1)
 
 
-@patch('urllib2.urlopen', patched_urlopen_hr)
+@patch('urllib.request.urlopen', patched_urlopen_hr)
 def test_get_hrv2_companies():
     hr = get_client().hr
     #test get_companies
-    assert hr.get_companies() == hr_dict[u'companies'], hr.get_companies()
+    assert hr.get_companies() == hr_dict['companies'], hr.get_companies()
 
     #test get_company
-    assert hr.get_company(1) == hr_dict[u'company'], hr.get_company(1)
+    assert hr.get_company(1) == hr_dict['company'], hr.get_company(1)
 
 
-@patch('urllib2.urlopen', patched_urlopen_hr)
+@patch('urllib.request.urlopen', patched_urlopen_hr)
 def test_get_hrv2_company_teams():
     hr = get_client().hr
     #test get_company_teams
     assert hr.get_company_teams(1) == hr_dict['teams'], hr.get_company_teams(1)
 
 
-@patch('urllib2.urlopen', patched_urlopen_hr)
+@patch('urllib.request.urlopen', patched_urlopen_hr)
 def test_get_hrv2_company_users():
     hr = get_client().hr
     #test get_company_users
@@ -637,52 +637,52 @@ def test_get_hrv2_company_users():
     assert hr.get_company_users(1, False) == hr_dict['users'], \
          hr.get_company_users(1, False)
 
-@patch('urllib2.urlopen', patched_urlopen_hr)
+@patch('urllib.request.urlopen', patched_urlopen_hr)
 def test_get_hrv2_teams():
     hr = get_client().hr
     #test get_teams
-    assert hr.get_teams() == hr_dict[u'teams'], hr.get_teams()
+    assert hr.get_teams() == hr_dict['teams'], hr.get_teams()
 
     #test get_team
-    assert hr.get_team(1) == hr_dict[u'team'], hr.get_team(1)
+    assert hr.get_team(1) == hr_dict['team'], hr.get_team(1)
 
 
-@patch('urllib2.urlopen', patched_urlopen_hr)
+@patch('urllib.request.urlopen', patched_urlopen_hr)
 def test_get_hrv2_team_users():
     hr = get_client().hr
     #test get_team_users
-    assert hr.get_team_users(1) == hr_dict[u'users'], hr.get_team_users(1)
-    assert hr.get_team_users(1, False) == hr_dict[u'users'], \
+    assert hr.get_team_users(1) == hr_dict['users'], hr.get_team_users(1)
+    assert hr.get_team_users(1, False) == hr_dict['users'], \
          hr.get_team_users(1, False)
 
 
-@patch('urllib2.urlopen', patched_urlopen_hr)
+@patch('urllib.request.urlopen', patched_urlopen_hr)
 def test_get_hrv2_jobs():
     hr = get_client().hr
     #test get_jobs
-    assert hr.get_jobs() == hr_dict[u'jobs'], hr.get_jobs()
-    assert hr.get_job(1) == hr_dict[u'job'], hr.get_job(1)
+    assert hr.get_jobs() == hr_dict['jobs'], hr.get_jobs()
+    assert hr.get_job(1) == hr_dict['job'], hr.get_job(1)
     assert hr.update_job(1, {'status': 'filled'}) == hr_dict, hr.update_job(1, {'status': 'filled'})
     assert hr.delete_job(1, 41) == hr_dict, hr.delete_job(1, 41)
 
 
-@patch('urllib2.urlopen', patched_urlopen_hr)
+@patch('urllib.request.urlopen', patched_urlopen_hr)
 def test_get_hrv2_offers():
     hr = get_client().hr
     #test get_offers
-    assert hr.get_offers() == hr_dict[u'offers'], hr.get_offers()
-    assert hr.get_offer(1) == hr_dict[u'offer'], hr.get_offer(1)
+    assert hr.get_offers() == hr_dict['offers'], hr.get_offers()
+    assert hr.get_offer(1) == hr_dict['offer'], hr.get_offer(1)
 
 
-@patch('urllib2.urlopen', patched_urlopen_hr)
+@patch('urllib.request.urlopen', patched_urlopen_hr)
 def test_get_hrv2_engagements():
     hr = get_client().hr
     #test get_engagements
-    assert hr.get_engagements() == hr_dict[u'engagements'], hr.get_engagements()
-    assert hr.get_engagement(1) == hr_dict[u'engagement'], hr.get_engagement(1)
+    assert hr.get_engagements() == hr_dict['engagements'], hr.get_engagements()
+    assert hr.get_engagement(1) == hr_dict['engagement'], hr.get_engagement(1)
 
 
-adjustments = {u'adjustment': {u'reference': '100'}}
+adjustments = {'adjustment': {'reference': '100'}}
 
 
 def return_hradjustment_json():
@@ -694,15 +694,15 @@ def patched_urlopen_hradjustment(request, *args, **kwargs):
     return request
 
 
-@patch('urllib2.urlopen', patched_urlopen_hradjustment)
+@patch('urllib.request.urlopen', patched_urlopen_hradjustment)
 def test_hrv2_post_adjustment():
     hr = get_client().hr
 
     result = hr.post_team_adjustment(1, 2, 100000, 'test', 'test note')
-    assert result == adjustments[u'adjustment'], result
+    assert result == adjustments['adjustment'], result
 
 
-@patch('urllib2.urlopen', patched_urlopen_hr)
+@patch('urllib.request.urlopen', patched_urlopen_hr)
 def test_get_hrv2_candidacy_stats():
     hr = get_client().hr
     #test get_candidacy_stats
@@ -711,27 +711,27 @@ def test_get_hrv2_candidacy_stats():
 
 
 provider_dict = {'profile':
-                 {u'response_time': u'31.0000000000000000',
-                  u'dev_agency_ref': u'',
-                  u'dev_adj_score_recent': u'0',
-                  u'dev_ui_profile_access': u'Public',
-                  u'dev_portrait': u'',
-                  u'dev_ic': u'Freelance Provider',
-                  u'certification': u'',
-                  u'dev_usr_score': u'0',
-                  u'dev_country': u'Ukraine',
-                  u'dev_recent_rank_percentile': u'0',
-                  u'dev_profile_title': u'Python developer',
-                  u'dev_groups': u'',
-                  u'dev_scores':
-                  {u'dev_score':
-                   [{u'description': u'competency and skills for the job, understanding of specifications/instructions',
-                     u'avg_category_score_recent': u'',
-                     u'avg_category_score': u'',
-                     u'order': u'1', u'label': u'Skills'},
-                     {u'description': u'quality of work deliverables',
-                      u'avg_category_score_recent': u'',
-                      u'avg_category_score': u'', u'order': u'2', u'label': u'Quality'},
+                 {'response_time': '31.0000000000000000',
+                  'dev_agency_ref': '',
+                  'dev_adj_score_recent': '0',
+                  'dev_ui_profile_access': 'Public',
+                  'dev_portrait': '',
+                  'dev_ic': 'Freelance Provider',
+                  'certification': '',
+                  'dev_usr_score': '0',
+                  'dev_country': 'Ukraine',
+                  'dev_recent_rank_percentile': '0',
+                  'dev_profile_title': 'Python developer',
+                  'dev_groups': '',
+                  'dev_scores':
+                  {'dev_score':
+                   [{'description': 'competency and skills for the job, understanding of specifications/instructions',
+                     'avg_category_score_recent': '',
+                     'avg_category_score': '',
+                     'order': '1', 'label': 'Skills'},
+                     {'description': 'quality of work deliverables',
+                      'avg_category_score_recent': '',
+                      'avg_category_score': '', 'order': '2', 'label': 'Quality'},
                       ]
                    }},
                    'providers': {'test': 'test'},
@@ -755,7 +755,7 @@ def patched_urlopen_provider(request, *args, **kwargs):
     return request
 
 
-@patch('urllib2.urlopen', patched_urlopen_provider)
+@patch('urllib.request.urlopen', patched_urlopen_provider)
 def test_provider():
     pr = get_client().provider
 
@@ -791,18 +791,18 @@ def test_provider():
     assert result == provider_dict['profile']
 
 
-trays_dict = {'trays': [{u'unread': u'0',
-              u'type': u'sent',
-              u'id': u'1',
-              u'tray_api': u'/api/mc/v1/trays/username/sent.json'},
-              {u'unread': u'0',
-               u'type': u'inbox',
-               u'id': u'2',
-               u'tray_api': u'/api/mc/v1/trays/username/inbox.json'},
-              {u'unread': u'0',
-               u'type': u'notifications',
-               u'id': u'3',
-               u'tray_api': u'/api/mc/v1/trays/username/notifications.json'}]}
+trays_dict = {'trays': [{'unread': '0',
+              'type': 'sent',
+              'id': '1',
+              'tray_api': '/api/mc/v1/trays/username/sent.json'},
+              {'unread': '0',
+               'type': 'inbox',
+               'id': '2',
+               'tray_api': '/api/mc/v1/trays/username/inbox.json'},
+              {'unread': '0',
+               'type': 'notifications',
+               'id': '3',
+               'tray_api': '/api/mc/v1/trays/username/notifications.json'}]}
 
 
 def return_trays_json():
@@ -814,7 +814,7 @@ def patched_urlopen_trays(request, *args, **kwargs):
     return request
 
 
-@patch('urllib2.urlopen', patched_urlopen_trays)
+@patch('urllib.request.urlopen', patched_urlopen_trays)
 def test_get_trays():
     mc = get_client().mc
 
@@ -840,7 +840,7 @@ def patched_urlopen_tray_content(request, *args, **kwargs):
     return request
 
 
-@patch('urllib2.urlopen', patched_urlopen_tray_content)
+@patch('urllib.request.urlopen', patched_urlopen_tray_content)
 def test_get_tray_content():
     mc = get_client().mc
 
@@ -864,7 +864,7 @@ def patched_urlopen_thread_content(request, *args, **kwargs):
     return request
 
 
-@patch('urllib2.urlopen', patched_urlopen_thread_content)
+@patch('urllib.request.urlopen', patched_urlopen_thread_content)
 def test_get_thread_content():
     mc = get_client().mc
 
@@ -888,7 +888,7 @@ def patched_urlopen_read_thread_content(request, *args, **kwargs):
     return request
 
 
-@patch('urllib2.urlopen', patched_urlopen_read_thread_content)
+@patch('urllib.request.urlopen', patched_urlopen_read_thread_content)
 def test_put_threads_read_unread():
     mc = get_client().mc
 
@@ -902,7 +902,7 @@ def test_put_threads_read_unread():
     assert read == read_thread_content_dict, read
 
 
-@patch('urllib2.urlopen', patched_urlopen_read_thread_content)
+@patch('urllib.request.urlopen', patched_urlopen_read_thread_content)
 def test_put_threads_starred_unstarred():
     mc = get_client().mc
 
@@ -913,7 +913,7 @@ def test_put_threads_starred_unstarred():
     assert unstarred == read_thread_content_dict, unstarred
 
 
-@patch('urllib2.urlopen', patched_urlopen_read_thread_content)
+@patch('urllib.request.urlopen', patched_urlopen_read_thread_content)
 def test_put_threads_deleted_undeleted():
     mc = get_client().mc
 
@@ -924,7 +924,7 @@ def test_put_threads_deleted_undeleted():
     assert undeleted == read_thread_content_dict, undeleted
 
 
-@patch('urllib2.urlopen', patched_urlopen_read_thread_content)
+@patch('urllib.request.urlopen', patched_urlopen_read_thread_content)
 def test_post_message():
     mc = get_client().mc
 
@@ -947,24 +947,24 @@ def test_post_message():
     assert reply == read_thread_content_dict, reply
 
 
-timereport_dict = {u'table':
-     {u'rows':
-      [{u'c':
-        [{u'v': u'20100513'},
-         {u'v': u'company1:team1'},
-         {u'v': u'1'},
-         {u'v': u'1'},
-         {u'v': u'0'},
-         {u'v': u'1'},
-         {u'v': u'Bug 1: Test'}]}],
-         u'cols':
-         [{u'type': u'date', u'label': u'worked_on'},
-          {u'type': u'string', u'label': u'assignment_team_id'},
-          {u'type': u'number', u'label': u'hours'},
-          {u'type': u'number', u'label': u'earnings'},
-          {u'type': u'number', u'label': u'earnings_offline'},
-          {u'type': u'string', u'label': u'task'},
-          {u'type': u'string', u'label': u'memo'}]}}
+timereport_dict = {'table':
+     {'rows':
+      [{'c':
+        [{'v': '20100513'},
+         {'v': 'company1:team1'},
+         {'v': '1'},
+         {'v': '1'},
+         {'v': '0'},
+         {'v': '1'},
+         {'v': 'Bug 1: Test'}]}],
+         'cols':
+         [{'type': 'date', 'label': 'worked_on'},
+          {'type': 'string', 'label': 'assignment_team_id'},
+          {'type': 'number', 'label': 'hours'},
+          {'type': 'number', 'label': 'earnings'},
+          {'type': 'number', 'label': 'earnings_offline'},
+          {'type': 'string', 'label': 'task'},
+          {'type': 'string', 'label': 'memo'}]}}
 
 
 def return_read_timereport_json(*args, **kwargs):
@@ -976,7 +976,7 @@ def patched_urlopen_timereport_content(request, *args, **kwargs):
     return request
 
 
-@patch('urllib2.urlopen', patched_urlopen_timereport_content)
+@patch('urllib.request.urlopen', patched_urlopen_timereport_content)
 def test_get_provider_timereport():
     tc = get_client().timereport
 
@@ -990,7 +990,7 @@ def test_get_provider_timereport():
     assert read == timereport_dict, read
 
 
-@patch('urllib2.urlopen', patched_urlopen_timereport_content)
+@patch('urllib.request.urlopen', patched_urlopen_timereport_content)
 def test_get_company_timereport():
     tc = get_client().timereport
 
@@ -1004,7 +1004,7 @@ def test_get_company_timereport():
     assert read == timereport_dict, read
 
 
-@patch('urllib2.urlopen', patched_urlopen_timereport_content)
+@patch('urllib.request.urlopen', patched_urlopen_timereport_content)
 def test_get_agency_timereport():
     tc = get_client().timereport
 
@@ -1017,24 +1017,24 @@ def test_get_agency_timereport():
                                   hours=True)
     assert read == timereport_dict, read
 
-fin_report_dict = {u'table':
-     {u'rows':
-      [{u'c':
-        [{u'v': u'20100513'},
-         {u'v': u'odesk:odeskps'},
-         {u'v': u'1'},
-         {u'v': u'1'},
-         {u'v': u'0'},
-         {u'v': u'1'},
-         {u'v': u'Bug 1: Test'}]}],
-         u'cols':
-         [{u'type': u'date', u'label': u'worked_on'},
-          {u'type': u'string', u'label': u'assignment_team_id'},
-          {u'type': u'number', u'label': u'hours'},
-          {u'type': u'number', u'label': u'earnings'},
-          {u'type': u'number', u'label': u'earnings_offline'},
-          {u'type': u'string', u'label': u'task'},
-          {u'type': u'string', u'label': u'memo'}]}}
+fin_report_dict = {'table':
+     {'rows':
+      [{'c':
+        [{'v': '20100513'},
+         {'v': 'odesk:odeskps'},
+         {'v': '1'},
+         {'v': '1'},
+         {'v': '0'},
+         {'v': '1'},
+         {'v': 'Bug 1: Test'}]}],
+         'cols':
+         [{'type': 'date', 'label': 'worked_on'},
+          {'type': 'string', 'label': 'assignment_team_id'},
+          {'type': 'number', 'label': 'hours'},
+          {'type': 'number', 'label': 'earnings'},
+          {'type': 'number', 'label': 'earnings_offline'},
+          {'type': 'string', 'label': 'task'},
+          {'type': 'string', 'label': 'memo'}]}}
 
 
 def return_read_fin_report_json(*args, **kwargs):
@@ -1046,7 +1046,7 @@ def patched_urlopen_fin_report_content(request, *args, **kwargs):
     return request
 
 
-@patch('urllib2.urlopen', patched_urlopen_fin_report_content)
+@patch('urllib.request.urlopen', patched_urlopen_fin_report_content)
 def test_get_provider_billings():
     fr = get_client().finreport
 
@@ -1054,7 +1054,7 @@ def test_get_provider_billings():
     assert read == fin_report_dict, read
 
 
-@patch('urllib2.urlopen', patched_urlopen_fin_report_content)
+@patch('urllib.request.urlopen', patched_urlopen_fin_report_content)
 def test_get_provider_teams_billings():
     fr = get_client().finreport
 
@@ -1062,7 +1062,7 @@ def test_get_provider_teams_billings():
     assert read == fin_report_dict, read
 
 
-@patch('urllib2.urlopen', patched_urlopen_fin_report_content)
+@patch('urllib.request.urlopen', patched_urlopen_fin_report_content)
 def test_get_provider_companies_billings():
     fr = get_client().finreport
 
@@ -1070,7 +1070,7 @@ def test_get_provider_companies_billings():
     assert read == fin_report_dict, read
 
 
-@patch('urllib2.urlopen', patched_urlopen_fin_report_content)
+@patch('urllib.request.urlopen', patched_urlopen_fin_report_content)
 def test_get_provider_earnings():
     fr = get_client().finreport
 
@@ -1078,7 +1078,7 @@ def test_get_provider_earnings():
     assert read == fin_report_dict, read
 
 
-@patch('urllib2.urlopen', patched_urlopen_fin_report_content)
+@patch('urllib.request.urlopen', patched_urlopen_fin_report_content)
 def test_get_provider_teams_earnings():
     fr = get_client().finreport
 
@@ -1086,7 +1086,7 @@ def test_get_provider_teams_earnings():
     assert read == fin_report_dict, read
 
 
-@patch('urllib2.urlopen', patched_urlopen_fin_report_content)
+@patch('urllib.request.urlopen', patched_urlopen_fin_report_content)
 def test_get_provider_companies_earnings():
     fr = get_client().finreport
 
@@ -1094,7 +1094,7 @@ def test_get_provider_companies_earnings():
     assert read == fin_report_dict, read
 
 
-@patch('urllib2.urlopen', patched_urlopen_fin_report_content)
+@patch('urllib.request.urlopen', patched_urlopen_fin_report_content)
 def test_get_buyer_teams_billings():
     fr = get_client().finreport
 
@@ -1102,7 +1102,7 @@ def test_get_buyer_teams_billings():
     assert read == fin_report_dict, read
 
 
-@patch('urllib2.urlopen', patched_urlopen_fin_report_content)
+@patch('urllib.request.urlopen', patched_urlopen_fin_report_content)
 def test_get_buyer_companies_billings():
     fr = get_client().finreport
 
@@ -1110,7 +1110,7 @@ def test_get_buyer_companies_billings():
     assert read == fin_report_dict, read
 
 
-@patch('urllib2.urlopen', patched_urlopen_fin_report_content)
+@patch('urllib.request.urlopen', patched_urlopen_fin_report_content)
 def test_get_buyer_teams_earnings():
     fr = get_client().finreport
 
@@ -1118,7 +1118,7 @@ def test_get_buyer_teams_earnings():
     assert read == fin_report_dict, read
 
 
-@patch('urllib2.urlopen', patched_urlopen_fin_report_content)
+@patch('urllib.request.urlopen', patched_urlopen_fin_report_content)
 def test_get_buyer_companies_earnings():
     fr = get_client().finreport
 
@@ -1126,7 +1126,7 @@ def test_get_buyer_companies_earnings():
     assert read == fin_report_dict, read
 
 
-@patch('urllib2.urlopen', patched_urlopen_fin_report_content)
+@patch('urllib.request.urlopen', patched_urlopen_fin_report_content)
 def test_get_financial_entities():
     fr = get_client().finreport
 
@@ -1134,7 +1134,7 @@ def test_get_financial_entities():
     assert read == fin_report_dict, read
 
 
-@patch('urllib2.urlopen', patched_urlopen_fin_report_content)
+@patch('urllib.request.urlopen', patched_urlopen_fin_report_content)
 def test_get_financial_entities_provider():
     fr = get_client().finreport
 
@@ -1152,7 +1152,7 @@ def test_get_version():
     assert get_version() == '1.2.3 pre-alpha', get_version()
 
 
-task_dict = {u'tasks': 'task1'
+task_dict = {'tasks': 'task1'
      }
 
 
@@ -1165,7 +1165,7 @@ def patched_urlopen_task(request, *args, **kwargs):
     return request
 
 
-@patch('urllib2.urlopen', patched_urlopen_task)
+@patch('urllib.request.urlopen', patched_urlopen_task)
 def test_get_company_tasks():
     task = get_client().task
 
@@ -1173,7 +1173,7 @@ def test_get_company_tasks():
      task.get_company_tasks(1)
 
 
-@patch('urllib2.urlopen', patched_urlopen_task)
+@patch('urllib.request.urlopen', patched_urlopen_task)
 def test_get_team_tasks():
     task = get_client().task
 
@@ -1181,7 +1181,7 @@ def test_get_team_tasks():
      task.get_team_tasks(1, 1)
 
 
-@patch('urllib2.urlopen', patched_urlopen_task)
+@patch('urllib.request.urlopen', patched_urlopen_task)
 def test_get_user_tasks():
     task = get_client().task
 
@@ -1189,7 +1189,7 @@ def test_get_user_tasks():
      task.get_user_tasks(1, 1, 1)
 
 
-@patch('urllib2.urlopen', patched_urlopen_task)
+@patch('urllib.request.urlopen', patched_urlopen_task)
 def test_company_tasks_full():
     task = get_client().task
 
@@ -1197,7 +1197,7 @@ def test_company_tasks_full():
      task.get_company_tasks_full(1)
 
 
-@patch('urllib2.urlopen', patched_urlopen_task)
+@patch('urllib.request.urlopen', patched_urlopen_task)
 def test_get_team_tasks_full():
     task = get_client().task
 
@@ -1205,7 +1205,7 @@ def test_get_team_tasks_full():
      task.get_team_tasks_full(1, 1)
 
 
-@patch('urllib2.urlopen', patched_urlopen_task)
+@patch('urllib.request.urlopen', patched_urlopen_task)
 def test_get_user_tasks_full():
     task = get_client().task
 
@@ -1213,7 +1213,7 @@ def test_get_user_tasks_full():
      task.get_user_tasks_full(1, 1, 1)
 
 
-@patch('urllib2.urlopen', patched_urlopen_task)
+@patch('urllib.request.urlopen', patched_urlopen_task)
 def test_get_company_specific_tasks():
     task = get_client().task
 
@@ -1221,7 +1221,7 @@ def test_get_company_specific_tasks():
      task.get_company_specific_tasks(1, [1, 1])
 
 
-@patch('urllib2.urlopen', patched_urlopen_task)
+@patch('urllib.request.urlopen', patched_urlopen_task)
 def test_get_team_specific_tasks():
     task = get_client().task
 
@@ -1229,7 +1229,7 @@ def test_get_team_specific_tasks():
      task.get_team_specific_tasks(1, 1, [1, 1])
 
 
-@patch('urllib2.urlopen', patched_urlopen_task)
+@patch('urllib.request.urlopen', patched_urlopen_task)
 def test_get_user_specific_tasks():
     task = get_client().task
 
@@ -1237,7 +1237,7 @@ def test_get_user_specific_tasks():
      task.get_user_specific_tasks(1, 1, 1, [1, 1])
 
 
-@patch('urllib2.urlopen', patched_urlopen_task)
+@patch('urllib.request.urlopen', patched_urlopen_task)
 def test_post_company_task():
     task = get_client().task
 
@@ -1245,7 +1245,7 @@ def test_post_company_task():
      task.post_company_task(1, 1, '1', 'ttt')
 
 
-@patch('urllib2.urlopen', patched_urlopen_task)
+@patch('urllib.request.urlopen', patched_urlopen_task)
 def test_post_team_task():
     task = get_client().task
 
@@ -1253,7 +1253,7 @@ def test_post_team_task():
      task.post_team_task(1, 1, 1, '1', 'ttt')
 
 
-@patch('urllib2.urlopen', patched_urlopen_task)
+@patch('urllib.request.urlopen', patched_urlopen_task)
 def test_post_user_task():
     task = get_client().task
 
@@ -1261,7 +1261,7 @@ def test_post_user_task():
      task.post_user_task(1, 1, 1, 1, '1', 'ttt')
 
 
-@patch('urllib2.urlopen', patched_urlopen_task)
+@patch('urllib.request.urlopen', patched_urlopen_task)
 def test_put_company_task():
     task = get_client().task
 
@@ -1269,7 +1269,7 @@ def test_put_company_task():
      task.put_company_task(1, 1, '1', 'ttt')
 
 
-@patch('urllib2.urlopen', patched_urlopen_task)
+@patch('urllib.request.urlopen', patched_urlopen_task)
 def test_put_team_task():
     task = get_client().task
 
@@ -1277,7 +1277,7 @@ def test_put_team_task():
      task.put_team_task(1, 1, 1, '1', 'ttt')
 
 
-@patch('urllib2.urlopen', patched_urlopen_task)
+@patch('urllib.request.urlopen', patched_urlopen_task)
 def test_put_user_task():
     task = get_client().task
 
@@ -1285,7 +1285,7 @@ def test_put_user_task():
      task.put_user_task(1, 1, 1, 1, '1', 'ttt')
 
 
-@patch('urllib2.urlopen', patched_urlopen_task)
+@patch('urllib.request.urlopen', patched_urlopen_task)
 def test_delete_company_task():
     task = get_client().task
 
@@ -1293,7 +1293,7 @@ def test_delete_company_task():
      task.delete_company_task(1, [1, 1])
 
 
-@patch('urllib2.urlopen', patched_urlopen_task)
+@patch('urllib.request.urlopen', patched_urlopen_task)
 def test_delete_team_task():
     task = get_client().task
 
@@ -1301,7 +1301,7 @@ def test_delete_team_task():
      task.delete_team_task(1, 1, [1, 1])
 
 
-@patch('urllib2.urlopen', patched_urlopen_task)
+@patch('urllib.request.urlopen', patched_urlopen_task)
 def test_delete_user_task():
     task = get_client().task
 
@@ -1309,7 +1309,7 @@ def test_delete_user_task():
      task.delete_user_task(1, 1, 1, [1, 1])
 
 
-@patch('urllib2.urlopen', patched_urlopen_task)
+@patch('urllib.request.urlopen', patched_urlopen_task)
 def test_delete_all_company_tasks():
     task = get_client().task
 
@@ -1317,7 +1317,7 @@ def test_delete_all_company_tasks():
      task.delete_all_company_tasks(1)
 
 
-@patch('urllib2.urlopen', patched_urlopen_task)
+@patch('urllib.request.urlopen', patched_urlopen_task)
 def test_delete_all_team_tasks():
     task = get_client().task
 
@@ -1325,7 +1325,7 @@ def test_delete_all_team_tasks():
      task.delete_all_team_tasks(1, 1)
 
 
-@patch('urllib2.urlopen', patched_urlopen_task)
+@patch('urllib.request.urlopen', patched_urlopen_task)
 def test_delete_all_user_tasks():
     task = get_client().task
 
@@ -1333,7 +1333,7 @@ def test_delete_all_user_tasks():
      task.delete_all_user_tasks(1, 1, 1)
 
 
-@patch('urllib2.urlopen', patched_urlopen_task)
+@patch('urllib.request.urlopen', patched_urlopen_task)
 def test_update_batch_tasks():
     task = get_client().task
 
@@ -1349,29 +1349,29 @@ def test_gds_namespace():
         gds.urlopen('test.url', {}, 'POST')
 
 
-oconomy_dict = {u'table':
-                {u'rows':
-                  [{u'c': [{u'v': u'Administrative Support'},
-                        {u'v': u'2787297.31'}]},
-                   {u'c': [{u'v': u'Business Services'},
-                        {u'v': u'1146857.51'}]},
-                   {u'c': [{u'v': u'Customer Service'},
-                        {u'v': u'1072926.55'}]},
-                   {u'c': [{u'v': u'Design & Multimedia'},
-                        {u'v': u'1730094.73'}]},
-                   {u'c': [{u'v': u'Networking & Information Systems'},
-                        {u'v': u'690526.57'}]},
-                   {u'c': [{u'v': u'Sales & Marketing'},
-                        {u'v': u'3232511.54'}]},
-                   {u'c': [{u'v': u'Software Development'},
-                        {u'v': u'6826354.60'}]},
-                   {u'c': [{u'v': u'Web Development'},
-                        {u'v': u'15228679.46'}]},
-                   {u'c': [{u'v': u'Writing & Translation'},
-                        {u'v': u'2257654.76'}]}],
-                 u'cols':
-                  [{u'type': u'string', u'label': u'category'},
-                   {u'type': u'number', u'label': u'amount'}]}}
+oconomy_dict = {'table':
+                {'rows':
+                  [{'c': [{'v': 'Administrative Support'},
+                        {'v': '2787297.31'}]},
+                   {'c': [{'v': 'Business Services'},
+                        {'v': '1146857.51'}]},
+                   {'c': [{'v': 'Customer Service'},
+                        {'v': '1072926.55'}]},
+                   {'c': [{'v': 'Design & Multimedia'},
+                        {'v': '1730094.73'}]},
+                   {'c': [{'v': 'Networking & Information Systems'},
+                        {'v': '690526.57'}]},
+                   {'c': [{'v': 'Sales & Marketing'},
+                        {'v': '3232511.54'}]},
+                   {'c': [{'v': 'Software Development'},
+                        {'v': '6826354.60'}]},
+                   {'c': [{'v': 'Web Development'},
+                        {'v': '15228679.46'}]},
+                   {'c': [{'v': 'Writing & Translation'},
+                        {'v': '2257654.76'}]}],
+                 'cols':
+                  [{'type': 'string', 'label': 'category'},
+                   {'type': 'number', 'label': 'amount'}]}}
 
 
 def return_read_oconomy_json(*args, **kwargs):
@@ -1383,7 +1383,7 @@ def patched_urlopen_oconomy_content(request, *args, **kwargs):
     return request
 
 
-@patch('urllib2.urlopen', patched_urlopen_oconomy_content)
+@patch('urllib.request.urlopen', patched_urlopen_oconomy_content)
 def test_get_monthly_summary():
     oconomy = get_client().nonauth_oconomy
 
@@ -1391,7 +1391,7 @@ def test_get_monthly_summary():
     assert read == oconomy_dict, read
 
 
-@patch('urllib2.urlopen', patched_urlopen_oconomy_content)
+@patch('urllib.request.urlopen', patched_urlopen_oconomy_content)
 def test_get_hours_worked_by_locations():
     oconomy = get_client().oconomy
 
@@ -1399,7 +1399,7 @@ def test_get_hours_worked_by_locations():
     assert read == oconomy_dict, read
 
 
-@patch('urllib2.urlopen', patched_urlopen_oconomy_content)
+@patch('urllib.request.urlopen', patched_urlopen_oconomy_content)
 def test_get_hours_worked_by_weeks():
     oconomy = get_client().oconomy
 
@@ -1407,7 +1407,7 @@ def test_get_hours_worked_by_weeks():
     assert read == oconomy_dict, read
 
 
-@patch('urllib2.urlopen', patched_urlopen_oconomy_content)
+@patch('urllib.request.urlopen', patched_urlopen_oconomy_content)
 def test_get_top_countries_by_hours():
     oconomy = get_client().oconomy
 
@@ -1415,7 +1415,7 @@ def test_get_top_countries_by_hours():
     assert read == oconomy_dict, read
 
 
-@patch('urllib2.urlopen', patched_urlopen_oconomy_content)
+@patch('urllib.request.urlopen', patched_urlopen_oconomy_content)
 def test_get_earnings_by_categories():
     oconomy = get_client().nonauth_oconomy
 
@@ -1423,7 +1423,7 @@ def test_get_earnings_by_categories():
     assert read == oconomy_dict, read
 
 
-@patch('urllib2.urlopen', patched_urlopen_oconomy_content)
+@patch('urllib.request.urlopen', patched_urlopen_oconomy_content)
 def test_get_most_requested_skills():
     oconomy = get_client().oconomy
 

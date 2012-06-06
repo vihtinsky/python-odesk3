@@ -1,25 +1,10 @@
 """
-Python bindings to odesk API
-python-odesk version 0.4.1
-(C) 2010-2011 oDesk
+Python3 bindings to odesk API
+python-odesk3 version 0.1
+(C) 2012 oDesk
 """
 
-import cookielib
-from datetime import date
-import hashlib
-import logging
-import urllib
-import urllib2
-
-
-try:
-    import json
-except ImportError:
-    import simplejson as json
-
-
 from odesk.namespaces import Namespace
-from odesk.utils import *
 
 
 class Provider(Namespace):
@@ -119,7 +104,7 @@ class Provider(Namespace):
         result_key = self.resume_info_result_keys[strinfo]
         return result[result_key]
 
-    def _add_resume_info_item(self, provider_ciphertext, info_type,\
+    def _add_resume_info_item(self, provider_ciphertext, info_type, \
         item_data):
         """
         info_type can be one of
@@ -132,7 +117,7 @@ class Provider(Namespace):
         url = 'providers/%s/%s' % (str(provider_ciphertext), strinfo)
         return self.post(url, item_data)
 
-    def _update_resume_info_item(self, provider_ciphertext,\
+    def _update_resume_info_item(self, provider_ciphertext, \
         resource_id, info_type, item_data):
         """
         info_type can be one of (otherexp|skills|tests|certificates|\
@@ -143,14 +128,14 @@ class Provider(Namespace):
             raise ValueError('invalid info_type %s' % strinfo)
 
         if resource_id is not None:
-            url = 'providers/%s/%s/%s' % (str(provider_ciphertext),\
+            url = 'providers/%s/%s/%s' % (str(provider_ciphertext), \
                 str(resource_id), strinfo)
         else:
-            url = 'providers/%s/%s' % (str(provider_ciphertext),\
+            url = 'providers/%s/%s' % (str(provider_ciphertext), \
                 strinfo)
         return self.post(url, item_data)
 
-    def _delete_resume_info_item(self, provider_ciphertext,\
+    def _delete_resume_info_item(self, provider_ciphertext, \
         resource_id, info_type):
         """
         info_type can be one of (otherexp|skills|tests|certificates|\
@@ -161,10 +146,10 @@ class Provider(Namespace):
             raise ValueError('invalid info_type %s' % strinfo)
 
         if resource_id is not None:
-            url = 'providers/%s/%s/%s' % (str(provider_ciphertext),\
+            url = 'providers/%s/%s/%s' % (str(provider_ciphertext), \
                 str(resource_id), strinfo)
         else:
-            url = 'providers/%s/%s' % (str(provider_ciphertext),\
+            url = 'providers/%s/%s' % (str(provider_ciphertext), \
                 strinfo)
 
         return self.delete(url)
@@ -195,7 +180,7 @@ class Provider(Namespace):
           provider_ciphertext   Provider cipher text (key)
           data                  A dict containing updated 'quick info'
         """
-        return self._update_resume_info_item(provider_ciphertext, None,\
+        return self._update_resume_info_item(provider_ciphertext, None, \
                                             'quickinfo', data)
 
     def get_affiliates(self, affiliate_key):

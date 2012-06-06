@@ -1,24 +1,13 @@
 """
-Python bindings to odesk API
-python-odesk version 0.4.1
-(C) 2010-2011 oDesk
+Python3 bindings to odesk API
+python-odesk3 version 0.1
+(C) 2012 oDesk
 """
 
-import cookielib
-from datetime import date
-import hashlib
-import logging
-import urllib
-import urllib2
+import urllib.request
 
-
-try:
-    import json
-except ImportError:
-    import simplejson as json
-
-from odesk.exceptions import *
-from odesk.utils import *
+from odesk.exceptions import (HTTP400BadRequestError, HTTP401UnauthorizedError,
+    HTTP403ForbiddenError, HTTP404NotFoundError)
 
 
 def raise_http_error(e):
@@ -39,7 +28,7 @@ def raise_http_error(e):
         raise e
 
 
-class HttpRequest(urllib2.Request):
+class HttpRequest(urllib.request.Request):
     """
     A hack around Request class that allows to specify HTTP method explicitly
     """
@@ -47,7 +36,7 @@ class HttpRequest(urllib2.Request):
     def __init__(self, *args, **kwargs):
         #Request is an old-style class, so can't use `super`
         method = kwargs.pop('method', 'GET')
-        urllib2.Request.__init__(self, *args, **kwargs)
+        urllib.request.Request.__init__(self, *args, **kwargs)
         self.method = method
 
     def get_method(self):

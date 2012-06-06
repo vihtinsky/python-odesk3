@@ -1,25 +1,14 @@
 """
-Python bindings to odesk API
-python-odesk version 0.4.1
-(C) 2010-2011 oDesk
+Python3 bindings to odesk API
+python-odesk3 version 0.1
+(C) 2012 oDesk
 """
 
-import cookielib
-from datetime import date
-import hashlib
-import logging
-import urllib
-import urllib2
+import urllib.request, urllib.error
+import json
 
+from odesk.http import raise_http_error, HttpRequest
 
-try:
-    import json
-except ImportError:
-    import simplejson as json
-
-
-from odesk.http import *
-from odesk.utils import *
 
 
 class Namespace(object):
@@ -63,7 +52,7 @@ class GdsNamespace(Namespace):
         if method == 'GET':
             url += '?' + query
             request = HttpRequest(url=url, data=None, method=method)
-            return urllib2.urlopen(request)
+            return urllib.request.urlopen(request)
         return None
 
     def read(self, url, data={}, method='GET'):
@@ -72,7 +61,7 @@ class GdsNamespace(Namespace):
         """
         try:
             response = self.urlopen(url, data, method)
-        except urllib2.HTTPError, e:
+        except urllib.error.HTTPError as e:
             raise_http_error(e)
 
         result = json.loads(response.read())
@@ -92,5 +81,5 @@ class NonauthGdsNamespace(GdsNamespace):
         if method == 'GET':
             request = HttpRequest(url=url, data=data.copy(),
                     method=method)
-            return urllib2.urlopen(request)
+            return urllib.request.urlopen(request)
         return None
