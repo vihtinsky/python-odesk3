@@ -99,7 +99,7 @@ class BaseClient(object):
             url += '?' + query
             request = HttpRequest(url=url, data=None, method=method)
         else:
-            request = HttpRequest(url=url, data=query, method=method)
+            request = HttpRequest(url=url, data=query.encode("utf-8"), method=method)
         return urllib.request.urlopen(request)
 
     def read(self, url, data={}, method='GET', format='json'):
