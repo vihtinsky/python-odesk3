@@ -64,7 +64,7 @@ class GdsNamespace(Namespace):
         except urllib.error.HTTPError as e:
             raise_http_error(e)
 
-        result = json.loads(response.read())
+        result = json.loads(response.read().decode("utf-8"))
         return result
 
     def get(self, url, data={}):
@@ -79,7 +79,8 @@ class NonauthGdsNamespace(GdsNamespace):
     '''
     def urlopen(self, url, data={}, method='GET'):
         if method == 'GET':
-            request = HttpRequest(url=url, data=data.copy(),
-                    method=method)
+            query = self.client.urlencode(data)
+            url += '?' + query
+            request = HttpRequest(url=url, data=None, method=method)
             return urllib.request.urlopen(request)
         return None
