@@ -114,7 +114,7 @@ class BaseClient(object):
             raise_http_error(e)
 
         if format == 'json':
-            result = json.loads(response.read())
+            result = json.loads(response.read().decode("utf-8"))
         return result
 
 

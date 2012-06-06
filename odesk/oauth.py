@@ -59,8 +59,8 @@ class OAuth(Namespace):
         if response.get('status') != '200':
             raise Exception("Invalid request token response: %s." % content)
         request_token = dict(urllib.parse.parse_qsl(content))
-        self.request_token = request_token.get('oauth_token')
-        self.request_token_secret = request_token.get('oauth_token_secret')
+        self.request_token = request_token.get(b'oauth_token')
+        self.request_token_secret = request_token.get(b'oauth_token_secret')
         return self.request_token, self.request_token_secret
 
     def get_authorize_url(self, callback_url=None):
@@ -92,6 +92,6 @@ class OAuth(Namespace):
         if response.get('status') != '200':
             raise Exception("Invalid access token response: %s." % content)
         access_token = dict(urllib.parse.parse_qsl(content))
-        self.access_token = access_token.get('oauth_token')
-        self.access_token_secret = access_token.get('oauth_token_secret')
+        self.access_token = access_token.get(b'oauth_token')
+        self.access_token_secret = access_token.get(b'oauth_token_secret')
         return self.access_token, self.access_token_secret
