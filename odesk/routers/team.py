@@ -80,7 +80,7 @@ class Team(Namespace):
         url = 'snapshots/%s/%s' % (str(company_id), str(user_id))
         if datetime:
             url += '/%s' % datetime.isoformat()
-        return self.post(url, {'memo': memo})
+        return self.put(url, {'memo': memo})
 
     def delete_snapshot(self, company_id, user_id, datetime=None):
         """
