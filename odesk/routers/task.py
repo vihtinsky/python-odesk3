@@ -105,7 +105,9 @@ class Task(Namespace):
         return result["tasks"] or []
 
     def _generate_many_tasks_url(self, task_codes):
-        return ';'.join(urllib.parse.quote(str(c)) for c in task_codes)
+        tasks = ';'.join(urllib.parse.quote(str(c)) for c in task_codes)
+        #for correct work of oAuth signing
+        return urllib.parse.quote(tasks)
 
     def get_company_specific_tasks(self, company_id, task_codes):
         """
