@@ -78,7 +78,7 @@ sample_json_dict = {'glossary':
 
 
 def return_sample_json():
-    return json.dumps(sample_json_dict)
+    return json.dumps(sample_json_dict).encode("utf-8")
 
 
 def patched_urlopen(request, *args, **kwargs):
@@ -103,19 +103,19 @@ def test_base_client_urlopen():
              {'url': 'http://test.url',
              'data': {},
              'method': 'POST',
-             'result_data': 'api_sig=ba343f176db8166c4b7e88911e7e46ec&api_key=public',
+             'result_data': b'api_sig=ba343f176db8166c4b7e88911e7e46ec&api_key=public',
              'result_url': 'http://test.url',
              'result_method': 'POST'},
              {'url': 'http://test.url',
              'data': {},
              'method': 'PUT',
-             'result_data': 'api_sig=52cbaea073a5d47abdffc7fc8ccd839b&api_key=public&http_method=put',
+             'result_data': b'api_sig=52cbaea073a5d47abdffc7fc8ccd839b&api_key=public&http_method=put',
              'result_url': 'http://test.url',
              'result_method': 'POST'},
              {'url': 'http://test.url',
              'data': {},
              'method': 'DELETE',
-             'result_data': 'api_sig=8621f072b1492fbd164d808307ba72b9&api_key=public&http_method=delete',
+             'result_data': b'api_sig=8621f072b1492fbd164d808307ba72b9&api_key=public&http_method=delete',
              'result_url': 'http://test.url',
              'result_method': 'POST'},
              ]
@@ -329,7 +329,7 @@ frob_dict = {'frob': 'test'}
 
 
 def return_frob_json():
-    return json.dumps(frob_dict)
+    return json.dumps(frob_dict).encode("utf-8")
 
 
 def patched_urlopen_frob(request, *args, **kwargs):
@@ -348,7 +348,7 @@ token_dict = {'token': 'testtoken', 'auth_user': 'test_auth_user'}
 
 
 def return_token_json():
-    return json.dumps(token_dict)
+    return json.dumps(token_dict).encode("utf-8")
 
 
 def patched_urlopen_token(request, *args, **kwargs):
@@ -413,7 +413,7 @@ teamrooms_dict = {'teamrooms':
 
 
 def return_teamrooms_json():
-    return json.dumps(teamrooms_dict)
+    return json.dumps(teamrooms_dict).encode("utf-8")
 
 
 def patched_urlopen_teamrooms(request, *args, **kwargs):
@@ -596,7 +596,7 @@ hr_dict = {'auth_user': auth_user,
 
 
 def return_hr_json():
-    return json.dumps(hr_dict)
+    return json.dumps(hr_dict).encode("utf-8")
 
 
 def patched_urlopen_hr(request, *args, **kwargs):
@@ -686,7 +686,7 @@ adjustments = {'adjustment': {'reference': '100'}}
 
 
 def return_hradjustment_json():
-    return json.dumps(adjustments)
+    return json.dumps(adjustments).encode("utf-8")
 
 
 def patched_urlopen_hradjustment(request, *args, **kwargs):
@@ -747,7 +747,7 @@ provider_dict = {'profile':
 
 
 def return_provider_json():
-    return json.dumps(provider_dict)
+    return json.dumps(provider_dict).encode("utf-8")
 
 
 def patched_urlopen_provider(request, *args, **kwargs):
@@ -806,7 +806,7 @@ trays_dict = {'trays': [{'unread': '0',
 
 
 def return_trays_json():
-    return json.dumps(trays_dict)
+    return json.dumps(trays_dict).encode("utf-8")
 
 
 def patched_urlopen_trays(request, *args, **kwargs):
@@ -832,7 +832,7 @@ tray_content_dict = {"current_tray": {"threads": '1'}}
 
 
 def return_tray_content_json():
-    return json.dumps(tray_content_dict)
+    return json.dumps(tray_content_dict).encode("utf-8")
 
 
 def patched_urlopen_tray_content(request, *args, **kwargs):
@@ -856,7 +856,7 @@ thread_content_dict = {"thread": {"test": '1'}}
 
 
 def return_thread_content_json():
-    return json.dumps(thread_content_dict)
+    return json.dumps(thread_content_dict).encode("utf-8")
 
 
 def patched_urlopen_thread_content(request, *args, **kwargs):
@@ -880,7 +880,7 @@ read_thread_content_dict = {"thread": {"test": '1'}}
 
 
 def return_read_thread_content_json():
-    return json.dumps(read_thread_content_dict)
+    return json.dumps(read_thread_content_dict).encode("utf-8")
 
 
 def patched_urlopen_read_thread_content(request, *args, **kwargs):
@@ -968,7 +968,7 @@ timereport_dict = {'table':
 
 
 def return_read_timereport_json(*args, **kwargs):
-    return json.dumps(timereport_dict)
+    return json.dumps(timereport_dict).encode("utf-8")
 
 
 def patched_urlopen_timereport_content(request, *args, **kwargs):
@@ -1038,7 +1038,7 @@ fin_report_dict = {'table':
 
 
 def return_read_fin_report_json(*args, **kwargs):
-    return json.dumps(fin_report_dict)
+    return json.dumps(fin_report_dict).encode("utf-8")
 
 
 def patched_urlopen_fin_report_content(request, *args, **kwargs):
@@ -1157,7 +1157,7 @@ task_dict = {'tasks': 'task1'
 
 
 def return_task_dict_json(*args, **kwargs):
-    return json.dumps(task_dict)
+    return json.dumps(task_dict).encode("utf-8")
 
 
 def patched_urlopen_task(request, *args, **kwargs):
@@ -1375,7 +1375,7 @@ oconomy_dict = {'table':
 
 
 def return_read_oconomy_json(*args, **kwargs):
-    return json.dumps(oconomy_dict)
+    return json.dumps(oconomy_dict).encode("utf-8")
 
 
 def patched_urlopen_oconomy_content(request, *args, **kwargs):
@@ -1448,13 +1448,13 @@ def test_oauth_full_url():
 
 def patched_httplib2_request(*args, **kwargs):
     return {'status': '200'},\
-        'oauth_callback_confirmed=1&oauth_token=709d434e6b37a25c50e95b0e57d24c46&oauth_token_secret=193ef27f57ab4e37'
+        b'oauth_callback_confirmed=1&oauth_token=709d434e6b37a25c50e95b0e57d24c46&oauth_token_secret=193ef27f57ab4e37'
 
 @patch('httplib2.Http.request', patched_httplib2_request)
 def test_oauth_get_request_token():
     oa = setup_oauth()
-    assert oa.get_request_token() == ('709d434e6b37a25c50e95b0e57d24c46',\
-                                    '193ef27f57ab4e37')
+    assert oa.get_request_token() == (b'709d434e6b37a25c50e95b0e57d24c46',\
+                                    b'193ef27f57ab4e37')
 
 @patch('httplib2.Http.request', patched_httplib2_request)
 def test_oauth_get_authorize_url():
@@ -1466,7 +1466,7 @@ def test_oauth_get_authorize_url():
 
 def patched_httplib2_access(*args, **kwargs):
     return {'status': '200'},\
-        'oauth_token=aedec833d41732a584d1a5b4959f9cd6&oauth_token_secret=9d9cccb363d2b13e'
+        b'oauth_token=aedec833d41732a584d1a5b4959f9cd6&oauth_token_secret=9d9cccb363d2b13e'
 
 @patch('httplib2.Http.request', patched_httplib2_access)
 def test_oauth_get_access_token():
@@ -1474,4 +1474,4 @@ def test_oauth_get_access_token():
     oa.request_token = '709d434e6b37a25c50e95b0e57d24c46'
     oa.request_token_secret = '193ef27f57ab4e37'
     assert oa.get_access_token('9cbcbc19f8acc2d85a013e377ddd4118') ==\
-     ('aedec833d41732a584d1a5b4959f9cd6', '9d9cccb363d2b13e')
+     (b'aedec833d41732a584d1a5b4959f9cd6', b'9d9cccb363d2b13e')
