@@ -12,6 +12,9 @@ Requirements
 -----------------
 You need to install oauth2 to run the python-odesk3, and mock and nosetests if you plan to develop python-odesk and/or run library's tests.
 
+Oauth2(for python3)::
+    pip install -e https://github.com/hades/python-oauth2/tarball/python3#egg=oauth2
+
 Mock::
 
     pip install mock
@@ -37,7 +40,7 @@ To install::
 
 Also, you can retrieve fresh version of python-odesk from GitHub::
 
-    git clone git://github.com/odesk/python-odesk3.git
+    git clone git://github.com/vihtinsky/python-odesk3.git
 
 .. _settings:
 

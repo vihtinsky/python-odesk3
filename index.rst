@@ -19,7 +19,7 @@ Python3 bindings to oDesk API
 Urls
 *********************
 
-* Git repo: http://github.com/odesk/python-odesk3
-* Issues: http://github.com/odesk/python-odesk3/issues
-* Documentation: http://odesk.github.com/python-odesk3/
+* Git repo: http://github.com/vihtinsky/python-odesk
+* Issues: http://github.com/odesk/python-odesk/issues
+* Documentation: http://odesk.github.com/python-odesk/
 
