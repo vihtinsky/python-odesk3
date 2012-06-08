@@ -111,8 +111,9 @@ class BaseClient(object):
         self.last_data = data
 
         if isinstance(self.auth, OAuth):
+            http_method = 'GET' if method=='GET' else 'POST'
             query = self.auth.urlencode(url, self.oauth_access_token,\
-                self.oauth_access_token_secret, data)
+                self.oauth_access_token_secret, data, http_method)
         else:
             query = self.urlencode(data)
 
