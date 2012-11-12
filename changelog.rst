@@ -5,7 +5,16 @@
 Changelog
 ***************
 
-..
+.. _0.5:
+
+Version 0.5_alfa
+-----------------
+*Nov 2012*
+
+* Add Metadata Api
+* Fixed job posting issue
+* Add advanced logging
+
 
 .. _0.4:
 
