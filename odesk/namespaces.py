@@ -46,13 +46,31 @@ class Namespace(object):
 class GdsNamespace(Namespace):
     base_url = 'https://www.odesk.com/gds/'
 
-    def urlopen(self, url, data=None, method='GET'):
-        query = self.client.urlencode(data)
+    def urlopen(self, url, data={}, method='GET'):
+        from odesk.oauth import OAuth
+        data = data.copy()
+
+        #FIXME: Http method hack. Should be removed once oDesk supports true
+        #HTTP methods
+        if method in ['PUT', 'DELETE']:
+            data['http_method'] = method.lower()
+        #End of hack
+
+        self.client.last_method = method
+        self.client.last_url = url
+        self.client.last_data = data
+
+        if isinstance(self.client.auth, OAuth):
+            query = self.client.auth.urlencode(url, self.client.oauth_access_token,\
+                self.client.oauth_access_token_secret, data)
+        else:
+            query = self.client.urlencode(data)
         if method == 'GET':
             url += '?' + query
             request = HttpRequest(url=url, data=None, method=method)
             return urllib2.urlopen(request)
         return None
+
 
     def read(self, url, data=None, method='GET'):
         """
