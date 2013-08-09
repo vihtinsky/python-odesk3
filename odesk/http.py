@@ -4,7 +4,7 @@ python-odesk3 version 0.1
 (C) 2012 oDesk
 """
 
-import urllib.request
+import urllib2
 
 from odesk.exceptions import (HTTP400BadRequestError, HTTP401UnauthorizedError,
     HTTP403ForbiddenError, HTTP404NotFoundError)
@@ -28,7 +28,7 @@ def raise_http_error(e):
         raise e
 
 
-class HttpRequest(urllib.request.Request):
+class HttpRequest(urllib2.Request):
     """
     A hack around Request class that allows to specify HTTP method explicitly
     """
@@ -36,7 +36,7 @@ class HttpRequest(urllib.request.Request):
     def __init__(self, *args, **kwargs):
         #Request is an old-style class, so can't use `super`
         method = kwargs.pop('method', 'GET')
-        urllib.request.Request.__init__(self, *args, **kwargs)
+        urllib2.Request.__init__(self, *args, **kwargs)
         self.method = method
 
     def get_method(self):

@@ -12,7 +12,7 @@ from odesk.oauth import OAuth
 from odesk.routers.team import Team
 
 from mock import Mock, patch
-import urllib.request, urllib.error, urllib.parse
+import urllib2, urllib
 
 try:
     import json
@@ -86,7 +86,7 @@ def patched_urlopen(request, *args, **kwargs):
     return request
 
 
-@patch('urllib.request.urlopen', patched_urlopen)
+@patch('urllib2.urlopen', patched_urlopen)
 def test_base_client_urlopen():
     public_key = 'public'
     secret_key = 'secret'
@@ -136,7 +136,7 @@ def test_base_client_urlopen():
 
 
 def patched_urlopen_error(request, code=400, *args, **kwargs):
-    raise urllib.error.HTTPError(url=request.get_full_url(),
+    raise urllib2.HTTPError(url=request.get_full_url(),
                             code=code, msg=str(code), hdrs='', fp=None)
 
 
@@ -160,32 +160,32 @@ def patched_urlopen_500(request, *args, **kwargs):
     return patched_urlopen_error(request, 500, *args, **kwargs)
 
 
-@patch('urllib.request.urlopen', patched_urlopen_400)
+@patch('urllib2.urlopen', patched_urlopen_400)
 def base_client_read_400(bc, url):
     return bc.read(url)
 
 
-@patch('urllib.request.urlopen', patched_urlopen_401)
+@patch('urllib2.urlopen', patched_urlopen_401)
 def base_client_read_401(bc, url):
     return bc.read(url)
 
 
-@patch('urllib.request.urlopen', patched_urlopen_403)
+@patch('urllib2.urlopen', patched_urlopen_403)
 def base_client_read_403(bc, url):
     return bc.read(url)
 
 
-@patch('urllib.request.urlopen', patched_urlopen_404)
+@patch('urllib2.urlopen', patched_urlopen_404)
 def base_client_read_404(bc, url):
     return bc.read(url)
 
 
-@patch('urllib.request.urlopen', patched_urlopen_500)
+@patch('urllib2.urlopen', patched_urlopen_500)
 def base_client_read_500(bc, url):
     return bc.read(url)
 
 
-@patch('urllib.request.urlopen', patched_urlopen)
+@patch('urllib2.urlopen', patched_urlopen)
 def test_base_client_read():
     """
     test cases:
@@ -250,7 +250,7 @@ def test_base_client_read():
     #test get, 500 error
     try:
         result = base_client_read_500(bc=bc, url=test_url)
-    except urllib.error.HTTPError as e:
+    except urllib2.HTTPError as e:
         if e.code == 500:
             pass
         else:
@@ -266,7 +266,7 @@ def get_client():
     return Client(public_key, secret_key, api_token)
 
 
-@patch('urllib.request.urlopen', patched_urlopen)
+@patch('urllib2.urlopen', patched_urlopen)
 def test_client():
     c = get_client()
     test_url = "http://test.url"
@@ -284,7 +284,7 @@ def test_client():
     assert result == sample_json_dict, result
 
 
-@patch('urllib.request.urlopen', patched_urlopen)
+@patch('urllib2.urlopen', patched_urlopen)
 def test_namespace():
     ns = Namespace(get_client())
     test_url = "http://test.url"
@@ -337,7 +337,7 @@ def patched_urlopen_frob(request, *args, **kwargs):
     return request
 
 
-@patch('urllib.request.urlopen', patched_urlopen_frob)
+@patch('urllib2.urlopen', patched_urlopen_frob)
 def test_auth_get_frob():
     #test get_frob
     au = setup_auth()
@@ -356,7 +356,7 @@ def patched_urlopen_token(request, *args, **kwargs):
     return request
 
 
-@patch('urllib.request.urlopen', patched_urlopen_token)
+@patch('urllib2.urlopen', patched_urlopen_token)
 def test_auth_get_token():
     #test get_frob
     au = setup_auth()
@@ -365,7 +365,7 @@ def test_auth_get_token():
     assert auth_user == token_dict['auth_user'], auth_user
 
 
-@patch('urllib.request.urlopen', patched_urlopen_token)
+@patch('urllib2.urlopen', patched_urlopen_token)
 def test_check_token_true():
     #check if ok
     au = setup_auth()
@@ -377,14 +377,14 @@ def test_check_token_true():
         assert "Not Raised"
 
 
-@patch('urllib.request.urlopen', patched_urlopen_token)
+@patch('urllib2.urlopen', patched_urlopen_token)
 def test_revoke_token_true():
     #check if ok
     au = setup_auth()
     assert au.revoke_token(), au.revoke_token()
 
 
-@patch('urllib.request.urlopen', patched_urlopen_403)
+@patch('urllib2.urlopen', patched_urlopen_403)
 def test_check_token_false():
     #check if denied
     au = setup_auth()
@@ -421,7 +421,7 @@ def patched_urlopen_teamrooms(request, *args, **kwargs):
     return request
 
 
-@patch('urllib.request.urlopen', patched_urlopen_teamrooms)
+@patch('urllib2.urlopen', patched_urlopen_teamrooms)
 def test_team():
     te = Team(get_client())
 
@@ -604,7 +604,7 @@ def patched_urlopen_hr(request, *args, **kwargs):
     return request
 
 
-@patch('urllib.request.urlopen', patched_urlopen_hr)
+@patch('urllib2.urlopen', patched_urlopen_hr)
 def test_get_hrv2_user():
     hr = get_client().hr
 
@@ -612,7 +612,7 @@ def test_get_hrv2_user():
     assert hr.get_user(1) == hr_dict['user'], hr.get_user(1)
 
 
-@patch('urllib.request.urlopen', patched_urlopen_hr)
+@patch('urllib2.urlopen', patched_urlopen_hr)
 def test_get_hrv2_companies():
     hr = get_client().hr
     #test get_companies
@@ -622,14 +622,14 @@ def test_get_hrv2_companies():
     assert hr.get_company(1) == hr_dict['company'], hr.get_company(1)
 
 
-@patch('urllib.request.urlopen', patched_urlopen_hr)
+@patch('urllib2.urlopen', patched_urlopen_hr)
 def test_get_hrv2_company_teams():
     hr = get_client().hr
     #test get_company_teams
     assert hr.get_company_teams(1) == hr_dict['teams'], hr.get_company_teams(1)
 
 
-@patch('urllib.request.urlopen', patched_urlopen_hr)
+@patch('urllib2.urlopen', patched_urlopen_hr)
 def test_get_hrv2_company_users():
     hr = get_client().hr
     #test get_company_users
@@ -637,7 +637,7 @@ def test_get_hrv2_company_users():
     assert hr.get_company_users(1, False) == hr_dict['users'], \
          hr.get_company_users(1, False)
 
-@patch('urllib.request.urlopen', patched_urlopen_hr)
+@patch('urllib2.urlopen', patched_urlopen_hr)
 def test_get_hrv2_teams():
     hr = get_client().hr
     #test get_teams
@@ -647,7 +647,7 @@ def test_get_hrv2_teams():
     assert hr.get_team(1) == hr_dict['team'], hr.get_team(1)
 
 
-@patch('urllib.request.urlopen', patched_urlopen_hr)
+@patch('urllib2.urlopen', patched_urlopen_hr)
 def test_get_hrv2_team_users():
     hr = get_client().hr
     #test get_team_users
@@ -656,7 +656,7 @@ def test_get_hrv2_team_users():
          hr.get_team_users(1, False)
 
 
-@patch('urllib.request.urlopen', patched_urlopen_hr)
+@patch('urllib2.urlopen', patched_urlopen_hr)
 def test_get_hrv2_jobs():
     hr = get_client().hr
     #test get_jobs
@@ -666,7 +666,7 @@ def test_get_hrv2_jobs():
     assert hr.delete_job(1, 41) == hr_dict, hr.delete_job(1, 41)
 
 
-@patch('urllib.request.urlopen', patched_urlopen_hr)
+@patch('urllib2.urlopen', patched_urlopen_hr)
 def test_get_hrv2_offers():
     hr = get_client().hr
     #test get_offers
@@ -674,7 +674,7 @@ def test_get_hrv2_offers():
     assert hr.get_offer(1) == hr_dict['offer'], hr.get_offer(1)
 
 
-@patch('urllib.request.urlopen', patched_urlopen_hr)
+@patch('urllib2.urlopen', patched_urlopen_hr)
 def test_get_hrv2_engagements():
     hr = get_client().hr
     #test get_engagements
@@ -694,7 +694,7 @@ def patched_urlopen_hradjustment(request, *args, **kwargs):
     return request
 
 
-@patch('urllib.request.urlopen', patched_urlopen_hradjustment)
+@patch('urllib2.urlopen', patched_urlopen_hradjustment)
 def test_hrv2_post_adjustment():
     hr = get_client().hr
 
@@ -702,7 +702,7 @@ def test_hrv2_post_adjustment():
     assert result == adjustments['adjustment'], result
 
 
-@patch('urllib.request.urlopen', patched_urlopen_hr)
+@patch('urllib2.urlopen', patched_urlopen_hr)
 def test_get_hrv2_candidacy_stats():
     hr = get_client().hr
     #test get_candidacy_stats
@@ -755,7 +755,7 @@ def patched_urlopen_provider(request, *args, **kwargs):
     return request
 
 
-@patch('urllib.request.urlopen', patched_urlopen_provider)
+@patch('urllib2.urlopen', patched_urlopen_provider)
 def test_provider():
     pr = get_client().provider
 
@@ -814,7 +814,7 @@ def patched_urlopen_trays(request, *args, **kwargs):
     return request
 
 
-@patch('urllib.request.urlopen', patched_urlopen_trays)
+@patch('urllib2.urlopen', patched_urlopen_trays)
 def test_get_trays():
     mc = get_client().mc
 
@@ -840,7 +840,7 @@ def patched_urlopen_tray_content(request, *args, **kwargs):
     return request
 
 
-@patch('urllib.request.urlopen', patched_urlopen_tray_content)
+@patch('urllib2.urlopen', patched_urlopen_tray_content)
 def test_get_tray_content():
     mc = get_client().mc
 
@@ -864,7 +864,7 @@ def patched_urlopen_thread_content(request, *args, **kwargs):
     return request
 
 
-@patch('urllib.request.urlopen', patched_urlopen_thread_content)
+@patch('urllib2.urlopen', patched_urlopen_thread_content)
 def test_get_thread_content():
     mc = get_client().mc
 
@@ -888,7 +888,7 @@ def patched_urlopen_read_thread_content(request, *args, **kwargs):
     return request
 
 
-@patch('urllib.request.urlopen', patched_urlopen_read_thread_content)
+@patch('urllib2.urlopen', patched_urlopen_read_thread_content)
 def test_put_threads_read_unread():
     mc = get_client().mc
 
@@ -902,7 +902,7 @@ def test_put_threads_read_unread():
     assert read == read_thread_content_dict, read
 
 
-@patch('urllib.request.urlopen', patched_urlopen_read_thread_content)
+@patch('urllib2.urlopen', patched_urlopen_read_thread_content)
 def test_put_threads_starred_unstarred():
     mc = get_client().mc
 
@@ -913,7 +913,7 @@ def test_put_threads_starred_unstarred():
     assert unstarred == read_thread_content_dict, unstarred
 
 
-@patch('urllib.request.urlopen', patched_urlopen_read_thread_content)
+@patch('urllib2.urlopen', patched_urlopen_read_thread_content)
 def test_put_threads_deleted_undeleted():
     mc = get_client().mc
 
@@ -924,7 +924,7 @@ def test_put_threads_deleted_undeleted():
     assert undeleted == read_thread_content_dict, undeleted
 
 
-@patch('urllib.request.urlopen', patched_urlopen_read_thread_content)
+@patch('urllib2.urlopen', patched_urlopen_read_thread_content)
 def test_post_message():
     mc = get_client().mc
 
@@ -976,7 +976,7 @@ def patched_urlopen_timereport_content(request, *args, **kwargs):
     return request
 
 
-@patch('urllib.request.urlopen', patched_urlopen_timereport_content)
+@patch('urllib2.urlopen', patched_urlopen_timereport_content)
 def test_get_provider_timereport():
     tc = get_client().timereport
 
@@ -990,7 +990,7 @@ def test_get_provider_timereport():
     assert read == timereport_dict, read
 
 
-@patch('urllib.request.urlopen', patched_urlopen_timereport_content)
+@patch('urllib2.urlopen', patched_urlopen_timereport_content)
 def test_get_company_timereport():
     tc = get_client().timereport
 
@@ -1004,7 +1004,7 @@ def test_get_company_timereport():
     assert read == timereport_dict, read
 
 
-@patch('urllib.request.urlopen', patched_urlopen_timereport_content)
+@patch('urllib2.urlopen', patched_urlopen_timereport_content)
 def test_get_agency_timereport():
     tc = get_client().timereport
 
@@ -1046,7 +1046,7 @@ def patched_urlopen_fin_report_content(request, *args, **kwargs):
     return request
 
 
-@patch('urllib.request.urlopen', patched_urlopen_fin_report_content)
+@patch('urllib2.urlopen', patched_urlopen_fin_report_content)
 def test_get_provider_billings():
     fr = get_client().finreport
 
@@ -1054,7 +1054,7 @@ def test_get_provider_billings():
     assert read == fin_report_dict, read
 
 
-@patch('urllib.request.urlopen', patched_urlopen_fin_report_content)
+@patch('urllib2.urlopen', patched_urlopen_fin_report_content)
 def test_get_provider_teams_billings():
     fr = get_client().finreport
 
@@ -1062,7 +1062,7 @@ def test_get_provider_teams_billings():
     assert read == fin_report_dict, read
 
 
-@patch('urllib.request.urlopen', patched_urlopen_fin_report_content)
+@patch('urllib2.urlopen', patched_urlopen_fin_report_content)
 def test_get_provider_companies_billings():
     fr = get_client().finreport
 
@@ -1070,7 +1070,7 @@ def test_get_provider_companies_billings():
     assert read == fin_report_dict, read
 
 
-@patch('urllib.request.urlopen', patched_urlopen_fin_report_content)
+@patch('urllib2.urlopen', patched_urlopen_fin_report_content)
 def test_get_provider_earnings():
     fr = get_client().finreport
 
@@ -1078,7 +1078,7 @@ def test_get_provider_earnings():
     assert read == fin_report_dict, read
 
 
-@patch('urllib.request.urlopen', patched_urlopen_fin_report_content)
+@patch('urllib2.urlopen', patched_urlopen_fin_report_content)
 def test_get_provider_teams_earnings():
     fr = get_client().finreport
 
@@ -1086,7 +1086,7 @@ def test_get_provider_teams_earnings():
     assert read == fin_report_dict, read
 
 
-@patch('urllib.request.urlopen', patched_urlopen_fin_report_content)
+@patch('urllib2.urlopen', patched_urlopen_fin_report_content)
 def test_get_provider_companies_earnings():
     fr = get_client().finreport
 
@@ -1094,7 +1094,7 @@ def test_get_provider_companies_earnings():
     assert read == fin_report_dict, read
 
 
-@patch('urllib.request.urlopen', patched_urlopen_fin_report_content)
+@patch('urllib2.urlopen', patched_urlopen_fin_report_content)
 def test_get_buyer_teams_billings():
     fr = get_client().finreport
 
@@ -1102,7 +1102,7 @@ def test_get_buyer_teams_billings():
     assert read == fin_report_dict, read
 
 
-@patch('urllib.request.urlopen', patched_urlopen_fin_report_content)
+@patch('urllib2.urlopen', patched_urlopen_fin_report_content)
 def test_get_buyer_companies_billings():
     fr = get_client().finreport
 
@@ -1110,7 +1110,7 @@ def test_get_buyer_companies_billings():
     assert read == fin_report_dict, read
 
 
-@patch('urllib.request.urlopen', patched_urlopen_fin_report_content)
+@patch('urllib2.urlopen', patched_urlopen_fin_report_content)
 def test_get_buyer_teams_earnings():
     fr = get_client().finreport
 
@@ -1118,7 +1118,7 @@ def test_get_buyer_teams_earnings():
     assert read == fin_report_dict, read
 
 
-@patch('urllib.request.urlopen', patched_urlopen_fin_report_content)
+@patch('urllib2.urlopen', patched_urlopen_fin_report_content)
 def test_get_buyer_companies_earnings():
     fr = get_client().finreport
 
@@ -1126,7 +1126,7 @@ def test_get_buyer_companies_earnings():
     assert read == fin_report_dict, read
 
 
-@patch('urllib.request.urlopen', patched_urlopen_fin_report_content)
+@patch('urllib2.urlopen', patched_urlopen_fin_report_content)
 def test_get_financial_entities():
     fr = get_client().finreport
 
@@ -1134,7 +1134,7 @@ def test_get_financial_entities():
     assert read == fin_report_dict, read
 
 
-@patch('urllib.request.urlopen', patched_urlopen_fin_report_content)
+@patch('urllib2.urlopen', patched_urlopen_fin_report_content)
 def test_get_financial_entities_provider():
     fr = get_client().finreport
 
@@ -1165,7 +1165,7 @@ def patched_urlopen_task(request, *args, **kwargs):
     return request
 
 
-@patch('urllib.request.urlopen', patched_urlopen_task)
+@patch('urllib2.urlopen', patched_urlopen_task)
 def test_get_company_tasks():
     task = get_client().task
 
@@ -1173,7 +1173,7 @@ def test_get_company_tasks():
      task.get_company_tasks(1)
 
 
-@patch('urllib.request.urlopen', patched_urlopen_task)
+@patch('urllib2.urlopen', patched_urlopen_task)
 def test_get_team_tasks():
     task = get_client().task
 
@@ -1181,7 +1181,7 @@ def test_get_team_tasks():
      task.get_team_tasks(1, 1)
 
 
-@patch('urllib.request.urlopen', patched_urlopen_task)
+@patch('urllib2.urlopen', patched_urlopen_task)
 def test_get_user_tasks():
     task = get_client().task
 
@@ -1189,7 +1189,7 @@ def test_get_user_tasks():
      task.get_user_tasks(1, 1, 1)
 
 
-@patch('urllib.request.urlopen', patched_urlopen_task)
+@patch('urllib2.urlopen', patched_urlopen_task)
 def test_company_tasks_full():
     task = get_client().task
 
@@ -1197,7 +1197,7 @@ def test_company_tasks_full():
      task.get_company_tasks_full(1)
 
 
-@patch('urllib.request.urlopen', patched_urlopen_task)
+@patch('urllib2.urlopen', patched_urlopen_task)
 def test_get_team_tasks_full():
     task = get_client().task
 
@@ -1205,7 +1205,7 @@ def test_get_team_tasks_full():
      task.get_team_tasks_full(1, 1)
 
 
-@patch('urllib.request.urlopen', patched_urlopen_task)
+@patch('urllib2.urlopen', patched_urlopen_task)
 def test_get_user_tasks_full():
     task = get_client().task
 
@@ -1213,7 +1213,7 @@ def test_get_user_tasks_full():
      task.get_user_tasks_full(1, 1, 1)
 
 
-@patch('urllib.request.urlopen', patched_urlopen_task)
+@patch('urllib2.urlopen', patched_urlopen_task)
 def test_get_company_specific_tasks():
     task = get_client().task
 
@@ -1221,7 +1221,7 @@ def test_get_company_specific_tasks():
      task.get_company_specific_tasks(1, [1, 1])
 
 
-@patch('urllib.request.urlopen', patched_urlopen_task)
+@patch('urllib2.urlopen', patched_urlopen_task)
 def test_get_team_specific_tasks():
     task = get_client().task
 
@@ -1229,7 +1229,7 @@ def test_get_team_specific_tasks():
      task.get_team_specific_tasks(1, 1, [1, 1])
 
 
-@patch('urllib.request.urlopen', patched_urlopen_task)
+@patch('urllib2.urlopen', patched_urlopen_task)
 def test_get_user_specific_tasks():
     task = get_client().task
 
@@ -1237,7 +1237,7 @@ def test_get_user_specific_tasks():
      task.get_user_specific_tasks(1, 1, 1, [1, 1])
 
 
-@patch('urllib.request.urlopen', patched_urlopen_task)
+@patch('urllib2.urlopen', patched_urlopen_task)
 def test_post_company_task():
     task = get_client().task
 
@@ -1245,7 +1245,7 @@ def test_post_company_task():
      task.post_company_task(1, 1, '1', 'ttt')
 
 
-@patch('urllib.request.urlopen', patched_urlopen_task)
+@patch('urllib2.urlopen', patched_urlopen_task)
 def test_post_team_task():
     task = get_client().task
 
@@ -1253,7 +1253,7 @@ def test_post_team_task():
      task.post_team_task(1, 1, 1, '1', 'ttt')
 
 
-@patch('urllib.request.urlopen', patched_urlopen_task)
+@patch('urllib2.urlopen', patched_urlopen_task)
 def test_post_user_task():
     task = get_client().task
 
@@ -1261,7 +1261,7 @@ def test_post_user_task():
      task.post_user_task(1, 1, 1, 1, '1', 'ttt')
 
 
-@patch('urllib.request.urlopen', patched_urlopen_task)
+@patch('urllib2.urlopen', patched_urlopen_task)
 def test_put_company_task():
     task = get_client().task
 
@@ -1269,7 +1269,7 @@ def test_put_company_task():
      task.put_company_task(1, 1, '1', 'ttt')
 
 
-@patch('urllib.request.urlopen', patched_urlopen_task)
+@patch('urllib2.urlopen', patched_urlopen_task)
 def test_put_team_task():
     task = get_client().task
 
@@ -1277,7 +1277,7 @@ def test_put_team_task():
      task.put_team_task(1, 1, 1, '1', 'ttt')
 
 
-@patch('urllib.request.urlopen', patched_urlopen_task)
+@patch('urllib2.urlopen', patched_urlopen_task)
 def test_put_user_task():
     task = get_client().task
 
@@ -1285,7 +1285,7 @@ def test_put_user_task():
      task.put_user_task(1, 1, 1, 1, '1', 'ttt')
 
 
-@patch('urllib.request.urlopen', patched_urlopen_task)
+@patch('urllib2.urlopen', patched_urlopen_task)
 def test_delete_company_task():
     task = get_client().task
 
@@ -1293,7 +1293,7 @@ def test_delete_company_task():
      task.delete_company_task(1, [1, 1])
 
 
-@patch('urllib.request.urlopen', patched_urlopen_task)
+@patch('urllib2.urlopen', patched_urlopen_task)
 def test_delete_team_task():
     task = get_client().task
 
@@ -1301,7 +1301,7 @@ def test_delete_team_task():
      task.delete_team_task(1, 1, [1, 1])
 
 
-@patch('urllib.request.urlopen', patched_urlopen_task)
+@patch('urllib2.urlopen', patched_urlopen_task)
 def test_delete_user_task():
     task = get_client().task
 
@@ -1309,7 +1309,7 @@ def test_delete_user_task():
      task.delete_user_task(1, 1, 1, [1, 1])
 
 
-@patch('urllib.request.urlopen', patched_urlopen_task)
+@patch('urllib2.urlopen', patched_urlopen_task)
 def test_delete_all_company_tasks():
     task = get_client().task
 
@@ -1317,7 +1317,7 @@ def test_delete_all_company_tasks():
      task.delete_all_company_tasks(1)
 
 
-@patch('urllib.request.urlopen', patched_urlopen_task)
+@patch('urllib2.urlopen', patched_urlopen_task)
 def test_delete_all_team_tasks():
     task = get_client().task
 
@@ -1325,7 +1325,7 @@ def test_delete_all_team_tasks():
      task.delete_all_team_tasks(1, 1)
 
 
-@patch('urllib.request.urlopen', patched_urlopen_task)
+@patch('urllib2.urlopen', patched_urlopen_task)
 def test_delete_all_user_tasks():
     task = get_client().task
 
@@ -1333,7 +1333,7 @@ def test_delete_all_user_tasks():
      task.delete_all_user_tasks(1, 1, 1)
 
 
-@patch('urllib.request.urlopen', patched_urlopen_task)
+@patch('urllib2.urlopen', patched_urlopen_task)
 def test_update_batch_tasks():
     task = get_client().task
 
@@ -1383,7 +1383,7 @@ def patched_urlopen_oconomy_content(request, *args, **kwargs):
     return request
 
 
-@patch('urllib.request.urlopen', patched_urlopen_oconomy_content)
+@patch('urllib2.urlopen', patched_urlopen_oconomy_content)
 def test_get_monthly_summary():
     oconomy = get_client().nonauth_oconomy
 
@@ -1391,7 +1391,7 @@ def test_get_monthly_summary():
     assert read == oconomy_dict, read
 
 
-@patch('urllib.request.urlopen', patched_urlopen_oconomy_content)
+@patch('urllib2.urlopen', patched_urlopen_oconomy_content)
 def test_get_hours_worked_by_locations():
     oconomy = get_client().oconomy
 
@@ -1399,7 +1399,7 @@ def test_get_hours_worked_by_locations():
     assert read == oconomy_dict, read
 
 
-@patch('urllib.request.urlopen', patched_urlopen_oconomy_content)
+@patch('urllib2.urlopen', patched_urlopen_oconomy_content)
 def test_get_hours_worked_by_weeks():
     oconomy = get_client().oconomy
 
@@ -1407,7 +1407,7 @@ def test_get_hours_worked_by_weeks():
     assert read == oconomy_dict, read
 
 
-@patch('urllib.request.urlopen', patched_urlopen_oconomy_content)
+@patch('urllib2.urlopen', patched_urlopen_oconomy_content)
 def test_get_top_countries_by_hours():
     oconomy = get_client().oconomy
 
@@ -1415,7 +1415,7 @@ def test_get_top_countries_by_hours():
     assert read == oconomy_dict, read
 
 
-@patch('urllib.request.urlopen', patched_urlopen_oconomy_content)
+@patch('urllib2.urlopen', patched_urlopen_oconomy_content)
 def test_get_earnings_by_categories():
     oconomy = get_client().nonauth_oconomy
 
@@ -1423,7 +1423,7 @@ def test_get_earnings_by_categories():
     assert read == oconomy_dict, read
 
 
-@patch('urllib.request.urlopen', patched_urlopen_oconomy_content)
+@patch('urllib2.urlopen', patched_urlopen_oconomy_content)
 def test_get_most_requested_skills():
     oconomy = get_client().oconomy
 

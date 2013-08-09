@@ -4,7 +4,7 @@ python-odesk3 version 0.1
 (C) 2012 oDesk
 """
 
-import urllib.request, urllib.error
+import urllib2
 import json
 
 from odesk.http import raise_http_error, HttpRequest
@@ -78,7 +78,7 @@ class GdsNamespace(Namespace):
         """
         try:
             response = self.urlopen(url, data, method)
-        except urllib.error.HTTPError as e:
+        except urllib2.HTTPError as e:
             raise_http_error(e)
 
         result = json.loads(response.read().decode("utf-8"))
@@ -99,5 +99,5 @@ class NonauthGdsNamespace(GdsNamespace):
             query = self.client.urlencode(data)
             url += '?' + query
             request = HttpRequest(url=url, data=None, method=method)
-            return urllib.request.urlopen(request)
+            return urllib2.urlopen(request)
         return None

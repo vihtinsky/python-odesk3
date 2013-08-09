@@ -23,7 +23,7 @@ def get_version():
 
 import hashlib
 import logging
-import urllib.request, urllib.parse, urllib.error
+import urllib2, urllib
 import json
 
 from odesk.auth import Auth
@@ -33,6 +33,14 @@ from odesk.http import HttpRequest, raise_http_error
 
 __all__ = ["get_version", "Client", "utils"]
 
+def _utf8_str(obj):
+    try:
+        return unicode(obj).encode("utf8")
+    except UnicodeDecodeError, e:
+        # input could be an utf8 encoded
+        logging.debug(e)
+        obj.decode("utf8")  # check if it is a valid utf8 string
+        return obj
 
 def signed_urlencode(secret, query={}):
     """
@@ -43,18 +51,18 @@ def signed_urlencode(secret, query={}):
     >>> signed_urlencode('some$ecret', {'spam':42,'foo':'bar'})
     'api_sig=11b1fc2e6555297bdc144aed0a5e641c&foo=bar&spam=42'
     """
-    message = secret
+    message = _utf8_str(secret)
     for key in sorted(query.keys()):
         try:
-            message += str(key) + str(query[key])
+            message += _utf8_str(key) + _utf8_str(query[key])
         except Exception as e:
             logging.debug("[python-odesk] Error while trying to sign key: %s and query %s" % (key, query[key]))
             raise e
     _query = {}
-    _query['api_sig'] = hashlib.md5(message.encode('utf-8')).hexdigest()
+    _query['api_sig'] = hashlib.md5(message).hexdigest()
     for k, v in query.items():
-        _query[k] = str(v)
-    return urllib.parse.urlencode(_query)
+        _query[_utf8_str(k)] = _utf8_str(v)
+    return urllib.urlencode(_query)
 
 
 class BaseClient(object):
@@ -101,7 +109,7 @@ class BaseClient(object):
             request = HttpRequest(url=url, data=None, method=method)
         else:
             request = HttpRequest(url=url, data=query.encode("utf-8"), method=method)
-        return urllib.request.urlopen(request)
+        return urllib2.urlopen(request)
 
     def read(self, url, data={}, method='GET', format='json'):
         """
@@ -111,7 +119,7 @@ class BaseClient(object):
         url += '.' + format
         try:
             response = self.urlopen(url, data, method)
-        except urllib.error.HTTPError as e:
+        except urllib2.HTTPError as e:
             raise_http_error(e)
 
         if format == 'json':

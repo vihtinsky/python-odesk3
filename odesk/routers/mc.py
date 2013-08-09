@@ -4,7 +4,7 @@ python-odesk3 version 0.1
 (C) 2012 oDesk
 """
 
-import urllib.parse
+import urllib
 
 from odesk.namespaces import Namespace
 
@@ -75,7 +75,7 @@ class MC(Namespace):
         return result["thread"]
 
     def _generate_many_threads_url(self, threads_ids):
-        return ';'.join(urllib.parse.quote(str(i)) for i in threads_ids)
+        return ';'.join(urllib.quote(str(i)) for i in threads_ids)
 
     def put_threads_read_unread(self, username, thread_ids, read=True):
         """

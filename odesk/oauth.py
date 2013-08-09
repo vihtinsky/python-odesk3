@@ -5,7 +5,7 @@ python-odesk3 version 0.1
 """
 
 import time
-import urllib.parse
+import urlparse, urllib
 import oauth2 as oauth
 
 
@@ -58,7 +58,7 @@ class OAuth(Namespace):
         response, content = client.request(self.request_token_url, 'POST')
         if response.get('status') != '200':
             raise Exception("Invalid request token response: %s." % content)
-        request_token = dict(urllib.parse.parse_qsl(content))
+        request_token = dict(urlparse.parse_qsl(content))
         self.request_token = request_token.get(b'oauth_token')
         self.request_token_secret = request_token.get(b'oauth_token_secret')
         return self.request_token, self.request_token_secret
@@ -70,10 +70,10 @@ class OAuth(Namespace):
         oauth_token = getattr(self, 'request_token', None) or\
             self.get_request_token()[0]
         if callback_url:
-            params = urllib.parse.urlencode({'oauth_token': oauth_token,\
+            params = urllib.urlencode({'oauth_token': oauth_token,\
                 'oauth_callback': callback_url})
         else:
-            params = urllib.parse.urlencode({'oauth_token': oauth_token})
+            params = urllib.urlencode({'oauth_token': oauth_token})
         return '%s?%s' % (self.authorize_url, params)
 
     def get_access_token(self, verifier):
@@ -91,7 +91,7 @@ class OAuth(Namespace):
         response, content = client.request(self.access_token_url, 'POST')
         if response.get('status') != '200':
             raise Exception("Invalid access token response: %s." % content)
-        access_token = dict(urllib.parse.parse_qsl(content))
+        access_token = dict(urlparse.parse_qsl(content))
         self.access_token = access_token.get(b'oauth_token')
         self.access_token_secret = access_token.get(b'oauth_token_secret')
         return self.access_token, self.access_token_secret

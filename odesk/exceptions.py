@@ -5,7 +5,7 @@ python-odesk3 version 0.1
 """
 
 import logging
-import urllib.request, urllib.error, urllib.parse
+import urllib2, urllib
 
 
 class BaseException(Exception):
@@ -14,19 +14,19 @@ class BaseException(Exception):
         super(BaseException, self).__init__()
 
 
-class HTTP400BadRequestError(urllib.error.HTTPError, BaseException):
+class HTTP400BadRequestError(urllib2.HTTPError, BaseException):
     pass
 
 
-class HTTP401UnauthorizedError(urllib.error.HTTPError, BaseException):
+class HTTP401UnauthorizedError(urllib2.HTTPError, BaseException):
     pass
 
 
-class HTTP403ForbiddenError(urllib.error.HTTPError, BaseException):
+class HTTP403ForbiddenError(urllib2.HTTPError, BaseException):
     pass
 
 
-class HTTP404NotFoundError(urllib.error.HTTPError, BaseException):
+class HTTP404NotFoundError(urllib2.HTTPError, BaseException):
     pass
 
 
