@@ -7,9 +7,53 @@ from odesk.exceptions import APINotImplementedException
 from odesk.namespaces import Namespace
 
 
+class HR_V1(Namespace):
+    """
+    HR API version 1
+    """
+    api_url = 'hr/'
+    version = 1
+
+    def invite_to_interview(self, job_id, cover, profile_key=None,
+                            provider_reference=None):
+        """
+        Invite to an interview.
+
+        Parameters:
+          job_id               (required) Job reference ID
+
+          cover                (required) Text of the cover letter
+
+          profile_key          Unique contractor's key, e.g. ~~677961dcd7f65c01
+
+          provider_reference   Developer's unique reference ID, e.g. 12345.
+                               Use it if no profile_key available
+
+        Either one of the parameters ``profile_key`` or ``provider_reference``
+        should be provided, otherwise error will be raised.
+
+        """
+        data = {}
+
+        if profile_key is None and provider_reference is None:
+            raise Exception('Either one of the parameters ``profile_key`` or '
+                            '``provider_reference`` should be provided')
+
+        if profile_key:
+            data['profile_key'] = profile_key
+
+        if provider_reference:
+            data['provider__reference'] = provider_reference
+
+        data['cover'] = cover
+
+        url = 'jobs/{0}/candidates'.format(job_id)
+        return self.post(url, data)
+
+
 class HR(Namespace):
     """
-    HR API
+    HR API version 2
     """
     api_url = 'hr/'
     version = 2

@@ -196,7 +196,8 @@ class Client(BaseClient):
             self.finreport = Finreports(self)
 
         if hr:
-            from odesk.routers.hr import HR
+            from odesk.routers.hr import HR_V1, HR
+            self.hr_v1 = HR_V1(self)
             self.hr = HR(self)
 
         if mc:
