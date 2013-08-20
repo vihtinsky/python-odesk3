@@ -46,8 +46,10 @@ class Namespace(object):
 class GdsNamespace(Namespace):
     base_url = 'https://www.odesk.com/gds/'
 
-    def urlopen(self, url, data={}, method='GET'):
+    def urlopen(self, url, data=None, method='GET'):
         from odesk.oauth import OAuth
+        if not data:
+            data = {}
         data = data.copy()
 
         #FIXME: Http method hack. Should be removed once oDesk supports true
