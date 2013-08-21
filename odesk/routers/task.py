@@ -24,7 +24,10 @@ class Task(Namespace):
         """
         url = 'tasks/companies/%s/tasks' % str(company_id)
         result = self.get(url)
-        return result["tasks"] or []
+        try:
+            return result["tasks"] or []
+        except KeyError:
+            return result
 
     def get_team_tasks(self, company_id, team_id):
         """
@@ -39,7 +42,10 @@ class Task(Namespace):
         url = 'tasks/companies/%s/teams/%s/tasks' % (str(company_id),
                                                      str(team_id))
         result = self.get(url)
-        return result["tasks"] or []
+        try:
+            return result["tasks"] or []
+        except KeyError:
+            return result
 
     def get_user_tasks(self, company_id, team_id, user_id):
         """
@@ -55,7 +61,10 @@ class Task(Namespace):
         url = 'tasks/companies/%s/teams/%s/users/%s/tasks' % (str(company_id),
                                                     str(team_id), str(user_id))
         result = self.get(url)
-        return result["tasks"] or []
+        try:
+            return result["tasks"] or []
+        except KeyError:
+            return result
 
     def get_company_tasks_full(self, company_id):
         """
@@ -69,7 +78,10 @@ class Task(Namespace):
         """
         url = 'tasks/companies/%s/tasks/full_list' % str(company_id)
         result = self.get(url)
-        return result["tasks"] or []
+        try:
+            return result["tasks"] or []
+        except KeyError:
+            return result
 
     def get_team_tasks_full(self, company_id, team_id):
         """
@@ -85,7 +97,10 @@ class Task(Namespace):
         url = 'tasks/companies/%s/teams/%s/tasks/full_list' %\
                                              (str(company_id), str(team_id))
         result = self.get(url)
-        return result["tasks"] or []
+        try:
+            return result["tasks"] or []
+        except KeyError:
+            return result
 
     def get_user_tasks_full(self, company_id, team_id, user_id):
         """
@@ -102,7 +117,10 @@ class Task(Namespace):
         url = 'tasks/companies/%s/teams/%s/users/%s/tasks/full_list' %\
                                 (str(company_id), str(team_id), str(user_id))
         result = self.get(url)
-        return result["tasks"] or []
+        try:
+            return result["tasks"] or []
+        except KeyError:
+            return result
 
     def _generate_many_tasks_url(self, task_codes):
         return ';'.join(urllib.quote(str(c)) for c in task_codes)
@@ -119,7 +137,7 @@ class Task(Namespace):
             task_codes = ';'.join(map(str, task_codes))
         url = 'tasks/companies/%s/tasks/%s' % (company_id, task_codes)
         result = self.get(url)
-        return result["tasks"]
+        return result.get("tasks", result)
 
     def get_team_specific_tasks(self, company_id, team_id, task_codes):
         """
@@ -135,7 +153,10 @@ class Task(Namespace):
         url = 'tasks/companies/%s/teams/%s/tasks/%s' %\
                                 (company_id, team_id, task_codes)
         result = self.get(url)
-        return result["tasks"] or []
+        try:
+            return result["tasks"] or []
+        except KeyError:
+            return result
 
     def get_user_specific_tasks(self, company_id, team_id, user_id,
                                 task_codes):
@@ -153,7 +174,10 @@ class Task(Namespace):
         url = 'tasks/companies/%s/teams/%s/users/%s/tasks/%s' %\
                                 (company_id, team_id, user_id, task_codes)
         result = self.get(url)
-        return result["tasks"] or []
+        try:
+            return result["tasks"] or []
+        except KeyError:
+            return result
 
     def post_company_task(self, company_id, code, description, url):
         """

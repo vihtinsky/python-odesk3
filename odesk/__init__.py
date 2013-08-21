@@ -25,11 +25,11 @@ import json
 import hashlib
 import logging
 import urllib
-import urllib2
+import urllib3
 
 
 from odesk.auth import Auth
-from odesk.http import HttpRequest, raise_http_error
+from odesk.http import raise_http_error
 
 
 __all__ = ["get_version", "Client", "utils"]
@@ -100,6 +100,7 @@ class BaseClient(object):
         self.secret_key = secret_key
         self.api_token = api_token
         self.auth = None
+        self.http = urllib3.PoolManager()
 
     def urlencode(self, data=None):
         if data is None:
@@ -109,55 +110,86 @@ class BaseClient(object):
             data['api_token'] = self.api_token
         return signed_urlencode(self.secret_key, data)
 
-    def urlopen(self, url, data=None, method='GET'):
+    def urlopen(self, url, data=None, method='GET', headers=None):
         from odesk.oauth import OAuth
+
         if data is None:
             data = {}
 
-        #FIXME: Http method hack. Should be removed once oDesk supports true
-        #HTTP methods
-        if method in ['PUT', 'DELETE']:
-            data['http_method'] = method.lower()
-        #End of hack
+        if headers is None:
+            headers = {}
+
 
         self.last_method = method
         self.last_url = url
         self.last_data = data
 
         if isinstance(self.auth, OAuth):
-            query = self.auth.urlencode(url, self.oauth_access_token,\
-                self.oauth_access_token_secret, data, method)
+            # TODO: Headers are not supported fully yet
+
+            # headers.update(
+            #     self.auth.get_oauth_params(
+            #         url, self.oauth_access_token,
+            #         self.oauth_access_token_secret,
+            #         data, method, to_header=True))
+
+            post_data = self.auth.get_oauth_params(
+                url, self.oauth_access_token,
+                self.oauth_access_token_secret,
+                data, method)
         else:
-            query = self.urlencode(data)
+            # TODO: remove key-based api
+            post_data = self.urlencode(data)
 
         if method == 'GET':
-            url += '?' + query
-            request = HttpRequest(url=url, data=None, method=method)
-        else:
-            request = HttpRequest(url=url, data=query, method=method)
-        return urllib2.urlopen(request)
+            url = '{0}?{1}'.format(url, post_data)
+            return self.http.urlopen(method, url)
+        elif method == 'POST':
+            return self.http.urlopen(
+                method, url, body=post_data,
+                headers={'Content-Type':
+                         'application/x-www-form-urlencoded;charset=UTF-8'})
+        elif method in ('PUT', 'DELETE'):
+            url = '{0}?{1}'.format(url, post_data)
+            headers['Content-Type'] = 'application/json'
+            data_json = json.dumps(data)
+            return self.http.urlopen(
+                method, url, body=data_json, headers=headers)
 
-    def read(self, url, data=None, method='GET', format='json'):
+        else:
+            raise Exception('Wrong http method: {0}. Supported'
+                            'methods are: GET, POST, PUT, DELETE')
+
+    def read(self, url, data=None, method='GET', format_='json'):
         """
         Returns parsed Python object or raises an error
         """
-        assert format == 'json', "Only JSON format is supported at the moment"
-        url += '.' + format
-        logger = logging.getLogger('python-odesk')
-        try:
-            logger.debug('Prepairing to make oDesk call')
-            logger.debug('URL: ' + url)
-            logger.debug('Data: ' + json.dumps(data))
-            logger.debug('Method: ' + method)
-            response = self.urlopen(url, data, method)
-        except urllib2.HTTPError, e:
-            logger.debug(e)
-            raise_http_error(e)
+        assert format_ == 'json', "Only JSON format is supported at the moment"
 
-        result = response.read()
-        logger.debug('Response: ' + result)
-        if format == 'json':
-            result = json.loads(result)
+        headers = {'Accept': 'application/{0}'.format(format_)}
+
+        logger = logging.getLogger('python-odesk')
+
+        logger.debug('Prepairing to make oDesk call')
+        logger.debug('URL: {0}'.format(url))
+        logger.debug('Data: {0}'.format(json.dumps(data)))
+        logger.debug('Method: {0}'.format(method))
+        response = self.urlopen(url, data, method, headers=headers)
+
+        if response.status != 200:
+            logger.debug('Error: {0}'.format(response))
+            raise_http_error(url, response)
+
+        result = response.data
+        logger.debug('Response: {0}'.format(result))
+
+        if format_ == 'json':
+            try:
+                result = json.loads(result)
+            except ValueError:
+                # Not a valid json string
+                logger.debug('Response is not a valid json string')
+                pass
         return result
 
 
@@ -168,15 +200,16 @@ class Client(BaseClient):
 
     def __init__(self, public_key, secret_key, api_token=None,
                 oauth_access_token=None, oauth_access_token_secret=None,
-                format='json', auth='simple', finance=True, finreport=True,
-                hr=True, mc=True, oconomy=True, provider=True,
+                format_='json', auth='simple', finance=True, finreport=True,
+                hr=True, mc=True, provider=True,
                 task=True, team=True, ticket=True, timereport=True, url=True,
                 job=True):
 
         self.public_key = public_key
         self.secret_key = secret_key
         self.api_token = api_token
-        self.format = format
+        self.format_ = format_
+        self.http = urllib3.PoolManager()
 
         if auth == 'simple':
             self.auth = Auth(self)
@@ -203,11 +236,6 @@ class Client(BaseClient):
         if mc:
             from odesk.routers.mc import MC
             self.mc = MC(self)
-
-        if oconomy:
-            from odesk.routers.oconomy import OConomy, NonauthOConomy
-            self.oconomy = OConomy(self)
-            self.nonauth_oconomy = NonauthOConomy(self)
 
         if provider:
             from odesk.routers.provider import Provider
@@ -239,16 +267,16 @@ class Client(BaseClient):
 
     #Shortcuts for HTTP methods
     def get(self, url, data=None):
-        return self.read(url, data, method='GET', format=self.format)
+        return self.read(url, data, method='GET', format_=self.format_)
 
     def post(self, url, data=None):
-        return self.read(url, data, method='POST', format=self.format)
+        return self.read(url, data, method='POST', format_=self.format_)
 
     def put(self, url, data=None):
-        return self.read(url, data, method='PUT', format=self.format)
+        return self.read(url, data, method='PUT', format_=self.format_)
 
     def delete(self, url, data=None):
-        return self.read(url, data, method='DELETE', format=self.format)
+        return self.read(url, data, method='DELETE', format_=self.format_)
 
 
 if __name__ == "__main__":

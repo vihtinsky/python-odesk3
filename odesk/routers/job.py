@@ -41,4 +41,5 @@ class Job(Namespace):
         else:
             url %= job_key
         result = self.get(url)
-        return result.get('profiles', result)['profile']
+        profiles = result.get('profiles', result)
+        return profiles.get('profile', result)

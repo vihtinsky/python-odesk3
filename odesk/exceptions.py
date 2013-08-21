@@ -9,26 +9,36 @@ import urllib2
 
 
 class BaseException(Exception):
+    def __init__(self, *args, **kwargs):
+        self.odesk_debug(*args, **kwargs)
+
+    def odesk_debug(self, *args, **kwargs):
+        logger = logging.getLogger('python-odesk')
+        logger.debug('{0}: {1}'.format(
+            self.__class__.__name__,
+            ', '.join(map(unicode, args))))
+
+
+class BaseHttpException(urllib2.HTTPError, BaseException):
 
     def __init__(self, *args, **kwargs):
-        logger = logging.getLogger('python-odesk')
-        logger.debug("BaseException:" + unicode(s) for s in args)
-        super(BaseException, self).__init__()
+        self.odesk_debug(*args, **kwargs)
+        super(BaseException, self).__init__(*args, **kwargs)
 
 
-class HTTP400BadRequestError(urllib2.HTTPError, BaseException):
+class HTTP400BadRequestError(BaseHttpException):
     pass
 
 
-class HTTP401UnauthorizedError(urllib2.HTTPError, BaseException):
+class HTTP401UnauthorizedError(BaseHttpException):
     pass
 
 
-class HTTP403ForbiddenError(urllib2.HTTPError, BaseException):
+class HTTP403ForbiddenError(BaseHttpException):
     pass
 
 
-class HTTP404NotFoundError(urllib2.HTTPError, BaseException):
+class HTTP404NotFoundError(BaseHttpException):
     pass
 
 

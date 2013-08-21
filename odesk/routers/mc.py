@@ -30,7 +30,7 @@ class MC(Namespace):
         if username:
             url += '/%s' % str(username)
         result = self.get(url, data=data)
-        return result["trays"]
+        return result.get("trays", result)
 
     def get_tray_content(self, username, tray, paging_offset=0,
                          paging_count=20):
@@ -51,7 +51,11 @@ class MC(Namespace):
             data = {}
 
         result = self.get(url, data=data)
-        return result["current_tray"]["threads"]
+        try:
+            current_tray = result.get("current_tray", result)
+            return current_tray.get("threads", result)
+        except AttributeError:
+            return result
 
     def get_thread_content(self, username, thread_id, paging_offset=0,
                            paging_count=20):
@@ -72,7 +76,7 @@ class MC(Namespace):
             data = {}
 
         result = self.get(url, data=data)
-        return result["thread"]
+        return result.get("thread", result)
 
     def _generate_many_threads_url(self, url, threads_ids):
         return ';'.join(urllib.quote(str(i)) for i in threads_ids)

@@ -69,7 +69,7 @@ class HR(Namespace):
         """
         url = 'users/%s' % str(user_reference)
         result = self.get(url)
-        return result['user']
+        return result.get('user', result)
 
     '''company api'''
 
@@ -92,7 +92,7 @@ class HR(Namespace):
         """
         url = 'companies/%s' % str(company_referece)
         result = self.get(url)
-        return result['company']
+        return result.get('company', result)
 
     def get_company_teams(self, company_referece):
         """
@@ -105,7 +105,7 @@ class HR(Namespace):
         """
         url = 'companies/%s/teams' % str(company_referece)
         result = self.get(url)
-        return result['teams']
+        return result.get('teams', result)
 
     def get_company_tasks(self, company_referece):
         """
@@ -129,7 +129,7 @@ class HR(Namespace):
         else:
             data = {'status_in_company': 'inactive'}
         result = self.get(url, data)
-        return result['users']
+        return result.get('users', result)
 
     '''team api'''
 
@@ -141,7 +141,7 @@ class HR(Namespace):
         """
         url = 'teams'
         result = self.get(url)
-        return result['teams']
+        return result.get('teams', result)
 
     def get_team(self, team_reference, include_users=False):
         """
@@ -155,7 +155,7 @@ class HR(Namespace):
         url = 'teams/%s' % str(team_reference)
         result = self.get(url, {'include_users': include_users})
         #TODO: check how included users returned
-        return result['team']
+        return result.get('team', result)
 
     def get_team_tasks(self, team_reference):
         """
@@ -173,7 +173,7 @@ class HR(Namespace):
         else:
             data = {'status_in_team': 'inactive'}
         result = self.get(url, data)
-        return result['users']
+        return result.get('users', result)
 
     def post_team_adjustment(self, team_reference, engagement_reference,
                              amount, comments, notes):
@@ -193,7 +193,7 @@ class HR(Namespace):
                 'comments': comments,
                 'notes': notes}
         result = self.post(url, data)
-        return result['adjustment']
+        return result.get('adjustment', result)
 
     '''task api'''
 
@@ -223,7 +223,7 @@ class HR(Namespace):
         data['include_sub_teams'] = sub_teams
         url = 'userroles'
         result = self.get(url, data)
-        return result['userroles']
+        return result.get('userroles', result)
 
     '''job api'''
 
@@ -276,7 +276,7 @@ class HR(Namespace):
             data['order_by'] = order_by
 
         result = self.get(url, data)
-        return result['jobs']
+        return result.get('jobs', result)
 
     def get_job(self, job_reference):
         """
@@ -290,7 +290,7 @@ class HR(Namespace):
         """
         url = 'jobs/%s' % str(job_reference)
         result = self.get(url)
-        return result['job']
+        return result.get('job', result)
 
     def post_job(self, job_data):
         """
@@ -385,7 +385,7 @@ class HR(Namespace):
             data['order_by'] = order_by
 
         result = self.get(url, data)
-        return result['offers']
+        return result.get('offers', result)
 
     def get_offer(self, offer_reference):
         """
@@ -396,7 +396,7 @@ class HR(Namespace):
         """
         url = 'offers/%s' % str(offer_reference)
         result = self.get(url)
-        return result['offer']
+        return result.get('offer', result)
 
     '''engagement api'''
 
@@ -452,7 +452,7 @@ class HR(Namespace):
             data['order_by'] = order_by
 
         result = self.get(url, data)
-        return result['engagements']
+        return result.get('engagements', result)
 
     def get_engagement(self, engagement_reference):
         """
@@ -463,7 +463,7 @@ class HR(Namespace):
         """
         url = 'engagements/%s' % str(engagement_reference)
         result = self.get(url)
-        return result['engagement']
+        return result.get('engagement', result)
 
     '''candidacy api'''
 
@@ -473,4 +473,4 @@ class HR(Namespace):
         """
         url = 'candidacies/stats'
         result = self.get(url)
-        return result['candidacy_stats']
+        return result.get('candidacy_stats', result)

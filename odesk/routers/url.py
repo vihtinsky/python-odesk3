@@ -15,10 +15,10 @@ class Url(Namespace):
         url = 'shorten'
         data = {'url': long_url}
         result = self.get(url, data=data)
-        return result['short_url']
+        return result.get('short_url', result)
 
     def get_expand(self, short_url):
         url = 'expand'
         data = {'url': short_url}
         result = self.get(url, data=data)
-        return result['long_url']
+        return result.get('long_url', result)

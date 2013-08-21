@@ -33,6 +33,8 @@ class Team(Namespace):
             snapshot = result['snapshot']
         else:
             snapshot = []
+        if 'error' in result:
+            return result
         return snapshot
 
     def update_snapshot(self, company_id, user_id, datetime=None,
@@ -89,6 +91,9 @@ class Team(Namespace):
         if date:
             url += '/%s' % str(date)
         result = self.get(url)
+        if 'error' in result:
+            return result
+
         snapshots = result.get('snapshots', {}).get('snapshot', [])
         if not isinstance(snapshots, list):
             snapshots = [snapshots]
@@ -108,7 +113,10 @@ class Team(Namespace):
         else:
             data = {}
         result = self.get(url, data)
-        return result['streams']['snapshot']
+        try:
+            return result['streams']['snapshot']
+        except KeyError:
+            return result
 
     def get_teamrooms(self, target_version=1):
         """
@@ -123,6 +131,9 @@ class Team(Namespace):
         if target_version != current_version:
             self.version = target_version
         result = self.get(url)
+        if 'error' in result:
+            return result
+
         if 'teamrooms' in result and 'teamroom' in result['teamrooms']:
             teamrooms = result['teamrooms']['teamroom']
         else:
@@ -148,7 +159,11 @@ class Team(Namespace):
         current_version = self.version
         if target_version != current_version:
             self.version = target_version
+
         result = self.get(url, {'online': online})
+        if 'error' in result:
+            return result
+
         if 'teamroom' in result and 'snapshot' in result['teamroom']:
             snapshots = result['teamroom']['snapshot']
         else:

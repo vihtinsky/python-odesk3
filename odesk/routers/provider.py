@@ -35,7 +35,7 @@ class Provider(Namespace):
 
         url = 'providers/%s' % str(provider_ciphertext)
         result = self.get(url)
-        return result['profile']
+        return result.get('profile', result)
 
     def get_provider_brief(self, provider_ciphertext):
         """
@@ -51,10 +51,10 @@ class Provider(Namespace):
 
         url = 'providers/%s/brief' % str(provider_ciphertext)
         result = self.get(url)
-        return result['profile']
+        return result.get('profile', result)
 
-    def get_providers(self, data=None, page_offset=0, page_size=20, \
-                        order_by=None):
+    def get_providers(self, data=None, page_offset=0, page_size=20,
+                      order_by=None):
         """
         Search oDesk providers
 
@@ -77,7 +77,7 @@ class Provider(Namespace):
         if order_by is not None:
             data['order_by'] = order_by
         result = self.get(url, data=data)
-        return result['providers']
+        return result.get('providers', result)
 
     def get_jobs(self, data=None, page_offset=0, page_size=20, order_by=None):
         """
@@ -100,7 +100,7 @@ class Provider(Namespace):
         if order_by is not None:
             data['order_by'] = order_by
         result = self.get(url, data=data)
-        return result['jobs']
+        return result.get('jobs', result)
 
     def _get_resume_info(self, provider_ciphertext, info_type):
         '''
@@ -114,7 +114,7 @@ class Provider(Namespace):
         url = 'providers/%s/%s' % (str(provider_ciphertext), strinfo)
         result = self.get(url)
         result_key = self.resume_info_result_keys[strinfo]
-        return result[result_key]
+        return result.get(result_key, result)
 
     def _add_resume_info_item(self, provider_ciphertext, info_type,\
         item_data):
@@ -238,7 +238,7 @@ class Provider(Namespace):
         """
         url = 'affiliates/%s' % affiliate_key
         result = self.get(url)
-        return result['profile']
+        return result.get('profile', result)
 
     def get_categories_metadata(self):
         """
@@ -247,7 +247,7 @@ class Provider(Namespace):
         """
         url = 'metadata/categories'
         result = self.get(url)
-        return result['categories']
+        return result.get('categories', result)
 
     def get_skills_metadata(self):
         """
@@ -256,7 +256,7 @@ class Provider(Namespace):
         """
         url = 'metadata/skills'
         result = self.get(url)
-        return result['skills']
+        return result.get('skills', result)
 
     def get_regions_metadata(self):
         """
@@ -265,7 +265,7 @@ class Provider(Namespace):
         """
         url = 'metadata/regions'
         result = self.get(url)
-        return result['regions']
+        return result.get('regions', result)
 
     def get_tests_metadata(self):
         """
@@ -273,4 +273,4 @@ class Provider(Namespace):
         """
         url = 'metadata/tests'
         result = self.get(url)
-        return result['tests']
+        return result.get('tests', result)

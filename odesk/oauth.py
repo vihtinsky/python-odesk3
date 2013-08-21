@@ -12,7 +12,6 @@ import logging
 
 
 from odesk.namespaces import Namespace
-from odesk.http import HttpRequest
 
 
 class OAuth(Namespace):
@@ -24,12 +23,17 @@ class OAuth(Namespace):
     authorize_url = 'https://www.odesk.com/services/api/auth'
     access_token_url = 'https://www.odesk.com/api/auth/v1/oauth/token/access'
 
-    def urlencode(self, url, key, secret, data=None, method='GET'):
+    def get_oauth_params(self, url, key, secret, data=None, method='GET',
+                         to_header=False, to_dict=False):
         """
         Converts a mapping object to signed url query
         """
+        # Temporary not use incoming data, just generate headers
         if data is None:
             data = {}
+        else:
+            data = data.copy()
+
         token = oauth.Token(key, secret)
         consumer = self.get_oauth_consumer()
         data.update({
@@ -42,6 +46,11 @@ class OAuth(Namespace):
         request = oauth.Request(method=method, url=url, parameters=data)
         signature_method = oauth.SignatureMethod_HMAC_SHA1()
         request.sign_request(signature_method, consumer, token)
+
+        if to_header:
+            return request.to_header()
+        if to_dict:
+            return request.copy()
         return request.to_postdata()
 
     def get_oauth_consumer(self):

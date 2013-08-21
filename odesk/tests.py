@@ -10,16 +10,23 @@ from odesk.namespaces import *
 from odesk.auth import Auth
 from odesk.oauth import OAuth
 from odesk.routers.team import Team
+from odesk.http import ODESK_ERROR_CODE, ODESK_ERROR_MESSAGE
 
 from mock import Mock, patch
 import urlparse
 import urllib2
+import urllib3
 import httplib
 
 try:
     import json
 except ImportError:
     import simplejson as json
+
+
+class MicroMock(object):
+    def __init__(self, **kwargs):
+        self.__dict__.update(kwargs)
 
 
 def test_signed_urlencode():
@@ -39,16 +46,6 @@ def test_signed_urlencode():
         assert secret_data[key]['result'] == result, \
             " %s returned and should be %s" % (result, \
                                                 secret_data[key]['result'])
-
-
-def test_http_request():
-    request_methods = [('POST', 'POST'), ('GET', 'GET'),
-                       ('PUT', 'POST'), ('DELETE', 'POST')]
-
-    for method in request_methods:
-        request = HttpRequest(url="http://url.com", data=None, method=method[0])
-        assert request.get_method() == method[1], (request.get_method(), \
-                                                   method[1])
 
 
 def test_base_client():
@@ -79,16 +76,11 @@ sample_json_dict = {u'glossary':
                          u'title': u'example glossary'}}
 
 
-def return_sample_json():
-    return json.dumps(sample_json_dict)
+def patched_urlopen(*args, **kwargs):
+    return MicroMock(data=json.dumps(sample_json_dict), status=200)
 
 
-def patched_urlopen(request, *args, **kwargs):
-    request.read = return_sample_json
-    return request
-
-
-@patch('urllib2.urlopen', patched_urlopen)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen)
 def test_base_client_urlopen():
     public_key = 'public'
     secret_key = 'secret'
@@ -122,72 +114,79 @@ def test_base_client_urlopen():
              'result_method': 'POST'},
              ]
 
+    result_json = json.dumps(sample_json_dict)
+
     for params in data:
         result = bc.urlopen(url=params['url'],
                             data=params['data'],
                             method=params['method'])
-        assert isinstance(result, HttpRequest), type(result)
-        assert result.get_data() == params["result_data"], (result.get_data(),
-                                                        params["result_data"])
-        assert result.get_full_url() == params["result_url"], \
-                                                         (result.get_full_url(),
-                                                          params["result_url"])
-        assert result.get_method() == params["result_method"], \
-                                                         (result.get_method(),
-                                                          params["result_method"])
+        assert result.data == result_json, (result.data, result_json)
 
 
-def patched_urlopen_error(request, code=httplib.BAD_REQUEST, *args, **kwargs):
-    raise urllib2.HTTPError(url=request.get_full_url(),
-                            code=code, msg=str(code), hdrs='', fp=None)
+def patched_urlopen_error(method, url, code=httplib.BAD_REQUEST,
+                          message=None, **kwargs):
+    getheaders = Mock()
+    getheaders.return_value = {ODESK_ERROR_CODE: code,
+                               ODESK_ERROR_MESSAGE: message}
+    return MicroMock(data='', getheaders=getheaders, status=code)
 
 
-def patched_urlopen_400(request, *args, **kwargs):
-    return patched_urlopen_error(request, httplib.BAD_REQUEST, *args, **kwargs)
+def patched_urlopen_400(self, method, url, **kwargs):
+    return patched_urlopen_error(
+        method, url, code=httplib.BAD_REQUEST,
+        message='Limit exceeded', **kwargs)
 
 
-def patched_urlopen_401(request, *args, **kwargs):
-    return patched_urlopen_error(request, httplib.UNAUTHORIZED, *args, **kwargs)
+def patched_urlopen_401(self, method, url, **kwargs):
+    return patched_urlopen_error(
+        method, url, code=httplib.UNAUTHORIZED,
+        message='Not authorized', **kwargs)
 
 
-def patched_urlopen_403(request, *args, **kwargs):
-    return patched_urlopen_error(request, httplib.FORBIDDEN, *args, **kwargs)
+def patched_urlopen_403(self, method, url, **kwargs):
+    return patched_urlopen_error(
+        method, url, code=httplib.FORBIDDEN,
+        message='Forbidden', **kwargs)
 
 
-def patched_urlopen_404(request, *args, **kwargs):
-    return patched_urlopen_error(request, httplib.NOT_FOUND, *args, **kwargs)
+def patched_urlopen_404(self, method, url, **kwargs):
+    return patched_urlopen_error(
+        method, url, code=httplib.NOT_FOUND,
+        message='Not found', **kwargs)
 
 
-def patched_urlopen_500(request, *args, **kwargs):
-    return patched_urlopen_error(request, httplib.INTERNAL_SERVER_ERROR, *args, **kwargs)
+def patched_urlopen_500(self, method, url, **kwargs):
+    return patched_urlopen_error(
+        method, url, code=httplib.INTERNAL_SERVER_ERROR,
+        message='Internal server error', **kwargs)
 
 
-@patch('urllib2.urlopen', patched_urlopen_400)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_400)
 def base_client_read_400(bc, url):
     return bc.read(url)
 
 
-@patch('urllib2.urlopen', patched_urlopen_401)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_401)
 def base_client_read_401(bc, url):
     return bc.read(url)
 
 
-@patch('urllib2.urlopen', patched_urlopen_403)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_403)
 def base_client_read_403(bc, url):
     return bc.read(url)
 
 
-@patch('urllib2.urlopen', patched_urlopen_404)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_404)
 def base_client_read_404(bc, url):
     return bc.read(url)
 
 
-@patch('urllib2.urlopen', patched_urlopen_500)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_500)
 def base_client_read_500(bc, url):
     return bc.read(url)
 
 
-@patch('urllib2.urlopen', patched_urlopen)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen)
 def test_base_client_read():
     """
     test cases:
@@ -268,7 +267,7 @@ def get_client():
     return Client(public_key, secret_key, api_token)
 
 
-@patch('urllib2.urlopen', patched_urlopen)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen)
 def test_client():
     c = get_client()
     test_url = "http://test.url"
@@ -286,7 +285,7 @@ def test_client():
     assert result == sample_json_dict, result
 
 
-@patch('urllib2.urlopen', patched_urlopen)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen)
 def test_namespace():
     ns = Namespace(get_client())
     test_url = "http://test.url"
@@ -330,16 +329,11 @@ def test_auth():
 frob_dict = {'frob': 'test'}
 
 
-def return_frob_json():
-    return json.dumps(frob_dict)
+def patched_urlopen_frob(*args, **kwargs):
+    return MicroMock(data=json.dumps(frob_dict), status=200)
 
 
-def patched_urlopen_frob(request, *args, **kwargs):
-    request.read = return_frob_json
-    return request
-
-
-@patch('urllib2.urlopen', patched_urlopen_frob)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_frob)
 def test_auth_get_frob():
     #test get_frob
     au = setup_auth()
@@ -349,16 +343,11 @@ def test_auth_get_frob():
 token_dict = {'token': 'testtoken', 'auth_user': 'test_auth_user'}
 
 
-def return_token_json():
-    return json.dumps(token_dict)
+def patched_urlopen_token(*args, **kwargs):
+    return MicroMock(data=json.dumps(token_dict), status=200)
 
 
-def patched_urlopen_token(request, *args, **kwargs):
-    request.read = return_token_json
-    return request
-
-
-@patch('urllib2.urlopen', patched_urlopen_token)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_token)
 def test_auth_get_token():
     #test get_frob
     au = setup_auth()
@@ -367,7 +356,7 @@ def test_auth_get_token():
     assert auth_user == token_dict['auth_user'], auth_user
 
 
-@patch('urllib2.urlopen', patched_urlopen_token)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_token)
 def test_check_token_true():
     #check if ok
     au = setup_auth()
@@ -379,14 +368,14 @@ def test_check_token_true():
         assert "Not Raised"
 
 
-@patch('urllib2.urlopen', patched_urlopen_token)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_token)
 def test_revoke_token_true():
     #check if ok
     au = setup_auth()
     assert au.revoke_token(), au.revoke_token()
 
 
-@patch('urllib2.urlopen', patched_urlopen_403)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_403)
 def test_check_token_false():
     #check if denied
     au = setup_auth()
@@ -414,16 +403,11 @@ teamrooms_dict = {'teamrooms':
                  }
 
 
-def return_teamrooms_json():
-    return json.dumps(teamrooms_dict)
+def patched_urlopen_teamrooms(*args, **kwargs):
+    return MicroMock(data=json.dumps(teamrooms_dict), status=200)
 
 
-def patched_urlopen_teamrooms(request, *args, **kwargs):
-    request.read = return_teamrooms_json
-    return request
-
-
-@patch('urllib2.urlopen', patched_urlopen_teamrooms)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_teamrooms)
 def test_team():
     te = Team(get_client())
 
@@ -480,16 +464,11 @@ stream_dict = {'streams': {'snapshot': [{u'uid': u'test',
  u'portrait_img': u'http://www.test.com'}]}}
 
 
-def return_stream_json():
-    return json.dumps(stream_dict)
+def patched_urlopen_stream(*args, **kwargs):
+    return MicroMock(data=json.dumps(stream_dict), status=200)
 
 
-def patched_urlopen_stream(request, *args, **kwargs):
-    request.read = return_stream_json
-    return request
-
-
-@patch('urllib2.urlopen', patched_urlopen_stream)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_stream)
 def test_stream():
     te = Team(get_client())
 
@@ -504,16 +483,11 @@ teamrooms_dict_none = {'teamrooms': '',
                        }
 
 
-def return_teamrooms_none_json():
-    return json.dumps(teamrooms_dict_none)
+def patched_urlopen_teamrooms_none(*args, **kwargs):
+    return MicroMock(data=json.dumps(teamrooms_dict_none), status=200)
 
 
-def patched_urlopen_teamrooms_none(request, *args, **kwargs):
-    request.read = return_teamrooms_none_json
-    return request
-
-
-@patch('urllib2.urlopen', patched_urlopen_teamrooms_none)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_teamrooms_none)
 def test_teamrooms_none():
     te = Team(get_client())
 
@@ -676,16 +650,11 @@ hr_dict = {u'auth_user': auth_user,
             u'candidacy_stats': candidacy_stats}
 
 
-def return_hr_json():
-    return json.dumps(hr_dict)
+def patched_urlopen_hr(*args, **kwargs):
+    return MicroMock(data=json.dumps(hr_dict), status=200)
 
 
-def patched_urlopen_hr(request, *args, **kwargs):
-    request.read = return_hr_json
-    return request
-
-
-@patch('urllib2.urlopen', patched_urlopen_hr)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_hr)
 def test_get_hrv2_user():
     hr = get_client().hr
 
@@ -693,7 +662,7 @@ def test_get_hrv2_user():
     assert hr.get_user(1) == hr_dict[u'user'], hr.get_user(1)
 
 
-@patch('urllib2.urlopen', patched_urlopen_hr)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_hr)
 def test_get_hrv2_companies():
     hr = get_client().hr
     #test get_companies
@@ -703,14 +672,14 @@ def test_get_hrv2_companies():
     assert hr.get_company(1) == hr_dict[u'company'], hr.get_company(1)
 
 
-@patch('urllib2.urlopen', patched_urlopen_hr)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_hr)
 def test_get_hrv2_company_teams():
     hr = get_client().hr
     #test get_company_teams
     assert hr.get_company_teams(1) == hr_dict['teams'], hr.get_company_teams(1)
 
 
-@patch('urllib2.urlopen', patched_urlopen_hr)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_hr)
 def test_get_hrv2_company_users():
     hr = get_client().hr
     #test get_company_users
@@ -719,7 +688,7 @@ def test_get_hrv2_company_users():
          hr.get_company_users(1, False)
 
 
-@patch('urllib2.urlopen', patched_urlopen_hr)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_hr)
 def test_get_hrv2_company_tasks():
     hr = get_client().hr
     #test get_company_tasks
@@ -730,10 +699,10 @@ def test_get_hrv2_company_tasks():
         pass
     except Exception, e:
         print e
-        assert 0, "APINotImplementedException not raised"
+        assert 0, ("APINotImplementedException not raised", e)
 
 
-@patch('urllib2.urlopen', patched_urlopen_hr)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_hr)
 def test_get_hrv2_teams():
     hr = get_client().hr
     #test get_teams
@@ -743,7 +712,7 @@ def test_get_hrv2_teams():
     assert hr.get_team(1) == hr_dict[u'team'], hr.get_team(1)
 
 
-@patch('urllib2.urlopen', patched_urlopen_hr)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_hr)
 def test_get_hrv2_team_users():
     hr = get_client().hr
     #test get_team_users
@@ -752,7 +721,7 @@ def test_get_hrv2_team_users():
          hr.get_team_users(1, False)
 
 
-@patch('urllib2.urlopen', patched_urlopen_hr)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_hr)
 def test_get_hrv2_team_tasks():
     hr = get_client().hr
     #test get_team_tasks
@@ -764,7 +733,7 @@ def test_get_hrv2_team_tasks():
         assert 0, "APINotImplementedException not raised"
 
 
-@patch('urllib2.urlopen', patched_urlopen_hr)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_hr)
 def test_get_hrv2_userroles():
     hr = get_client().hr
     #test get_user_role
@@ -782,7 +751,7 @@ def test_get_hrv2_userroles():
         assert 0, "APINotImplementedException not raised"
 
 
-@patch('urllib2.urlopen', patched_urlopen_hr)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_hr)
 def test_get_hrv2_jobs():
     hr = get_client().hr
     #test get_jobs
@@ -792,7 +761,7 @@ def test_get_hrv2_jobs():
     assert hr.delete_job(1, 41) == hr_dict, hr.delete_job(1, 41)
 
 
-@patch('urllib2.urlopen', patched_urlopen_hr)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_hr)
 def test_get_hrv2_offers():
     hr = get_client().hr
     #test get_offers
@@ -800,7 +769,7 @@ def test_get_hrv2_offers():
     assert hr.get_offer(1) == hr_dict[u'offer'], hr.get_offer(1)
 
 
-@patch('urllib2.urlopen', patched_urlopen_hr)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_hr)
 def test_get_hrv2_engagements():
     hr = get_client().hr
     #test get_engagements
@@ -811,16 +780,11 @@ def test_get_hrv2_engagements():
 adjustments = {u'adjustment': {u'reference': '100'}}
 
 
-def return_hradjustment_json():
-    return json.dumps(adjustments)
+def patched_urlopen_hradjustment(*args, **kwargs):
+    return MicroMock(data=json.dumps(adjustments), status=200)
 
 
-def patched_urlopen_hradjustment(request, *args, **kwargs):
-    request.read = return_hradjustment_json
-    return request
-
-
-@patch('urllib2.urlopen', patched_urlopen_hradjustment)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_hradjustment)
 def test_hrv2_post_adjustment():
     hr = get_client().hr
 
@@ -840,20 +804,19 @@ job_data = {
                 }
 
 
-def patched_urlopen_job_data_parameters(request, *args, **kwargs):
-    post_dict = urlparse.parse_qs(request.data)
+def patched_urlopen_job_data_parameters(self, method, url, **kwargs):
+    post_dict = urlparse.parse_qs(kwargs.get('body'))
     assert post_dict == {'api_key': ['public'], 'job_data[subcategory]': ['Other - Web Development'], 'job_data[description]': ['this is test job, please do not apply to it'], 'job_data[duration]': ['10'], 'job_data[buyer_team_reference]': ['111'], 'job_data[job_type]': ['hourly'], 'api_token': ['some_token'], 'api_sig': ['830fb250d089dabb2e74a301796c6e6b'], 'job_data[title]': ['Test job from API'], 'job_data[visibility]': ['odesk'], 'job_data[category]': ['Web Development']}, a
-    request.read = lambda: '{"some":"data"}'
-    return request
+    return MicroMock(data='{"some":"data"}', status=200)
 
 
-@patch('urllib2.urlopen', patched_urlopen_job_data_parameters)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_job_data_parameters)
 def test_job_data_parameters():
     hr = get_client().hr
     result = hr.post_job(job_data)
 
 
-@patch('urllib2.urlopen', patched_urlopen_hr)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_hr)
 def test_get_hrv2_candidacy_stats():
     hr = get_client().hr
     #test get_candidacy_stats
@@ -901,16 +864,11 @@ provider_dict = {'profile':
                    }
 
 
-def return_provider_json():
-    return json.dumps(provider_dict)
+def patched_urlopen_provider(*args, **kwargs):
+    return MicroMock(data=json.dumps(provider_dict), status=200)
 
 
-def patched_urlopen_provider(request, *args, **kwargs):
-    request.read = return_provider_json
-    return request
-
-
-@patch('urllib2.urlopen', patched_urlopen_provider)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_provider)
 def test_provider():
     pr = get_client().provider
 
@@ -981,16 +939,11 @@ trays_dict = {'trays': [{u'unread': u'0',
                u'tray_api': u'/api/mc/v1/trays/username/notifications.json'}]}
 
 
-def return_trays_json():
-    return json.dumps(trays_dict)
+def patched_urlopen_trays(*args, **kwargs):
+    return MicroMock(data=json.dumps(trays_dict), status=200)
 
 
-def patched_urlopen_trays(request, *args, **kwargs):
-    request.read = return_trays_json
-    return request
-
-
-@patch('urllib2.urlopen', patched_urlopen_trays)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_trays)
 def test_get_trays():
     mc = get_client().mc
 
@@ -1007,16 +960,11 @@ def test_get_trays():
 tray_content_dict = {"current_tray": {"threads": '1'}}
 
 
-def return_tray_content_json():
-    return json.dumps(tray_content_dict)
+def patched_urlopen_tray_content(*args, **kwargs):
+    return MicroMock(data=json.dumps(tray_content_dict), status=200)
 
 
-def patched_urlopen_tray_content(request, *args, **kwargs):
-    request.read = return_tray_content_json
-    return request
-
-
-@patch('urllib2.urlopen', patched_urlopen_tray_content)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_tray_content)
 def test_get_tray_content():
     mc = get_client().mc
 
@@ -1031,16 +979,11 @@ def test_get_tray_content():
 thread_content_dict = {"thread": {"test": '1'}}
 
 
-def return_thread_content_json():
-    return json.dumps(thread_content_dict)
+def patched_urlopen_thread_content(*args, **kwargs):
+    return MicroMock(data=json.dumps(thread_content_dict), status=200)
 
 
-def patched_urlopen_thread_content(request, *args, **kwargs):
-    request.read = return_thread_content_json
-    return request
-
-
-@patch('urllib2.urlopen', patched_urlopen_thread_content)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_thread_content)
 def test_get_thread_content():
     mc = get_client().mc
 
@@ -1055,16 +998,11 @@ def test_get_thread_content():
 read_thread_content_dict = {"thread": {"test": '1'}}
 
 
-def return_read_thread_content_json():
-    return json.dumps(read_thread_content_dict)
+def patched_urlopen_read_thread_content(*args, **kwargs):
+    return MicroMock(data=json.dumps(read_thread_content_dict), status=200)
 
 
-def patched_urlopen_read_thread_content(request, *args, **kwargs):
-    request.read = return_read_thread_content_json
-    return request
-
-
-@patch('urllib2.urlopen', patched_urlopen_read_thread_content)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_read_thread_content)
 def test_put_threads_read_unread():
     mc = get_client().mc
 
@@ -1078,7 +1016,7 @@ def test_put_threads_read_unread():
     assert read == read_thread_content_dict, read
 
 
-@patch('urllib2.urlopen', patched_urlopen_read_thread_content)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_read_thread_content)
 def test_put_threads_starred_unstarred():
     mc = get_client().mc
 
@@ -1089,7 +1027,7 @@ def test_put_threads_starred_unstarred():
     assert unstarred == read_thread_content_dict, unstarred
 
 
-@patch('urllib2.urlopen', patched_urlopen_read_thread_content)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_read_thread_content)
 def test_put_threads_deleted_undeleted():
     mc = get_client().mc
 
@@ -1100,7 +1038,7 @@ def test_put_threads_deleted_undeleted():
     assert undeleted == read_thread_content_dict, undeleted
 
 
-@patch('urllib2.urlopen', patched_urlopen_read_thread_content)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_read_thread_content)
 def test_post_message():
     mc = get_client().mc
 
@@ -1143,16 +1081,11 @@ timereport_dict = {u'table':
           {u'type': u'string', u'label': u'memo'}]}}
 
 
-def return_read_timereport_json(*args, **kwargs):
-    return json.dumps(timereport_dict)
+def patched_urlopen_timereport_content(*args, **kwargs):
+    return MicroMock(data=json.dumps(timereport_dict), status=200)
 
 
-def patched_urlopen_timereport_content(request, *args, **kwargs):
-    request.read = return_read_timereport_json
-    return request
-
-
-@patch('urllib2.urlopen', patched_urlopen_timereport_content)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_timereport_content)
 def test_get_provider_timereport():
     tc = get_client().timereport
 
@@ -1166,7 +1099,7 @@ def test_get_provider_timereport():
     assert read == timereport_dict, read
 
 
-@patch('urllib2.urlopen', patched_urlopen_timereport_content)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_timereport_content)
 def test_get_company_timereport():
     tc = get_client().timereport
 
@@ -1180,7 +1113,7 @@ def test_get_company_timereport():
     assert read == timereport_dict, read
 
 
-@patch('urllib2.urlopen', patched_urlopen_timereport_content)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_timereport_content)
 def test_get_agency_timereport():
     tc = get_client().timereport
 
@@ -1213,16 +1146,11 @@ fin_report_dict = {u'table':
           {u'type': u'string', u'label': u'memo'}]}}
 
 
-def return_read_fin_report_json(*args, **kwargs):
-    return json.dumps(fin_report_dict)
+def patched_urlopen_fin_report_content(*args, **kwargs):
+    return MicroMock(data=json.dumps(fin_report_dict), status=200)
 
 
-def patched_urlopen_fin_report_content(request, *args, **kwargs):
-    request.read = return_read_fin_report_json
-    return request
-
-
-@patch('urllib2.urlopen', patched_urlopen_fin_report_content)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_fin_report_content)
 def test_get_provider_billings():
     fr = get_client().finreport
 
@@ -1230,7 +1158,7 @@ def test_get_provider_billings():
     assert read == fin_report_dict, read
 
 
-@patch('urllib2.urlopen', patched_urlopen_fin_report_content)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_fin_report_content)
 def test_get_provider_teams_billings():
     fr = get_client().finreport
 
@@ -1238,7 +1166,7 @@ def test_get_provider_teams_billings():
     assert read == fin_report_dict, read
 
 
-@patch('urllib2.urlopen', patched_urlopen_fin_report_content)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_fin_report_content)
 def test_get_provider_companies_billings():
     fr = get_client().finreport
 
@@ -1246,7 +1174,7 @@ def test_get_provider_companies_billings():
     assert read == fin_report_dict, read
 
 
-@patch('urllib2.urlopen', patched_urlopen_fin_report_content)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_fin_report_content)
 def test_get_provider_earnings():
     fr = get_client().finreport
 
@@ -1254,7 +1182,7 @@ def test_get_provider_earnings():
     assert read == fin_report_dict, read
 
 
-@patch('urllib2.urlopen', patched_urlopen_fin_report_content)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_fin_report_content)
 def test_get_provider_teams_earnings():
     fr = get_client().finreport
 
@@ -1262,7 +1190,7 @@ def test_get_provider_teams_earnings():
     assert read == fin_report_dict, read
 
 
-@patch('urllib2.urlopen', patched_urlopen_fin_report_content)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_fin_report_content)
 def test_get_provider_companies_earnings():
     fr = get_client().finreport
 
@@ -1270,7 +1198,7 @@ def test_get_provider_companies_earnings():
     assert read == fin_report_dict, read
 
 
-@patch('urllib2.urlopen', patched_urlopen_fin_report_content)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_fin_report_content)
 def test_get_buyer_teams_billings():
     fr = get_client().finreport
 
@@ -1278,7 +1206,7 @@ def test_get_buyer_teams_billings():
     assert read == fin_report_dict, read
 
 
-@patch('urllib2.urlopen', patched_urlopen_fin_report_content)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_fin_report_content)
 def test_get_buyer_companies_billings():
     fr = get_client().finreport
 
@@ -1286,7 +1214,7 @@ def test_get_buyer_companies_billings():
     assert read == fin_report_dict, read
 
 
-@patch('urllib2.urlopen', patched_urlopen_fin_report_content)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_fin_report_content)
 def test_get_buyer_teams_earnings():
     fr = get_client().finreport
 
@@ -1294,7 +1222,7 @@ def test_get_buyer_teams_earnings():
     assert read == fin_report_dict, read
 
 
-@patch('urllib2.urlopen', patched_urlopen_fin_report_content)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_fin_report_content)
 def test_get_buyer_companies_earnings():
     fr = get_client().finreport
 
@@ -1302,7 +1230,7 @@ def test_get_buyer_companies_earnings():
     assert read == fin_report_dict, read
 
 
-@patch('urllib2.urlopen', patched_urlopen_fin_report_content)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_fin_report_content)
 def test_get_financial_entities():
     fr = get_client().finreport
 
@@ -1310,7 +1238,7 @@ def test_get_financial_entities():
     assert read == fin_report_dict, read
 
 
-@patch('urllib2.urlopen', patched_urlopen_fin_report_content)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_fin_report_content)
 def test_get_financial_entities_provider():
     fr = get_client().finreport
 
@@ -1328,20 +1256,14 @@ def test_get_version():
     assert get_version() == '1.2.3 pre-alpha', get_version()
 
 
-task_dict = {u'tasks': 'task1'
-     }
+task_dict = {u'tasks': 'task1'}
 
 
-def return_task_dict_json(*args, **kwargs):
-    return json.dumps(task_dict)
+def patched_urlopen_task(*args, **kwargs):
+    return MicroMock(data=json.dumps(task_dict), status=200)
 
 
-def patched_urlopen_task(request, *args, **kwargs):
-    request.read = return_task_dict_json
-    return request
-
-
-@patch('urllib2.urlopen', patched_urlopen_task)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_task)
 def test_get_company_tasks():
     task = get_client().task
 
@@ -1349,7 +1271,7 @@ def test_get_company_tasks():
      task.get_company_tasks(1)
 
 
-@patch('urllib2.urlopen', patched_urlopen_task)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_task)
 def test_get_team_tasks():
     task = get_client().task
 
@@ -1357,7 +1279,7 @@ def test_get_team_tasks():
      task.get_team_tasks(1, 1)
 
 
-@patch('urllib2.urlopen', patched_urlopen_task)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_task)
 def test_get_user_tasks():
     task = get_client().task
 
@@ -1365,7 +1287,7 @@ def test_get_user_tasks():
      task.get_user_tasks(1, 1, 1)
 
 
-@patch('urllib2.urlopen', patched_urlopen_task)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_task)
 def test_company_tasks_full():
     task = get_client().task
 
@@ -1373,7 +1295,7 @@ def test_company_tasks_full():
      task.get_company_tasks_full(1)
 
 
-@patch('urllib2.urlopen', patched_urlopen_task)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_task)
 def test_get_team_tasks_full():
     task = get_client().task
 
@@ -1381,7 +1303,7 @@ def test_get_team_tasks_full():
      task.get_team_tasks_full(1, 1)
 
 
-@patch('urllib2.urlopen', patched_urlopen_task)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_task)
 def test_get_user_tasks_full():
     task = get_client().task
 
@@ -1389,7 +1311,7 @@ def test_get_user_tasks_full():
      task.get_user_tasks_full(1, 1, 1)
 
 
-@patch('urllib2.urlopen', patched_urlopen_task)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_task)
 def test_get_company_specific_tasks():
     task = get_client().task
 
@@ -1397,7 +1319,7 @@ def test_get_company_specific_tasks():
      task.get_company_specific_tasks(1, [1, 1])
 
 
-@patch('urllib2.urlopen', patched_urlopen_task)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_task)
 def test_get_team_specific_tasks():
     task = get_client().task
 
@@ -1405,7 +1327,7 @@ def test_get_team_specific_tasks():
      task.get_team_specific_tasks(1, 1, [1, 1])
 
 
-@patch('urllib2.urlopen', patched_urlopen_task)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_task)
 def test_get_user_specific_tasks():
     task = get_client().task
 
@@ -1413,7 +1335,7 @@ def test_get_user_specific_tasks():
      task.get_user_specific_tasks(1, 1, 1, [1, 1])
 
 
-@patch('urllib2.urlopen', patched_urlopen_task)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_task)
 def test_post_company_task():
     task = get_client().task
 
@@ -1421,7 +1343,7 @@ def test_post_company_task():
      task.post_company_task(1, 1, '1', 'ttt')
 
 
-@patch('urllib2.urlopen', patched_urlopen_task)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_task)
 def test_post_team_task():
     task = get_client().task
 
@@ -1429,7 +1351,7 @@ def test_post_team_task():
      task.post_team_task(1, 1, 1, '1', 'ttt')
 
 
-@patch('urllib2.urlopen', patched_urlopen_task)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_task)
 def test_post_user_task():
     task = get_client().task
 
@@ -1437,7 +1359,7 @@ def test_post_user_task():
      task.post_user_task(1, 1, 1, 1, '1', 'ttt')
 
 
-@patch('urllib2.urlopen', patched_urlopen_task)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_task)
 def test_put_company_task():
     task = get_client().task
 
@@ -1445,7 +1367,7 @@ def test_put_company_task():
      task.put_company_task(1, 1, '1', 'ttt')
 
 
-@patch('urllib2.urlopen', patched_urlopen_task)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_task)
 def test_put_team_task():
     task = get_client().task
 
@@ -1453,7 +1375,7 @@ def test_put_team_task():
      task.put_team_task(1, 1, 1, '1', 'ttt')
 
 
-@patch('urllib2.urlopen', patched_urlopen_task)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_task)
 def test_put_user_task():
     task = get_client().task
 
@@ -1461,7 +1383,7 @@ def test_put_user_task():
      task.put_user_task(1, 1, 1, 1, '1', 'ttt')
 
 
-@patch('urllib2.urlopen', patched_urlopen_task)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_task)
 def test_delete_company_task():
     task = get_client().task
 
@@ -1469,7 +1391,7 @@ def test_delete_company_task():
      task.delete_company_task(1, [1, 1])
 
 
-@patch('urllib2.urlopen', patched_urlopen_task)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_task)
 def test_delete_team_task():
     task = get_client().task
 
@@ -1477,7 +1399,7 @@ def test_delete_team_task():
      task.delete_team_task(1, 1, [1, 1])
 
 
-@patch('urllib2.urlopen', patched_urlopen_task)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_task)
 def test_delete_user_task():
     task = get_client().task
 
@@ -1485,7 +1407,7 @@ def test_delete_user_task():
      task.delete_user_task(1, 1, 1, [1, 1])
 
 
-@patch('urllib2.urlopen', patched_urlopen_task)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_task)
 def test_delete_all_company_tasks():
     task = get_client().task
 
@@ -1493,7 +1415,7 @@ def test_delete_all_company_tasks():
      task.delete_all_company_tasks(1)
 
 
-@patch('urllib2.urlopen', patched_urlopen_task)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_task)
 def test_delete_all_team_tasks():
     task = get_client().task
 
@@ -1501,7 +1423,7 @@ def test_delete_all_team_tasks():
      task.delete_all_team_tasks(1, 1)
 
 
-@patch('urllib2.urlopen', patched_urlopen_task)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_task)
 def test_delete_all_user_tasks():
     task = get_client().task
 
@@ -1509,7 +1431,7 @@ def test_delete_all_user_tasks():
      task.delete_all_user_tasks(1, 1, 1)
 
 
-@patch('urllib2.urlopen', patched_urlopen_task)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_task)
 def test_update_batch_tasks():
     task = get_client().task
 
@@ -1521,119 +1443,21 @@ def test_gds_namespace():
     from odesk.namespaces import GdsNamespace
     gds = GdsNamespace(get_client())
 
-    assert gds.urlopen('test.url', {}, 'POST') == None, \
-        gds.urlopen('test.url', {}, 'POST')
+    assert gds.post('test.url', {}) is None, \
+        gds.post('test.url', {})
+    assert gds.put('test.url', {}) is None, \
+        gds.put('test.url', {})
+    assert gds.delete('test.url', {}) is None, \
+        gds.delete('test.url', {})
 
-@patch('urllib2.urlopen', patched_urlopen)
-def test_gds_namespace_read():
-    from odesk.namespaces import GdsNamespace
-    gds = GdsNamespace(get_client())
-    result = gds.read('http://test.url', {'foo': 'bar'}, 'GET')
-    assert isinstance(result, dict), type(res)
-    assert result == sample_json_dict, (result, sample_json_dict)
 
-@patch('urllib2.urlopen', patched_urlopen)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen)
 def test_gds_namespace_get():
     from odesk.namespaces import GdsNamespace
     gds = GdsNamespace(get_client())
     result = gds.get('http://test.url')
     assert isinstance(result, dict), type(res)
     assert result == sample_json_dict, (result, sample_json_dict)
-
-def test_non_auth_gds_namespace_post():
-    from odesk.namespaces import NonauthGdsNamespace
-    na_gds = NonauthGdsNamespace(get_client())
-    assert na_gds.urlopen('', method='POST') == None
-
-@patch('urllib2.urlopen', patched_urlopen)
-def test_non_auth_gds_namespace_get():
-    from odesk.namespaces import NonauthGdsNamespace
-    na_gds = NonauthGdsNamespace(get_client())
-    result = na_gds.urlopen('http://test.url', method='GET')
-    assert isinstance(result, HttpRequest), type(result)
-    assert result.get_full_url() == 'http://test.url', result.get_full_url()
-    assert result.get_method() == 'GET', result.get_method()
-
-oconomy_dict = {u'table':
-                {u'rows':
-                  [{u'c': [{u'v': u'Administrative Support'},
-                        {u'v': u'2787297.31'}]},
-                   {u'c': [{u'v': u'Business Services'},
-                        {u'v': u'1146857.51'}]},
-                   {u'c': [{u'v': u'Customer Service'},
-                        {u'v': u'1072926.55'}]},
-                   {u'c': [{u'v': u'Design & Multimedia'},
-                        {u'v': u'1730094.73'}]},
-                   {u'c': [{u'v': u'Networking & Information Systems'},
-                        {u'v': u'690526.57'}]},
-                   {u'c': [{u'v': u'Sales & Marketing'},
-                        {u'v': u'3232511.54'}]},
-                   {u'c': [{u'v': u'Software Development'},
-                        {u'v': u'6826354.60'}]},
-                   {u'c': [{u'v': u'Web Development'},
-                        {u'v': u'15228679.46'}]},
-                   {u'c': [{u'v': u'Writing & Translation'},
-                        {u'v': u'2257654.76'}]}],
-                 u'cols':
-                  [{u'type': u'string', u'label': u'category'},
-                   {u'type': u'number', u'label': u'amount'}]}}
-
-
-def return_read_oconomy_json(*args, **kwargs):
-    return json.dumps(oconomy_dict)
-
-
-def patched_urlopen_oconomy_content(request, *args, **kwargs):
-    request.read = return_read_oconomy_json
-    return request
-
-
-@patch('urllib2.urlopen', patched_urlopen_oconomy_content)
-def test_get_monthly_summary():
-    oconomy = get_client().nonauth_oconomy
-
-    read = oconomy.get_monthly_summary('201011')
-    assert read == oconomy_dict, read
-
-
-@patch('urllib2.urlopen', patched_urlopen_oconomy_content)
-def test_get_hours_worked_by_locations():
-    oconomy = get_client().oconomy
-
-    read = oconomy.get_hours_worked_by_locations()
-    assert read == oconomy_dict, read
-
-
-@patch('urllib2.urlopen', patched_urlopen_oconomy_content)
-def test_get_hours_worked_by_weeks():
-    oconomy = get_client().oconomy
-
-    read = oconomy.get_hours_worked_by_weeks()
-    assert read == oconomy_dict, read
-
-
-@patch('urllib2.urlopen', patched_urlopen_oconomy_content)
-def test_get_top_countries_by_hours():
-    oconomy = get_client().oconomy
-
-    read = oconomy.get_top_countries_by_hours()
-    assert read == oconomy_dict, read
-
-
-@patch('urllib2.urlopen', patched_urlopen_oconomy_content)
-def test_get_earnings_by_categories():
-    oconomy = get_client().nonauth_oconomy
-
-    read = oconomy.get_earnings_by_categories()
-    assert read == oconomy_dict, read
-
-
-@patch('urllib2.urlopen', patched_urlopen_oconomy_content)
-def test_get_most_requested_skills():
-    oconomy = get_client().oconomy
-
-    read = oconomy.get_most_requested_skills()
-    assert read == oconomy_dict, read
 
 
 def get_oauth_client():
@@ -1760,25 +1584,16 @@ job_profile_dict = {'profile':
     }
 }
 
-def return_single_job_json():
-    return json.dumps(job_profile_dict)
+
+def patched_urlopen_single_job(*args, **kwargs):
+    return MicroMock(data=json.dumps(job_profile_dict), status=200)
 
 
-def patched_urlopen_single_job(request, *args, **kwargs):
-    request.read = return_single_job_json
-    return request
+def patched_urlopen_multiple_jobs(*args, **kwargs):
+    return MicroMock(data=json.dumps(job_profiles_dict), status=200)
 
 
-def return_multiple_jobs_json():
-    return json.dumps(job_profiles_dict)
-
-
-def patched_urlopen_multiple_jobs(request, *args, **kwargs):
-    request.read = return_multiple_jobs_json
-    return request
-
-
-@patch('urllib2.urlopen', patched_urlopen_single_job)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_single_job)
 def test_single_job_profile():
     job = get_client().job
 
@@ -1809,7 +1624,7 @@ def test_single_job_profile():
         job.get_job_profile('~~111111111')
 
 
-@patch('urllib2.urlopen', patched_urlopen_multiple_jobs)
+@patch('urllib3.PoolManager.urlopen', patched_urlopen_multiple_jobs)
 def test_multiple_job_profiles():
     job = get_client().job
 

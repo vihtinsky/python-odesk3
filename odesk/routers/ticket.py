@@ -16,7 +16,7 @@ class Ticket(Namespace):
         """
         url = 'topics'
         result = self.get(url)
-        return result['topics']
+        return result.get('topics', result)
 
     def get_ticket(self, ticket_key):
         """
@@ -27,7 +27,7 @@ class Ticket(Namespace):
         """
         url = 'tickets/%s' % str(ticket_key)
         result = self.get(url)
-        return result['ticket']
+        return result.get('ticket', result)
 
     def post_new_ticket(self, message, topic_id='', topic_api_ref='',
                         email='', name=''):
