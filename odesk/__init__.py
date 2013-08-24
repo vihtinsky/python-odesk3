@@ -166,7 +166,8 @@ class BaseClient(object):
         """
         assert format_ == 'json', "Only JSON format is supported at the moment"
 
-        headers = {'Accept': 'application/{0}'.format(format_)}
+        if '/gds/' not in url:
+            url = '{0}.{1}'.format(url, format_)
 
         logger = logging.getLogger('python-odesk')
 
@@ -174,7 +175,7 @@ class BaseClient(object):
         logger.debug('URL: {0}'.format(url))
         logger.debug('Data: {0}'.format(json.dumps(data)))
         logger.debug('Method: {0}'.format(method))
-        response = self.urlopen(url, data, method, headers=headers)
+        response = self.urlopen(url, data, method)
 
         if response.status != 200:
             logger.debug('Error: {0}'.format(response))

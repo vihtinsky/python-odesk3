@@ -11,8 +11,8 @@ import httplib
 from odesk.exceptions import HTTP400BadRequestError, HTTP401UnauthorizedError,\
     HTTP403ForbiddenError, HTTP404NotFoundError
 
-ODESK_ERROR_CODE = 'X-Odesk-Error-Code'
-ODESK_ERROR_MESSAGE = 'X-Odesk-Error-Message'
+ODESK_ERROR_CODE = 'x-odesk-error-code'
+ODESK_ERROR_MESSAGE = 'x-odesk-error-message'
 
 
 def raise_http_error(url, response):
@@ -20,7 +20,7 @@ def raise_http_error(url, response):
     status_code = response.status
 
     headers = response.getheaders()
-
+    print headers
     odesk_error_code = headers.get(ODESK_ERROR_CODE, 'N/A')
     odesk_error_message = headers.get(ODESK_ERROR_MESSAGE, 'N/A')
 
@@ -44,3 +44,4 @@ def raise_http_error(url, response):
                                   headers, None)
         logger = logging.getLogger('python-odesk')
         logger.debug(str(error))
+        raise error
